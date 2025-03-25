@@ -205,7 +205,7 @@ map("n", "<leader>bb", ":TagbarToggle<CR>", opts)
 -- let NERDTreeIgnore=[]                                                                                                                   
 -- g.NERDTreeIgnore=['\.ko$', '\.mod.c$', '\~$']                                                                                          
 -- let NERDTreeIgnore=['\.o$', '\.ko$', '\.mod.c$', '\~$']                                                                                 
-g.NERDTreeShowHidden=1                                                                                                                 
+g.NERDTreeShowHidden=1
 map("n", "<leader>nn", ":NERDTreeToggle<CR>", opts)
 map("n", "<leader>nb", ":NERDTreeFromBookmark<CR>", opts)
 map("n", "<leader>nf", ":NERDTreeFind<CR>", opts)

@@ -1,4 +1,26 @@
-return {
+local utils = require("utils")
+
+-- Install Lazy.nvim automatically if it's not installed(Bootstraping)
+-- Hint: string concatenation is done by `..`
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable", -- latest stable release
+		lazypath,
+	})
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- check if firenvim is active
+local firenvim_not_active = function()
+  return not vim.g.started_by_firenvim
+end
+
+local plugin_specs = {
   -- Colorscheme
   {
     "tanvirtin/monokai.nvim",
@@ -62,8 +84,8 @@ return {
       dependencies = "rafamadriz/friendly-snippets",
       opts = { history = true, updateevents = "TextChanged,TextChangedI" },
       config = function(_, opts)
-	require("luasnip").config.set_config(opts)
-	require "configs.luasnip"
+				require("luasnip").config.set_config(opts)
+				require "configs.luasnip"
       end,
     },
 
@@ -214,18 +236,18 @@ return {
       require("nvim-surround").setup({
 	-- To solve the conflicts with leap.nvim
 	-- See: https://github.com/ggandor/leap.nvim/discussions/59
-	keymaps = {
-	  insert = "<C-g>z",
-	  insert_line = "gC-ggZ",
-	  normal = "gz",
-	  normal_cur = "gZ",
-	  normal_line = "gzgz",
-	  normal_cur_line = "gZgZ",
-	  visual = "gz",
-	  visual_line = "gZ",
-	  delete = "gzd",
-	  change = "gzc",
-	},
+				keymaps = {
+					insert = "<C-g>z",
+					insert_line = "gC-ggZ",
+					normal = "gz",
+					normal_cur = "gZ",
+					normal_line = "gzgz",
+					normal_cur_line = "gZgZ",
+					visual = "gz",
+					visual_line = "gZ",
+					delete = "gzd",
+					change = "gzc",
+				},
       })
     end,
   },
@@ -301,5 +323,18 @@ return {
     end,
   },
 
+}
+
+require("lazy").setup {
+  spec = plugin_specs,
+  ui = {
+    border = "rounded",
+    title = "Plugin Manager",
+    title_pos = "center",
+  },
+  rocks = {
+    enabled = false,
+    hererocks = false,
+  },
 }
 
