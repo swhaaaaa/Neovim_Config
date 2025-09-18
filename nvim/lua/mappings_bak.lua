@@ -8,7 +8,6 @@ local opts = {
 	silent = true, -- do not show message
 }
 
-vim.g.mapleader = ','
 
 -----------------
 -- Normal mode --
@@ -58,14 +57,14 @@ map("n", "<leader>qa", "<cmd>qa<CR>", opts)
 
 map("n", "<leader>n", "<cmd>set nu!<CR>", { desc = "toggle line number" })
 map("n", "<leader>rn", "<cmd>set rnu!<CR>", { desc = "toggle relative number" })
-map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "toggle nvcheatsheet" })
+-- map("n", "<leader>ch", "<cmd>NvCheatsheet<CR>", { desc = "toggle nvcheatsheet" })
 
 map("n", "<leader>fm", function()
   require("conform").format { lsp_fallback = true }
 end, { desc = "format files" })
 
 -- tabufline
-map("n", "<leader>b", "<cmd>enew<CR>", { desc = "buffer new" })
+map("n", "<leader>bn", "<cmd>enew<CR>", { desc = "buffer new" })
 
 
 -- Close the current buffer
@@ -124,16 +123,16 @@ map("v", "<M-h>", "x2hmzpv`zl")
 
 
 -- Comment
-map("n", "<leader>c ", function()
-  require("Comment.api").toggle.linewise.current()
-end, { desc = "comment toggle" })
-
-map(
-  "v",
-  "<leader>c ",
-  "<ESC><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>",
-  { desc = "comment toggle" }
-)
+-- map("n", "<leader>c ", function()
+--   require("Comment.api").toggle.linewise.current()
+-- end, { desc = "comment toggle" })
+-- 
+-- map(
+--   "v",
+--   "<leader>c ",
+--   "<ESC><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>",
+--   { desc = "comment toggle" }
+-- )
 
 
 -----------------
@@ -176,39 +175,5 @@ map(
   "<cmd>Telescope find_files follow=true no_ignore=true hidden=true<CR>",
   { desc = "telescope find all files" }
 )
-
--- """"""""""""""""""""""""""""""
--- " => Ack
--- " 1. curl http://betterthangrep.com/ack-standalone > ~/bin/ack && chmod 0755
--- " 2. sudo apt-get install ack-grep 
--- """"""""""""""""""""""""""""""
-g.ackprg="ack -H --nocolor --nogroup --column -i --follow"
-map("n", "<leader>ak", ":Ack! <C-R>=expand(\"<cword>\")<CR>", opts)
-map("v", "<leader>ak", "y:Ack! \"<C-R>0\"", opts)
-map("n", "<leader>akk", ":Ack! \"\"<left>", opts)
-
--- """"""""""""""""""""""""""""""
--- " => Tagbar setting
--- """"""""""""""""""""""""""""""
-g.tagbar_width = 30
-g.tagbar_expand = 1
---g.tagbar_left = 1
---g.tagbar_autoshowtag = 1
---g.tagbar_ctags_bin = 'ctags'
-g.tagbar_ctags_bin = 'ctags-exuberant'
-map("n", "<leader>bb", ":TagbarToggle<CR>", opts)
-
--- """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""                                                                          
--- " => Nerd Tree                                                                                                                           
--- " NERDTree Menu         type 'm'                                                                                                         
--- """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""                                                                          
--- let NERDTreeIgnore=[]                                                                                                                   
--- g.NERDTreeIgnore=['\.ko$', '\.mod.c$', '\~$']                                                                                          
--- let NERDTreeIgnore=['\.o$', '\.ko$', '\.mod.c$', '\~$']                                                                                 
-g.NERDTreeShowHidden=1
-map("n", "<leader>nn", ":NERDTreeToggle<CR>", opts)
-map("n", "<leader>nb", ":NERDTreeFromBookmark<CR>", opts)
-map("n", "<leader>nf", ":NERDTreeFind<CR>", opts)
--- au VimEnter *  NERDTree   
 
 
