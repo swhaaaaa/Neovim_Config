@@ -153,9 +153,10 @@ keymap.set("x", "<A-j>", '<cmd>call utils#MoveSelection("down")<cr>', { desc = "
 keymap.set("x", "<A-h>", '<cmd>call utils#MoveSelection("left")<cr>', { desc = "move selection left" })
 keymap.set("x", "<A-l>", '<cmd>call utils#MoveSelection("right")<cr>', { desc = "move selection right" })
 
+-- This behavior does not align with my experience.
 -- Replace visual selection with text in register, but not contaminate the register,
 -- see also https://stackoverflow.com/q/10723700/6064933.
-keymap.set("x", "p", '"_c<Esc>p')
+-- keymap.set("x", "p", '"_c<Esc>p')
 
 -- Go to a certain buffer
 keymap.set("n", "gb", '<cmd>call buf_utils#GoToBuffer(v:count, "forward")<cr>', {

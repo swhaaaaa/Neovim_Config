@@ -250,13 +250,13 @@ local plugin_specs = {
   { "itchyny/vim-highlighturl", event = "BufReadPost" },
 
   -- notification plugin
-  {
-    "rcarriga/nvim-notify",
-    event = "VeryLazy",
-    config = function()
-      require("config.nvim-notify")
-    end,
-  },
+  -- {
+  --   "rcarriga/nvim-notify",
+  --   event = "VeryLazy",
+  --   config = function()
+  --     require("config.nvim-notify")
+  --   end,
+  -- },
 
 --  -- For Windows and Mac, we can open an URL in the browser. For Linux, it may
 --  -- not be possible since we maybe in a server which disables GUI.
@@ -309,15 +309,13 @@ local plugin_specs = {
   },
 
   -- Comment plugin
-  {
-    "tpope/vim-commentary",
-    keys = {
-      { "gc", mode = "n" },
-      { "gc", mode = "v" },
-    },
-  },
-
-
+--  {
+--    "tpope/vim-commentary",
+--    keys = {
+--      { "<leader>gc", mode = "n" },
+--      { "<leader>gc", mode = "v" },
+--    },
+--  },
 
 -- Add my preferred plugins
   {
@@ -328,6 +326,39 @@ local plugin_specs = {
     end,
   },
 
+  -- Comment plugin
+  {
+    "numToStr/Comment.nvim",
+    event = { "BufEnter" },
+    dependencies = {
+      {
+        "JoosepAlviste/nvim-ts-context-commentstring",
+        config = function()
+          require("ts_context_commentstring").setup({
+            enable_autocmd = false, -- we use Comment.nvim's pre_hook instead
+          })
+        end,
+      },
+    },
+    config = function()
+      require("config.comment")
+    end,
+  },
+
+-- cscope plugin
+  {
+    "nvim-lua/plenary.nvim",
+    lazy = true,
+  },
+  {
+    "dhananjaylatkar/cscope_maps.nvim",
+    event = { "BufEnter" },
+    -- optional pickers; keep only the one(s) you use
+    -- dependencies = { "nvim-telescope/telescope.nvim" },
+    config = function()
+      require("config.cscope")
+    end,
+  },
 }
 
 ---@diagnostic disable-next-line: missing-fields
