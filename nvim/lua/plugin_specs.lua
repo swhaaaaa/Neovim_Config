@@ -211,6 +211,113 @@ local plugin_specs = {
     end,
   },
 
+  {
+    "nvim-mini/mini.indentscope",
+    version = false,
+    config = function()
+      local mini_indent = require("mini.indentscope")
+      mini_indent.setup {
+        draw = {
+          animation = mini_indent.gen_animation.none(),
+        },
+        symbol = "▏",
+      }
+    end,
+  },
+--  {
+--    "luukvbaal/statuscol.nvim",
+--    opts = {},
+--    config = function()
+--      require("config.nvim-statuscol")
+--    end,
+--  },
+--  {
+--    "kevinhwang91/nvim-ufo",
+--    dependencies = "kevinhwang91/promise-async",
+--    event = "VeryLazy",
+--    opts = {},
+--    init = function()
+--      vim.o.foldcolumn = "1" -- '0' is not bad
+--      vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+--      vim.o.foldlevelstart = 99
+--      vim.o.foldenable = true
+--    end,
+--    config = function()
+--      require("config.nvim_ufo")
+--    end,
+--  },
+  -- Highlight URLs inside vim
+  { "itchyny/vim-highlighturl", event = "BufReadPost" },
+
+  -- notification plugin
+  {
+    "rcarriga/nvim-notify",
+    event = "VeryLazy",
+    config = function()
+      require("config.nvim-notify")
+    end,
+  },
+
+--  -- For Windows and Mac, we can open an URL in the browser. For Linux, it may
+--  -- not be possible since we maybe in a server which disables GUI.
+--  {
+--    "chrishrb/gx.nvim",
+--    keys = { { "gx", "<cmd>Browse<cr>", mode = { "n", "x" } } },
+--    cmd = { "Browse" },
+--    init = function()
+--      vim.g.netrw_nogx = 1 -- disable netrw gx
+--    end,
+--    enabled = function()
+--      return vim.g.is_win or vim.g.is_mac
+--    end,
+--    config = true, -- default settings
+--    submodules = false, -- not needed, submodules are required only for tests
+--  },
+
+  -- Only install these plugins if ctags are installed on the system
+  -- show file tags in vim window
+  {
+    "liuchengxu/vista.vim",
+    enabled = function()
+      return utils.executable("ctags")
+    end,
+    cmd = { "Vista", "VistaFind", "VistaFocus" },
+    keys = {
+        { "<leader>vv", "<cmd>Vista!!<CR>", desc = "Toggle Vista outline" },
+        { "g0",        "<cmd>Vista!!<CR>", desc = "Toggle Vista outline" },
+    },
+    dependencies = { "nvim-tree/nvim-web-devicons" }, -- optional icons
+    config = function()
+        require("config.vista")
+    end,
+  },
+
+  -- Snippet engine and snippet template
+  {
+    "SirVer/ultisnips",
+    dependencies = {
+      "honza/vim-snippets",
+    },
+    event = "InsertEnter",
+  },
+
+  -- Automatic insertion and deletion of a pair of characters
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = true,
+  },
+
+  -- Comment plugin
+  {
+    "tpope/vim-commentary",
+    keys = {
+      { "gc", mode = "n" },
+      { "gc", mode = "v" },
+    },
+  },
+
+
 
 -- Add my preferred plugins
   {
