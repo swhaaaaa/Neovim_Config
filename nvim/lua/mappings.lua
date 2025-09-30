@@ -277,7 +277,7 @@ keymap.set("n", "<A-h>", "x2hp")
 -- Insert mode --
 -----------------
 -- Mapping jj to <Esc> in Insert Mode, return Normal mode
-keymap.set({ "i" }, "jj", "<ESC>")
+-- keymap.set({ "i" }, "jj", "<ESC>")
 
 keymap.set({ "i" }, "<C-h>", "<Left>", { desc = "move left" })
 keymap.set({ "i" }, "<C-l>", "<Right>", { desc = "move right" })

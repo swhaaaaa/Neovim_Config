@@ -4,6 +4,26 @@
 -- Optional speedups: fd (aka fdfind) and/or ripgrep
 -- =============================================================================
 
+-- Default Keymaps
+-- <prefix>: <leader>c
+-- <prefix>: <C-c>
+
+-- Keymaps 	Description
+-- <prefix>s 	find all references to the token under cursor
+-- <prefix>g 	find global definition(s) of the token under cursor
+-- <prefix>c 	find all calls to the function name under cursor
+-- <prefix>t 	find all instances of the text under cursor
+-- <prefix>e 	egrep search for the word under cursor
+-- <prefix>f 	open the filename under cursor
+-- <prefix>i 	find files that include the filename under cursor
+-- <prefix>d 	find functions that function under cursor calls
+-- <prefix>a 	find places where this symbol is assigned a value
+-- <prefix>b 	build cscope database
+-- Ctrl-] 	do :Cstag <cword>
+
+-- convert cs to Cs in command line mode
+vim.fn["utils#Cabbrev"]("cs", "Cs")
+
 -- --- cscope_maps: sane defaults + project auto-detection ---------------------
 local has_telescope = pcall(require, "telescope")
 local ok_csm, csm = pcall(require, "cscope_maps")
@@ -11,7 +31,8 @@ if ok_csm then
   csm.setup({
     disable_maps = false,           -- keep plugin's <leader>c{sgcteifd} maps
     skip_input_prompt = false,
-    prefix = "<leader>c",
+    -- prefix = "<leader>c",
+    prefix = "<C-c>", -- (Try setting it to C-c 😉)
     cscope = {
       db_file = "./cscope.out",     -- per-project database file
       exec = "cscope",              -- or "gtags-cscope"
@@ -285,5 +306,10 @@ vim.api.nvim_create_user_command("CscopeBuild", function(opts)
   local list, _ = resolve_list(opts.args, project_root())
   M.build_async({ list = list })
 end, { nargs = "?", complete = "file", desc = "Build cscope.out (async) from [filelist]" })
+
+-- -- Prompt, then "global def" of <cword>
+-- vim.keymap.set({ "n", "v" }, "<C-c><C-g>", "<cmd>CsPrompt g<cr>", { desc = "Cscope: global def (prompt)" })
+-- -- Direct, no prompt
+-- vim.keymap.set({ "n", "v" }, "<C-c><C-s>", "<cmd>Cs f s<cr>",      { desc = "Cscope: references" })
 
 return M

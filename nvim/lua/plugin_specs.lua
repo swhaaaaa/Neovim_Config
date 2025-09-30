@@ -317,6 +317,78 @@ local plugin_specs = {
 --    },
 --  },
 
+  -- Multiple cursor plugin like Sublime Text?
+  -- 'mg979/vim-visual-multi'
+
+  -- Show undo history visually
+  { "simnalamburt/vim-mundo", cmd = { "MundoToggle", "MundoShow" } },
+
+  -- Manage your yank history
+  {
+    "gbprod/yanky.nvim",
+    config = function()
+      require("config.yanky")
+    end,
+    cmd = "YankyRingHistory",
+  },
+
+  -- Handy unix command inside Vim (Rename, Move etc.)
+  -- { "tpope/vim-eunuch", cmd = { "Rename", "Delete" } },
+  { "tpope/vim-eunuch" },
+
+  -- Repeat vim motions
+  { "tpope/vim-repeat", event = "VeryLazy" },
+
+  -- { "nvim-zh/better-escape.vim", event = { "InsertEnter" } },
+  {
+    "nvim-zh/better-escape.vim",
+    event = { "InsertEnter" },
+    -- set globals *before* the plugin loads
+    init = function() require("config.better_escape").init() end,
+    -- optional per-filetype tweaks, etc.
+    config = function() require("config.better_escape").setup() end,
+  },
+
+  -- I seem not to need this function.
+  -- {
+  --   "lyokha/vim-xkbswitch",
+  --   enabled = function()
+  --     return vim.g.is_mac and utils.executable("xkbswitch")
+  --   end,
+  --   event = { "InsertEnter" },
+  -- },
+
+  -- I seem not to need this function.
+  -- {
+  --   "Neur1n/neuims",
+  --   enabled = function()
+  --     return vim.g.is_win
+  --   end,
+  --   event = { "InsertEnter" },
+  -- },
+
+  -- Git command inside vim
+  {
+    "tpope/vim-fugitive",
+    event = "User InGitRepo",
+    config = function()
+      require("config.fugitive")
+    end,
+  },
+
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim", -- required
+      "sindrets/diffview.nvim", -- optional - Diff integration
+      -- Only one of these is needed.
+      "ibhagwan/fzf-lua", -- optional
+    },
+    event = "User InGitRepo",
+  },
+
+
+
 -- Add my preferred plugins
   {
    "RaafatTurki/hex.nvim",
