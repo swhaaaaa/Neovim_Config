@@ -417,6 +417,7 @@ local plugin_specs = {
     end,
   },
 
+
 -- cscope plugin
   {
     "nvim-lua/plenary.nvim",
