@@ -375,7 +375,6 @@ local plugin_specs = {
       require("config.fugitive")
     end,
   },
-
   {
     "NeogitOrg/neogit",
     dependencies = {
