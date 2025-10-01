@@ -1,51 +1,32 @@
--- =============================================================================
--- Cscope async tools + cscope_maps setup
--- REQUIRE: sudo apt install cscope
--- Optional speedups: fd (aka fdfind) and/or ripgrep
--- =============================================================================
-
--- Default Keymaps
--- <prefix>: <leader>c
--- <prefix>: <C-c>
-
--- Keymaps 	Description
--- <prefix>s 	find all references to the token under cursor
--- <prefix>g 	find global definition(s) of the token under cursor
--- <prefix>c 	find all calls to the function name under cursor
--- <prefix>t 	find all instances of the text under cursor
--- <prefix>e 	egrep search for the word under cursor
--- <prefix>f 	open the filename under cursor
--- <prefix>i 	find files that include the filename under cursor
--- <prefix>d 	find functions that function under cursor calls
--- <prefix>a 	find places where this symbol is assigned a value
--- <prefix>b 	build cscope database
--- Ctrl-] 	do :Cstag <cword>
-
 -- convert cs to Cs in command line mode
 vim.fn["utils#Cabbrev"]("cs", "Cs")
 
--- --- cscope_maps: sane defaults + project auto-detection ---------------------
+-- --- cscope_maps: gtags backend + Telescope picker --------------------------
 local has_telescope = pcall(require, "telescope")
 local ok_csm, csm = pcall(require, "cscope_maps")
 if ok_csm then
   csm.setup({
-    disable_maps = false,           -- keep plugin's <leader>c{sgcteifd} maps
+    disable_maps = false,
     skip_input_prompt = false,
     prefix = "<leader>c",
+
     cscope = {
-      db_file = "./cscope.out",     -- per-project database file
-      exec = "cscope",              -- or "gtags-cscope"
+      db_file = "./GTAGS",              -- fine for gtags
+      exec = "gtags-cscope",            -- use GNU Global's shim
       picker = has_telescope and "telescope" or "quickfix",
       picker_opts = { window_pos = "bottom", window_size = 8 },
       skip_picker_for_single_result = true,
-      db_build_cmd = { script = "default", args = { "-bqkv" } },
+
+      -- let plugin run gtags; label is handled in our builder too
+      db_build_cmd = { script = "gtags", args = { "--gtagslabel=ctags" } },
+
       project_rooter = { enable = true, change_cwd = false },
       tag = { keymap = true, order = { "cs", "tag_picker", "tag" }, tag_cmd = "tjump" },
     },
   })
 end
 
--- lua/config/cscope.lua
+-- lua/config/cscope.lua (GTAGS-first builder; defaults to ./ and ./cscope.files)
 local M = {}
 
 -- ---------- Config ----------
@@ -66,51 +47,38 @@ M.ignores = {
 
 -- ---------- Utils ----------
 local uv = vim.uv or vim.loop
-
-local function project_root()
-  local marks = {
-    ".git", "compile_commands.json", "Makefile", "package.json",
-    "pyproject.toml", "Cargo.toml", "go.mod"
-  }
-  return vim.fs.root(0, marks) or vim.loop.cwd()
-end
-
 local function has(exe) return vim.fn.executable(exe) == 1 end
 
--- Fast-event safe notify
 local function notify(msg, level)
   local lvl = level or vim.log.levels.INFO
-  local function do_notify() vim.notify(msg, lvl, { title = "Cscope" }) end
+  local function do_notify() vim.notify(msg, lvl, { title = "Cscope/GTAGS" }) end
   if vim.in_fast_event() then vim.schedule(do_notify) else do_notify() end
 end
 
--- Paths
+-- paths/helpers
 local function is_abs(p)
   if vim.fn.has("win32") == 1 then
     return p:match("^%a:[/\\]") or p:match("^\\\\")
   end
   return p:sub(1,1) == "/"
 end
-
 local function abs_join(root, p)
   if is_abs(p) then return vim.fs.normalize(p) end
   p = p:gsub("^%./+", "")
   return vim.fs.normalize(root .. "/" .. p)
 end
-
 local function to_abs_paths(files, root)
   for i = 1, #files do files[i] = abs_join(root, files[i]) end
   return files
 end
 
--- Convert any user string to a valid directory (expands ~; if file -> dirname)
+-- arg → valid dir; if file path, use its parent
 local function normalize_dir(p)
   if not p or p == "" then return nil end
   p = vim.fn.fnamemodify(p, ":p")
   local st = uv.fs_stat(p)
   if st and st.type ~= "directory" then
-    p = vim.fs.dirname(p)
-    st = uv.fs_stat(p)
+    p = vim.fs.dirname(p); st = uv.fs_stat(p)
   end
   if not st or st.type ~= "directory" then
     return nil, ("Not a directory: %s"):format(p)
@@ -118,22 +86,21 @@ local function normalize_dir(p)
   return p
 end
 
+-- DEFAULT to CWD (./) if no arg
 local function resolve_root(arg)
   if arg and arg ~= "" then
     local dir, err = normalize_dir(arg)
     if not dir then return nil, err end
     return dir
   end
-  -- return project_root()
-  return vim.loop.cwd()  -- was project_root()
+  return vim.loop.cwd()
 end
 
--- If user passes a directory → append "cscope.files"; if file → use it
+-- DEFAULT to ./cscope.files if no arg
+-- If a directory is passed → append /cscope.files; if a file → use it
 local function resolve_list(arg, fallback_root)
   if not arg or arg == "" then
-    -- local root = fallback_root or project_root()
-    local root = fallback_root or vim.loop.cwd()  -- was project_root()
-    -- return (root .. "/cscope.files"), root
+    local root = fallback_root or vim.loop.cwd()
     return (vim.fs.normalize(root .. "/cscope.files")), root
   end
   local p = vim.fn.fnamemodify(arg, ":p")
@@ -141,8 +108,7 @@ local function resolve_list(arg, fallback_root)
   if st and st.type == "directory" then
     return (vim.fs.normalize(p .. "/cscope.files")), p
   else
-    local dir = vim.fs.dirname(p)
-    return p, dir
+    return p, vim.fs.dirname(p)
   end
 end
 
@@ -157,7 +123,6 @@ local function run_cmd_async(cmd, args, cwd, on_done)
       on_done(code, lines, err)
     end
   end
-
   if not cwd then return finish(1, {}, "cwd not resolved") end
   local st = uv.fs_stat(cwd)
   if not st or st.type ~= "directory" then
@@ -177,9 +142,7 @@ local function run_cmd_async(cmd, args, cwd, on_done)
         if not data then return end
         for _, line in ipairs(data) do if line and line ~= "" then table.insert(out, line) end end
       end,
-      on_stderr = function(_, data)
-        if data then table.insert(err, table.concat(data, "\n")) end
-      end,
+      on_stderr = function(_, data) if data then table.insert(err, table.concat(data, "\n")) end end,
       on_exit = function(_, code) finish(code, out, table.concat(err, "\n")) end,
     })
     if ok <= 0 then finish(1, {}, "jobstart failed") end
@@ -199,7 +162,7 @@ function M.generate_async(opts, cb)
   local exts    = opts.extensions or M.extensions
   local ignores = opts.ignores or M.ignores
 
-  notify("Cscope: scanning files…")
+  notify("Scanning files for tags…")
 
   local cmd, args
   if has("fd") or has("fdfind") then
@@ -231,12 +194,8 @@ function M.generate_async(opts, cb)
       if cb then cb(err or "scan failed") end
       return
     end
+    if cmd ~= "fd" and cmd ~= "fdfind" then to_abs_paths(files, root) end
 
-    if cmd ~= "fd" and cmd ~= "fdfind" then
-      to_abs_paths(files, root) -- rg/find → make absolute
-    end
-
-    -- Write list (absolute paths)
     local ok, fh = pcall(io.open, outfile, "w")
     if not ok or not fh then
       notify("Cannot write " .. outfile, vim.log.levels.ERROR)
@@ -251,28 +210,37 @@ function M.generate_async(opts, cb)
   end)
 end
 
--- ---------- Build (async; accepts file list path) ----------
+-- ---------- Build (async; GTAGS preferred, fallback to cscope) ----------
+local function build_gtags_with_label(list, list_dir, label, cb)
+  notify(("GTAGS: building (%s)…"):format(label))
+  run_cmd_async("gtags", { "--gtagslabel=" .. label, "-f", list }, list_dir, function(code, _, err)
+    if code == 0 then
+      notify("Built " .. (list_dir .. "/GTAGS"))
+      if cb then cb(nil, list_dir .. "/GTAGS") end
+    else
+      if cb then cb(err or ("gtags failed (" .. label .. ")")) end
+    end
+  end)
+end
+
 function M.build_async(opts, cb)
   opts = opts or {}
-  if not has("cscope") then
-    notify("Missing `cscope` executable (sudo apt install cscope).", vim.log.levels.ERROR)
-    if cb then cb("cscope missing") end
-    return
-  end
+  -- resolve file list (default ./cscope.files)
+  local list, list_dir = resolve_list(opts.list, vim.loop.cwd())
+  local use_gtags = has("gtags")
+  local out = use_gtags and (list_dir .. "/GTAGS") or (list_dir .. "/cscope.out")
 
-  -- Resolve list path and its directory
-  local fallback_root = project_root()
-  local list, list_dir = resolve_list(opts.list, fallback_root)
-  local out = opts.out or (list_dir .. "/cscope.out")
-
-  -- Ensure list exists & non-empty; if not, generate into that exact path
-  local st = uv.fs_stat(list)
-  local function do_build()
+  local function do_build_with_cscope()
+    if not has("cscope") then
+      notify("Neither `gtags` nor `cscope` found. Install GNU Global.", vim.log.levels.ERROR)
+      if cb then cb("no indexer") end
+      return
+    end
     notify("Cscope: building database…")
     run_cmd_async("cscope", { "-bqk", "-i", list, "-f", out }, list_dir, function(code, _, err)
       if code ~= 0 then
         notify("cscope build failed: " .. (err or ""), vim.log.levels.ERROR)
-        if cb then cb(err or "build failed") end
+        if cb then cb(err or "cscope build failed") end
         return
       end
       notify("Built " .. out)
@@ -280,64 +248,64 @@ function M.build_async(opts, cb)
     end)
   end
 
+  local st = uv.fs_stat(list)
+  local function start_build()
+    if use_gtags then
+      -- Try modern Universal-ctags labels first, then native
+      build_gtags_with_label(list, list_dir, "new-ctags", function(err1)
+        if not err1 then return end
+        build_gtags_with_label(list, list_dir, "ctags", function(err2)
+          if not err2 then return end
+          build_gtags_with_label(list, list_dir, "native", function(err3)
+            if err3 then
+              notify("gtags build failed after all labels; falling back to cscope.", vim.log.levels.WARN)
+              do_build_with_cscope()
+            end
+          end)
+        end)
+      end)
+    else
+      do_build_with_cscope()
+    end
+  end
+
   if not st or st.size == 0 then
-    notify("cscope.files missing or empty; generating…")
+    notify("File list missing or empty; generating…")
     M.generate_async({ root = list_dir, out = list }, function(gen_err, _, count)
       if gen_err or not count or count == 0 then
         if cb then cb(gen_err or "no files") end
         return
       end
-      do_build()
+      start_build()
     end)
   else
-    do_build()
+    start_build()
   end
 end
 
-
--- ---------- User commands (now default to ./ and ./cscope.files) ----------
--- :CscopeFiles [folder] → generate <folder>/cscope.files (absolute paths)
+-- ---------- User commands (defaults: ./ and ./cscope.files) ----------
+-- :CscopeFiles [folder] → write ./cscope.files (or under [folder])
 vim.api.nvim_create_user_command("CscopeFiles", function(opts)
-  local root, rerr
+  local root
   if opts.args ~= "" then
-    root, rerr = resolve_root(opts.args)
-    if not root then return notify(rerr, vim.log.levels.ERROR) end
+    local r, err = resolve_root(opts.args)
+    if not r then return notify(err, vim.log.levels.ERROR) end
+    root = r
   else
-    root = vim.loop.cwd()  -- default: ./ 
+    root = vim.loop.cwd()
   end
   M.generate_async({ root = root, out = root .. "/cscope.files" })
 end, { nargs = "?", complete = "dir", desc = "Generate ./cscope.files (absolute, async) or at [folder]" })
 
--- :CscopeBuild [filelist] → build DB from a specific cscope.files path
--- If omitted, uses ./cscope.files in current dir
+-- :CscopeBuild [filelist] → build GTAGS (or cscope.out) from ./cscope.files by default
 vim.api.nvim_create_user_command("CscopeBuild", function(opts)
   local list
   if opts.args ~= "" then
     list = vim.fn.fnamemodify(opts.args, ":p")
   else
-    list = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")  -- default: ./cscope.files
+    list = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
   end
   M.build_async({ list = list })
-end, { nargs = "?", complete = "file", desc = "Build cscope.out (async) from ./cscope.files or [filelist]" })
-
--- -- ---------- User commands ----------
--- -- :CscopeFiles [folder]  → generate <folder>/cscope.files (absolute paths)
--- vim.api.nvim_create_user_command("CscopeFiles", function(opts)
---   local root, rerr = resolve_root(opts.args)
---   if not root then return notify(rerr, vim.log.levels.ERROR) end
---   M.generate_async({ root = root })
--- end, { nargs = "?", complete = "dir", desc = "Generate cscope.files (absolute, async) at [folder]" })
-
--- -- :CscopeBuild [filelist] → build DB from a specific cscope.files path
--- -- If [filelist] is a directory, uses [filelist]/cscope.files
--- vim.api.nvim_create_user_command("CscopeBuild", function(opts)
---   local list, _ = resolve_list(opts.args, project_root())
---   M.build_async({ list = list })
--- end, { nargs = "?", complete = "file", desc = "Build cscope.out (async) from [filelist]" })
-
--- -- Prompt, then "global def" of <cword>
--- vim.keymap.set({ "n", "v" }, "<C-c><C-g>", "<cmd>CsPrompt g<cr>", { desc = "Cscope: global def (prompt)" })
--- -- Direct, no prompt
--- vim.keymap.set({ "n", "v" }, "<C-c><C-s>", "<cmd>Cs f s<cr>",      { desc = "Cscope: references" })
+end, { nargs = "?", complete = "file", desc = "Build GTAGS (preferred) from ./cscope.files or [filelist]" })
 
 return M
