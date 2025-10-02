@@ -8,7 +8,8 @@ if ok_csm then
   csm.setup({
     disable_maps = false,
     skip_input_prompt = false,
-    prefix = "<leader>c",
+    -- prefix = "<leader>c",
+    prefix = "<C-c>",
 
     cscope = {
       db_file = "./GTAGS",

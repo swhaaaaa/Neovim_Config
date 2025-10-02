@@ -31,7 +31,8 @@ if ok_csm then
   csm.setup({
     disable_maps = false,           -- keep plugin's <leader>c{sgcteifd} maps
     skip_input_prompt = false,
-    prefix = "<leader>c",
+    -- prefix = "<leader>c",
+    prefix = "<C-c>",
     cscope = {
       db_file = "./cscope.out",     -- per-project database file
       exec = "cscope",              -- or "gtags-cscope"
