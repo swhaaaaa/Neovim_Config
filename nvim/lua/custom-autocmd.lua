@@ -224,7 +224,8 @@ api.nvim_create_autocmd("BufReadPre", {
   pattern = "*",
   desc = "optimize for large file",
   callback = function(ev)
-    local file_size_limit = 524288 -- 0.5MB
+    -- local file_size_limit = 524288 -- 0.5MB
+    local file_size_limit = 10485760 -- 10MB
     local f = ev.file
 
     if fn.getfsize(f) > file_size_limit or fn.getfsize(f) == -2 then
