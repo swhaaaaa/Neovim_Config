@@ -429,8 +429,8 @@ local plugin_specs = {
     -- optional pickers; keep only the one(s) you use
     -- dependencies = { "nvim-telescope/telescope.nvim" },
     config = function()
-      -- require("config.cscope")
-      require("config.gtags-cscope")
+      require("config.cscope")
+      -- require("config.gtags-cscope")
     end,
   },
 }
