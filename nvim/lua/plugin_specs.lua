@@ -402,6 +402,15 @@ local plugin_specs = {
       require("config.git-linker")
     end,
   },
+  -- Show git change (change, delete, add) signs in vim sign column
+  {
+    "lewis6991/gitsigns.nvim",
+    config = function()
+      require("config.gitsigns")
+    end,
+    event = "BufRead",
+    version = "*",
+  },
 
 
 
