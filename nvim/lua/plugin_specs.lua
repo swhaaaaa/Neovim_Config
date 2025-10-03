@@ -449,8 +449,80 @@ local plugin_specs = {
     end,
   },
 
-
-
+  {
+    "j-hui/fidget.nvim",
+    event = "BufRead",
+    config = function()
+      require("config.fidget-nvim")
+    end,
+  },
+  {
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
+    opts = {
+      library = {
+        -- See the configuration section for more details
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    },
+  },
+  -- Comment Copiliot function and study to use later.
+  -- {
+  --   "CopilotC-Nvim/CopilotChat.nvim",
+  --   dependencies = {
+  --     { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+  --   },
+  --   opts = {
+  --     debug = true, -- Enable debugging
+  --     -- See Configuration section for rest
+  --   },
+  --   cmd = { "CopilotChat" },
+  -- },
+  -- {
+  --   "zbirenbaum/copilot.lua",
+  --   cmd = "Copilot",
+  --   config = function()
+  --     require("copilot").setup {}
+  --   end,
+  -- },
+  -- Comment live-command function and study to use later.
+  -- {
+  --   "smjonas/live-command.nvim",
+  --   -- live-command supports semantic versioning via Git tags
+  --   -- tag = "2.*",
+  --   event = "VeryLazy",
+  --   config = function()
+  --     require("config.live-command")
+  --   end,
+  -- },
+  -- Comment nvim-lightbulb function and study to use later.
+  -- {
+  --   -- show hint for code actions, the user can also implement code actions themselves,
+  --   -- see discussion here: https://github.com/neovim/neovim/issues/14869
+  --   "kosayoda/nvim-lightbulb",
+  --   config = function()
+  --     require("config.lightbulb")
+  --   end,
+  --   event = "LspAttach",
+  -- },
+  {
+    "Bekaboo/dropbar.nvim",
+    event = "VeryLazy",
+  },
+  {
+    "catgoose/nvim-colorizer.lua",
+    event = "BufReadPre",
+    opts = { -- set to setup table
+    },
+  },
+  {
+    "stevearc/quicker.nvim",
+    event = "FileType qf",
+    ---@module "quicker"
+    ---@type quicker.SetupOptions
+    opts = {},
+  },
 
 -- Add my preferred plugins
   {
