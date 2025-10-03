@@ -134,12 +134,6 @@ local plugin_specs = {
     end,
     event = "VeryLazy",
   },
-  {
-    "MeanderingProgrammer/markdown.nvim",
-    main = "render-markdown",
-    opts = {},
-    ft = { "markdown" },
-  },
   -- A list of colorscheme plugin you may want to try. Find what suits you.
   { "navarasu/onedark.nvim", lazy = true },
   { "sainnhe/edge", lazy = true },
@@ -424,6 +418,38 @@ local plugin_specs = {
       require("config.bqf")
     end,
   },
+
+  -- Modern matchit implementation
+  { "andymass/vim-matchup", event = "BufRead" },
+
+  -- Session management plugin
+  { "tpope/vim-obsession", cmd = "Obsession" },
+
+  -- showing keybindings
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("config.which-key")
+    end,
+  },
+
+  -- show and trim trailing whitespaces
+  -- To trim trailing whitespaces, run command :StripTrailingWhitespace
+  { "jdhao/whitespace.nvim", event = "VeryLazy" },
+
+  -- file explorer
+  -- Open the tree: :NvimTreeOpen
+  -- Show the mappings: g?
+  {
+    "nvim-tree/nvim-tree.lua",
+    keys = { "<space>s" },
+    config = function()
+      require("config.nvim-tree")
+    end,
+  },
+
+
 
 
 -- Add my preferred plugins
