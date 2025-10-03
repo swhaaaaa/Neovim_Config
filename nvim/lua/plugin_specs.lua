@@ -412,6 +412,11 @@ local plugin_specs = {
     version = "*",
   },
 
+  {
+    "sindrets/diffview.nvim",
+    cmd = { "DiffviewOpen" },
+  },
+
 
 
 -- Add my preferred plugins
