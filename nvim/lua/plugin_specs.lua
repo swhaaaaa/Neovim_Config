@@ -417,6 +417,13 @@ local plugin_specs = {
     cmd = { "DiffviewOpen" },
   },
 
+  {
+    "kevinhwang91/nvim-bqf",
+    ft = "qf",
+    config = function()
+      require("config.bqf")
+    end,
+  },
 
 
 -- Add my preferred plugins
