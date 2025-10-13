@@ -34,7 +34,7 @@ local color_scheme = require("colorschemes")
 
 -- Load a random or specify colorscheme
 -- color_scheme.rand_colorscheme()
-color_scheme.select_colorscheme("vscode")
+color_scheme.select_colorscheme("everforest")
 
 
 -- Set LSP
