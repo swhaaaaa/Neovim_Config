@@ -443,7 +443,6 @@ local plugin_specs = {
   -- Show the mappings: g?
   {
     "nvim-tree/nvim-tree.lua",
-    keys = { "<space>s" },
     config = function()
       require("config.nvim-tree")
     end,
