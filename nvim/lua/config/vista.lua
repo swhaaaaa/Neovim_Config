@@ -19,6 +19,13 @@ g.vista_sidebar_position = "vertical botright"
 g.vista_disable_statusline = 1
 g.vista_fzf_preview = { "right:50%" } -- 如果有 fzf/skim
 
+g.vista_echo_cursor = 0
+g.vista_stay_on_open = 0
+g["vista#renderer#icons"] = {
+  member = "",
+}
+
+
 -- 顏色微調
 vim.api.nvim_set_hl(0, "VistaKind",   { link = "Type" })
 vim.api.nvim_set_hl(0, "VistaScope",  { link = "Function" })

@@ -277,8 +277,8 @@ local plugin_specs = {
     end,
     cmd = { "Vista", "VistaFind", "VistaFocus" },
     keys = {
-        { "<leader>vv", "<cmd>Vista!!<CR>", desc = "Toggle Vista outline" },
-        { "g0",        "<cmd>Vista!!<CR>", desc = "Toggle Vista outline" },
+        { "<leader>vv", "<cmd>Vista!!<CR>", desc = "Vista: toggle symbols sidebar" },
+        { "g0",        "<cmd>Vista!!<CR>", desc = "Vista: toggle symbols sidebar" },
     },
     dependencies = { "nvim-tree/nvim-web-devicons" }, -- optional icons
     config = function()
