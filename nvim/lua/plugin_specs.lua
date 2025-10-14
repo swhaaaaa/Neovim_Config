@@ -275,15 +275,7 @@ local plugin_specs = {
     enabled = function()
       return utils.executable("ctags")
     end,
-    cmd = { "Vista", "VistaFind", "VistaFocus" },
-    keys = {
-        { "<leader>vv", "<cmd>Vista!!<CR>", desc = "Vista: toggle symbols sidebar" },
-        { "g0",        "<cmd>Vista!!<CR>", desc = "Vista: toggle symbols sidebar" },
-    },
     dependencies = { "nvim-tree/nvim-web-devicons" }, -- optional icons
-    config = function()
-        require("config.vista")
-    end,
   },
 
   -- Snippet engine and snippet template

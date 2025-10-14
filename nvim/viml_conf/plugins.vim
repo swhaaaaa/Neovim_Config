@@ -17,14 +17,23 @@ call utils#Cabbrev('ps', 'Lazy sync')
 "                      configurations for vim script plugin                  "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+""""""""""""""""""""""""""" vista settings """"""""""""""""""""""""""""""""""
+let g:vista#renderer#icons = {
+      \ 'member': '',
+      \ }
+
+" Do not echo message on command line
+let g:vista_echo_cursor = 0
+" Stay in current window when vista window is opened
+let g:vista_stay_on_open = 0
+
+nnoremap <silent> <Space>t :<C-U>Vista!!<CR>
+
+""""""""""""""""""""""""vim-mundo settings"""""""""""""""""""""""
+let g:mundo_verbose_graph = 0
+let g:mundo_width = 80
+
+nnoremap <silent> <Space>u :MundoToggle<CR>
 
 
-" set guifont=Iosevka\ Nerd\ Font:h18
-" set guifont=Consolas
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"                      hexmode
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
-" let g:hexmode_xxd_options = '-g 1'
- 
