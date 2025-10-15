@@ -7,6 +7,12 @@ keymap.set("n", "<leader>gpl", "<cmd>Git pull<cr>", { desc = "Git: pull changes"
 keymap.set("n", "<leader>gpu", "<cmd>15 split|term git push<cr>", { desc = "Git: push changes" })
 keymap.set("v", "<leader>gb", ":Git blame<cr>", { desc = "Git: blame selected line" })
 
+keymap.set("n", "<leader>gd", "<cmd>Gdiffsplit<CR>",       { desc = "Git: diff split" })
+keymap.set("n", "<leader>ge", function()
+  -- edit version of current file at HEAD
+  vim.cmd("Gedit HEAD:%")
+end, { desc = "Git: edit HEAD:%" })
+
 -- convert git to Git in command line mode
 vim.fn["utils#Cabbrev"]("git", "Git")
 

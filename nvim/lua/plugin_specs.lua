@@ -370,6 +370,9 @@ local plugin_specs = {
       "ibhagwan/fzf-lua", -- optional
     },
     event = "User InGitRepo",
+    config = function()
+      require("config.neogit")
+    end,
   },
   -- Better git log display
   { "rbong/vim-flog", cmd = { "Flog" } },
