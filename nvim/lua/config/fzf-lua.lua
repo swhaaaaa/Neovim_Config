@@ -12,6 +12,12 @@ fzf.setup({
 })
 
 ---------------------------------------------------------------------------
+-- Options
+---------------------------------------------------------------------------
+-- If true, grep uses --fixed-strings so the seeded text is literal.
+local LITERAL_BY_DEFAULT = false
+
+---------------------------------------------------------------------------
 -- Helpers
 ---------------------------------------------------------------------------
 local uv = vim.uv or vim.loop
@@ -28,7 +34,6 @@ local function norm_dir(p)
   return nil
 end
 
--- Longest common ancestor directory of a list of absolute paths
 local function common_ancestor(paths)
   if #paths == 0 then return vim.loop.cwd() end
   local sep = package.config:sub(1,1)
@@ -44,9 +49,7 @@ local function common_ancestor(paths)
   return root
 end
 
--- Build fd options that restrict to multiple directories
 local function fd_search_paths(dirs)
-  -- fd: --search-path {dir} can be repeated
   local opts = { "--hidden", "--follow" }
   for _, d in ipairs(dirs) do
     table.insert(opts, "--search-path"); table.insert(opts, d)
@@ -54,19 +57,13 @@ local function fd_search_paths(dirs)
   return table.concat(opts, " ")
 end
 
--- Build ripgrep globs to limit search to given subdirs (from a common base)
 local function rg_globs(base, dirs)
-  -- convert each dir into a relative glob 'dir/**'
   local sep = package.config:sub(1,1)
   local add = {}
   for _, d in ipairs(dirs) do
     local rel = d:gsub("^"..vim.pesc(base)..sep.."?", "")
-    if rel == "" then
-      add = {}
-      break
-    end
-    table.insert(add, "--glob")
-    table.insert(add, rel .. "/**")
+    if rel == "" then add = {}; break end
+    table.insert(add, "--glob"); table.insert(add, rel .. "/**")
   end
   local opts = { "--hidden", "--follow" }
   for _, g in ipairs(add) do table.insert(opts, g) end
@@ -74,35 +71,37 @@ local function rg_globs(base, dirs)
 end
 
 ---------------------------------------------------------------------------
--- Visual selection helpers
+-- Visual selection (robust)
+-- Works in Visual mode WITHOUT leaving it; if not in Visual, reselects with gv.
 ---------------------------------------------------------------------------
--- queued query: set by visual mappings, consumed by :GrepHere / :FilesHere
-local _queued_query = nil
+local function get_visual_selection()
+  local mode = vim.fn.mode()
+  local save_z  = vim.fn.getreg('z')
+  local save_zt = vim.fn.getregtype('z')
 
-local function get_visual_text_inclusive(vmode)
-  local bufnr = 0
-  local srow, scol = unpack(vim.api.nvim_buf_get_mark(bufnr, "<"))
-  local erow, ecol = unpack(vim.api.nvim_buf_get_mark(bufnr, ">"))
-  if srow == 0 or erow == 0 then return "" end
-
-  -- normalize order
-  if (erow < srow) or (erow == srow and ecol < scol) then
-    srow, erow, scol, ecol = erow, srow, ecol, scol
+  if mode == 'v' or mode == 'V' or mode == '\022' then
+    -- still in Visual → yank exact selection
+    vim.cmd([[noautocmd normal! "zy]])
+  else
+    -- not in Visual (e.g. mapping called after an <Esc>) → reselect last region
+    vim.cmd([[noautocmd normal! gv"zy]])
   end
 
-  local start_col = (vmode == "V") and 0      or scol
-  local end_col   = (vmode == "V") and -1     or (ecol + 1)
+  local txt = vim.fn.getreg('z') or ""
 
-  local lines = vim.api.nvim_buf_get_text(bufnr, srow - 1, start_col, erow - 1, end_col, {})
-  local s = table.concat(lines, " ")
-  return (s:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", ""))
+  -- restore register z
+  vim.fn.setreg('z', save_z, save_zt)
+
+  -- single-line & trimmed for rg/fzf
+  txt = txt:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+  return txt
 end
 
+-- queued query used by :GrepHere / :FilesHere / :FilesDirs
+local _queued_query = nil
+
 ---------------------------------------------------------------------------
--- User commands
---  :GrepHere [dir]        – live_grep inside one directory (default: CWD)
---  :FilesHere [dir]       – list files inside one directory (default: CWD)
---  :FilesDirs {d1} {d2}…  – list files across multiple directories
+-- Commands
 ---------------------------------------------------------------------------
 vim.api.nvim_create_user_command("GrepHere", function(opts)
   local dir = opts.args ~= "" and norm_dir(opts.args) or vim.loop.cwd()
@@ -110,9 +109,12 @@ vim.api.nvim_create_user_command("GrepHere", function(opts)
     vim.notify("Not a directory: "..opts.args, vim.log.levels.ERROR)
     return
   end
-  local cfg = { cwd = dir, resume = false }
+  local cfg = { cwd = dir, resume = false, silent = true }
   if _queued_query and _queued_query ~= "" then
     cfg.search = _queued_query
+    if LITERAL_BY_DEFAULT then
+      cfg.rg_opts = (cfg.rg_opts and (cfg.rg_opts .. " ") or "") .. "--fixed-strings"
+    end
   end
   _queued_query = nil
   fzf.live_grep(cfg)
@@ -149,13 +151,11 @@ vim.api.nvim_create_user_command("FilesDirs", function(opts)
   local cfg = { cwd = anc, resume = false }
 
   if has("fd") or has("fdfind") then
-    cfg.fd_opts = fd_search_paths(dirs)      -- use fd across multiple roots
+    cfg.fd_opts = fd_search_paths(dirs)
   else
-    cfg.rg_opts = rg_globs(anc, dirs)        -- fallback: rg --files with globs
+    cfg.rg_opts = rg_globs(anc, dirs)
   end
 
-  -- If a queued query exists (e.g., you called :FilesDirs after a visual map),
-  -- use it to pre-fill the filename filter.
   if _queued_query and _queued_query ~= "" then
     cfg.fzf_opts = { ["--query"] = _queued_query }
   end
@@ -167,7 +167,6 @@ end, { nargs = "+", complete = "dir", desc = "files in multiple directories" })
 ---------------------------------------------------------------------------
 -- Keymaps
 ---------------------------------------------------------------------------
--- Regular pickers
 vim.keymap.set("n", "<leader>ff", "<cmd>FzfLua files<CR>",     { desc = "Fuzzy find files",     silent = true })
 vim.keymap.set("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Fuzzy grep (ripgrep)", silent = true })
 vim.keymap.set("n", "<leader>fh", "<cmd>FzfLua helptags<CR>",  { desc = "Help tags",             silent = true })
@@ -175,7 +174,7 @@ vim.keymap.set("n", "<leader>ft", "<cmd>FzfLua btags<CR>",     { desc = "Buffer 
 vim.keymap.set("n", "<leader>fb", "<cmd>FzfLua buffers<CR>",   { desc = "Open buffers",          silent = true })
 vim.keymap.set("n", "<leader>fr", "<cmd>FzfLua oldfiles<CR>",  { desc = "Recent files",          silent = true })
 
--- Choose a directory (normal) → one-dir grep/files
+-- Normal → choose a directory
 vim.keymap.set("n", "<leader>sd", function()
   local keys = vim.api.nvim_replace_termcodes(":GrepHere ", true, false, true)
   vim.api.nvim_feedkeys(keys, "n", false)
@@ -186,49 +185,36 @@ vim.keymap.set("n", "<leader>fd", function()
   vim.api.nvim_feedkeys(keys, "n", false)
 end, { desc = "files in chosen dir", silent = true })
 
--- NEW: multi-folder file search (normal)
+-- Multi-folder (normal)
 vim.keymap.set("n", "<leader>fD", function()
   local keys = vim.api.nvim_replace_termcodes(":FilesDirs ", true, false, true)
   vim.api.nvim_feedkeys(keys, "n", false)
 end, { desc = "files in multiple dirs", silent = true })
 
--- Visual mode:
--- <leader>sd → choose dir; seed selection into grep query
+-- Visual → seed selection WITHOUT leaving Visual first
 vim.keymap.set("x", "<leader>sd", function()
-  local vmode = vim.fn.visualmode()
-  local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
-  vim.api.nvim_feedkeys(esc, "x", false)
-  vim.schedule(function()
-    local q = get_visual_text_inclusive(vmode)
-    _queued_query = (q ~= "" and q or nil)
-    local keys = vim.api.nvim_replace_termcodes(":GrepHere ", true, false, true)
-    vim.api.nvim_feedkeys(keys, "n", false)
-  end)
+  _queued_query = get_visual_selection()
+  local keys = vim.api.nvim_replace_termcodes(":GrepHere ", true, false, true)
+  vim.api.nvim_feedkeys(keys, "n", false)
 end, { desc = "live_grep (seeded by selection) in chosen dir", silent = true })
 
--- <leader>fd → choose dir; seed selection into files picker filter
 vim.keymap.set("x", "<leader>fd", function()
-  local vmode = vim.fn.visualmode()
-  local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
-  vim.api.nvim_feedkeys(esc, "x", false)
-  vim.schedule(function()
-    local q = get_visual_text_inclusive(vmode)
-    _queued_query = (q ~= "" and q or nil)
-    local keys = vim.api.nvim_replace_termcodes(":FilesHere ", true, false, true)
-    vim.api.nvim_feedkeys(keys, "n", false)
-  end)
+  _queued_query = get_visual_selection()
+  local keys = vim.api.nvim_replace_termcodes(":FilesHere ", true, false, true)
+  vim.api.nvim_feedkeys(keys, "n", false)
 end, { desc = "files (seeded by selection) in chosen dir", silent = true })
 
--- Visual selection → plain live_grep with selection (no dir prompt)
+-- Visual → plain live_grep (no dir prompt)
 vim.keymap.set("x", "<leader>fg", function()
-  local vmode = vim.fn.visualmode()
-  local esc = vim.api.nvim_replace_termcodes("<Esc>", true, false, true)
-  vim.api.nvim_feedkeys(esc, "x", false)
-  vim.schedule(function()
-    local q = get_visual_text_inclusive(vmode)
-    if q ~= "" then fzf.live_grep({ search = q, resume = false })
-    else             fzf.live_grep({ resume = false }) end
-  end)
+  local q = get_visual_selection()
+  local cfg = { resume = false, silent = true }
+  if q ~= "" then
+    cfg.search = q
+    if LITERAL_BY_DEFAULT then
+      cfg.rg_opts = "--fixed-strings"
+    end
+  end
+  fzf.live_grep(cfg)
 end, { desc = "Fuzzy grep selection", silent = true })
 
 -- Paste from system clipboard (+) in terminal/fzf prompts
