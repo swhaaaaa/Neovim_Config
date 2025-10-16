@@ -80,19 +80,14 @@ local function get_visual_selection()
   local save_zt = vim.fn.getregtype('z')
 
   if mode == 'v' or mode == 'V' or mode == '\022' then
-    -- still in Visual → yank exact selection
     vim.cmd([[noautocmd normal! "zy]])
   else
-    -- not in Visual (e.g. mapping called after an <Esc>) → reselect last region
     vim.cmd([[noautocmd normal! gv"zy]])
   end
 
   local txt = vim.fn.getreg('z') or ""
-
-  -- restore register z
   vim.fn.setreg('z', save_z, save_zt)
 
-  -- single-line & trimmed for rg/fzf
   txt = txt:gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
   return txt
 end
@@ -216,6 +211,16 @@ vim.keymap.set("x", "<leader>fg", function()
   end
   fzf.live_grep(cfg)
 end, { desc = "Fuzzy grep selection", silent = true })
+
+-- NEW: Visual → files (no dir prompt), seeded by selection
+vim.keymap.set("x", "<leader>ff", function()
+  local q = get_visual_selection()
+  local cfg = {}
+  if q ~= "" then
+    cfg.fzf_opts = { ["--query"] = q }
+  end
+  fzf.files(cfg)
+end, { desc = "Fuzzy find files (seeded by selection)", silent = true })
 
 -- Paste from system clipboard (+) in terminal/fzf prompts
 vim.keymap.set('t', '<C-r>+', function()
