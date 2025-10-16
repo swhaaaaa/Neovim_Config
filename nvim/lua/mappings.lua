@@ -72,8 +72,8 @@ keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true })
 keymap.set("x", "$", "g_")
 
 -- Go to start or end of line easier
-keymap.set({ "n", "x" }, "H", "^")
-keymap.set({ "n", "x" }, "L", "g_")
+-- keymap.set({ "n", "x" }, "H", "^")
+-- keymap.set({ "n", "x" }, "L", "g_")
 
 -- Continuous visual shifting (does not exit Visual mode), `gv` means
 -- to reselect previous visual area, see https://superuser.com/q/310417/736190
@@ -98,10 +98,10 @@ end, {
 })
 
 -- Reselect the text that has just been pasted, see also https://stackoverflow.com/a/4317090/6064933.
-keymap.set("n", "<leader>v", "printf('`[%s`]', getregtype()[0])", {
-  expr = true,
-  desc = "reselect last pasted area",
-})
+-- keymap.set("n", "<leader>v", "printf('`[%s`]', getregtype()[0])", {
+--   expr = true,
+--   desc = "reselect last pasted area",
+-- })
 
 -- Always use very magic mode for searching
 -- keymap.set("n", "/", [[/\v]])
@@ -170,7 +170,7 @@ keymap.set("n", "<C-j>", "<C-W>j")
 keymap.set({ "x", "o" }, "iu", "<cmd>call text_obj#URL()<cr>", { desc = "URL text object" })
 
 -- Text objects for entire buffer
-keymap.set({ "x", "o" }, "iB", ":<C-U>call text_obj#Buffer()<cr>", { desc = "buffer text object" })
+-- keymap.set({ "x", "o" }, "iB", ":<C-U>call text_obj#Buffer()<cr>", { desc = "buffer text object" })
 
 -- Do not move my cursor when joining lines.
 keymap.set("n", "J", function()
@@ -207,9 +207,6 @@ keymap.set("i", "<C-E>", "<END>")
 
 -- Go to beginning of command in command-line mode
 keymap.set("c", "<C-A>", "<HOME>")
-
--- Delete the character to the right of the cursor
-keymap.set("i", "<C-D>", "<DEL>")
 
 keymap.set("n", "<leader>cb", function()
   local cnt = 0
@@ -280,3 +277,7 @@ keymap.set({ "i" }, "<C-k>", "<Up>", { desc = "move up" })
 
 -- Delete the character to the left of the cursor
 keymap.set("i", "<C-b>", "<BS>", { desc = "Delete left" })
+
+-- Delete the character to the right of the cursor
+keymap.set("i", "<C-D>", "<DEL>")
+
