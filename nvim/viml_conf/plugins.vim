@@ -19,14 +19,14 @@ call utils#Cabbrev('ps', 'Lazy sync')
 
 """""""""""""""""""""""""UltiSnips settings"""""""""""""""""""
 " Trigger configuration. Do not use <tab> if you use YouCompleteMe
-let g:UltiSnipsExpandTrigger='<c-j>'
+let g:UltiSnipsExpandTrigger='<tab>'
 
 " Do not look for SnipMate snippets
 let g:UltiSnipsEnableSnipMate = 0
 
 " Shortcut to jump forward and backward in tabstop positions
-let g:UltiSnipsJumpForwardTrigger='<c-j>'
-let g:UltiSnipsJumpBackwardTrigger='<c-k>'
+let g:UltiSnipsJumpBackwardTrigger='<tab>'
+let g:UltiSnipsJumpBackwardTrigger='<tab>'
 
 " Configuration for custom snippets directory, see
 " https://jdhao.github.io/2019/04/17/neovim_snippet_s1/ for details.
@@ -50,5 +50,27 @@ let g:mundo_width = 80
 
 nnoremap <silent> <Space>u :MundoToggle<CR>
 
+""""""""""""""""""""""""""""better-escape.vim settings"""""""""""""""""""""""""
+let g:better_escape_interval = 200
+
+""""""""""""""""""""""""""""vim-sandwich settings"""""""""""""""""""""""""""""
+" Map s to nop since s in used by vim-sandwich. Use cl instead of s.
+nmap s <Nop>
+omap s <Nop>
+
+""""""""""""""""""""""""""""vim-matchup settings"""""""""""""""""""""""""""""
+" Improve performance
+let g:matchup_matchparen_deferred = 1
+let g:matchup_matchparen_timeout = 100
+let g:matchup_matchparen_insert_timeout = 30
+
+" Enhanced matching with matchup plugin
+let g:matchup_override_vimtex = 1
+
+" Whether to enable matching inside comment or string
+let g:matchup_delim_noskips = 0
+
+" Show offscreen match pair in popup window
+let g:matchup_matchparen_offscreen = {'method': 'popup'}
 
 
