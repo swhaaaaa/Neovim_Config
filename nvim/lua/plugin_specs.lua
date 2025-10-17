@@ -218,55 +218,8 @@ local plugin_specs = {
       }
     end,
   },
---  {
---    "luukvbaal/statuscol.nvim",
---    opts = {},
---    config = function()
---      require("config.nvim-statuscol")
---    end,
---  },
---  {
---    "kevinhwang91/nvim-ufo",
---    dependencies = "kevinhwang91/promise-async",
---    event = "VeryLazy",
---    opts = {},
---    init = function()
---      vim.o.foldcolumn = "1" -- '0' is not bad
---      vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
---      vim.o.foldlevelstart = 99
---      vim.o.foldenable = true
---    end,
---    config = function()
---      require("config.nvim_ufo")
---    end,
---  },
   -- Highlight URLs inside vim
   { "itchyny/vim-highlighturl", event = "BufReadPost" },
-
-  -- notification plugin
-  -- {
-  --   "rcarriga/nvim-notify",
-  --   event = "VeryLazy",
-  --   config = function()
-  --     require("config.nvim-notify")
-  --   end,
-  -- },
-
---  -- For Windows and Mac, we can open an URL in the browser. For Linux, it may
---  -- not be possible since we maybe in a server which disables GUI.
---  {
---    "chrishrb/gx.nvim",
---    keys = { { "gx", "<cmd>Browse<cr>", mode = { "n", "x" } } },
---    cmd = { "Browse" },
---    init = function()
---      vim.g.netrw_nogx = 1 -- disable netrw gx
---    end,
---    enabled = function()
---      return vim.g.is_win or vim.g.is_mac
---    end,
---    config = true, -- default settings
---    submodules = false, -- not needed, submodules are required only for tests
---  },
 
   -- Only install these plugins if ctags are installed on the system
   -- show file tags in vim window
@@ -294,15 +247,6 @@ local plugin_specs = {
     config = true,
   },
 
-  -- Comment plugin
---  {
---    "tpope/vim-commentary",
---    keys = {
---      { "<leader>gc", mode = "n" },
---      { "<leader>gc", mode = "v" },
---    },
---  },
-
   -- Multiple cursor plugin like Sublime Text?
   -- 'mg979/vim-visual-multi'
 
@@ -319,13 +263,11 @@ local plugin_specs = {
   },
 
   -- Handy unix command inside Vim (Rename, Move etc.)
-  -- { "tpope/vim-eunuch", cmd = { "Rename", "Delete" } },
   { "tpope/vim-eunuch" },
 
   -- Repeat vim motions
   { "tpope/vim-repeat", event = "VeryLazy" },
 
-  -- { "nvim-zh/better-escape.vim", event = { "InsertEnter" } },
   {
     "nvim-zh/better-escape.vim",
     event = { "InsertEnter" },
@@ -334,24 +276,6 @@ local plugin_specs = {
     -- optional per-filetype tweaks, etc.
     config = function() require("config.better_escape").setup() end,
   },
-
-  -- I seem not to need this function.
-  -- {
-  --   "lyokha/vim-xkbswitch",
-  --   enabled = function()
-  --     return vim.g.is_mac and utils.executable("xkbswitch")
-  --   end,
-  --   event = { "InsertEnter" },
-  -- },
-
-  -- I seem not to need this function.
-  -- {
-  --   "Neur1n/neuims",
-  --   enabled = function()
-  --     return vim.g.is_win
-  --   end,
-  --   event = { "InsertEnter" },
-  -- },
 
   -- Git command inside vim
   {
@@ -461,45 +385,6 @@ local plugin_specs = {
       },
     },
   },
-  -- Comment Copiliot function and study to use later.
-  -- {
-  --   "CopilotC-Nvim/CopilotChat.nvim",
-  --   dependencies = {
-  --     { "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
-  --   },
-  --   opts = {
-  --     debug = true, -- Enable debugging
-  --     -- See Configuration section for rest
-  --   },
-  --   cmd = { "CopilotChat" },
-  -- },
-  -- {
-  --   "zbirenbaum/copilot.lua",
-  --   cmd = "Copilot",
-  --   config = function()
-  --     require("copilot").setup {}
-  --   end,
-  -- },
-  -- Comment live-command function and study to use later.
-  -- {
-  --   "smjonas/live-command.nvim",
-  --   -- live-command supports semantic versioning via Git tags
-  --   -- tag = "2.*",
-  --   event = "VeryLazy",
-  --   config = function()
-  --     require("config.live-command")
-  --   end,
-  -- },
-  -- Comment nvim-lightbulb function and study to use later.
-  -- {
-  --   -- show hint for code actions, the user can also implement code actions themselves,
-  --   -- see discussion here: https://github.com/neovim/neovim/issues/14869
-  --   "kosayoda/nvim-lightbulb",
-  --   config = function()
-  --     require("config.lightbulb")
-  --   end,
-  --   event = "LspAttach",
-  -- },
   {
     "Bekaboo/dropbar.nvim",
     event = "VeryLazy",
