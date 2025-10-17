@@ -98,7 +98,7 @@ local plugin_specs = {
       vim.opt.rtp:append(plugin.dir .. "/vim")
     end,
     ft = { "lisp" },
-    config = function()
+    config_1 = function()
       require("config.vlime")
     end,
   },

@@ -1,3 +1,15 @@
+-- IDE for Lisp
+-- 'kovisoft/slimv'
+-- quicklisp.lisp need to be installed first.
+-- https://www.quicklisp.org/beta/#installation
+--
+-- Start vlime service
+-- sbcl --load ./lazy/vlime/lisp/start-vlime.lisp
+--
+-- Type '\cc' to connect vlime service
+-- Type '\ss' to execute your lisp code
+-- More information ':h vlime'
+
 local plugin_dir = vim.fn.stdpath("data") .. "/lazy"
 local vlimepath = plugin_dir .. "/vlime"
 
@@ -23,4 +35,3 @@ vim.api.nvim_create_user_command("VlimeStart", function()
   vim.fn.jobstart({ sbcl, "--load", entry }, { detach = true })
   vim.notify("Vlime server starting (default 127.0.0.1:7002)")
 end, {})
-
