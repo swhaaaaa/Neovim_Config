@@ -183,28 +183,42 @@ api.nvim_create_autocmd("ColorScheme", {
 })
 
 api.nvim_create_autocmd("BufEnter", {
-  pattern = "*",
   group = api.nvim_create_augroup("auto_close_win", { clear = true }),
-  desc = "Quit Nvim if we have only one window, and its filetype match our pattern",
-  ---@diagnostic disable-next-line: unused-local
-  callback = function(context)
-    local quit_filetypes = { "qf", "vista", "NvimTree" }
+  desc = "Quit only if the last *real* window is a special FT and no other listed buffers exist",
+  callback = function()
+    -- mark “special” filetypes that can be sole window
+    local quit_fts = { qf = true, help = true, NvimTree = true, vista = true }
 
-    local should_quit = true
-    local tabwins = api.nvim_tabpage_list_wins(0)
-
-    for _, win in pairs(tabwins) do
-      local buf = api.nvim_win_get_buf(win)
-      local buf_type = vim.api.nvim_get_option_value("filetype", { buf = buf })
-
-      if not vim.tbl_contains(quit_filetypes, buf_type) then
-        should_quit = false
+    -- collect non-floating windows in current tab
+    local real_wins = {}
+    for _, win in ipairs(api.nvim_tabpage_list_wins(0)) do
+      local cfg = api.nvim_win_get_config(win)
+      if cfg.relative == "" then  -- ignore floating wins
+        table.insert(real_wins, win)
       end
     end
 
-    if should_quit then
-      vim.cmd("qall")
+    -- need exactly one real window
+    if #real_wins ~= 1 then return end
+
+    local win = real_wins[1]
+    local buf = api.nvim_win_get_buf(win)
+    local ft  = vim.api.nvim_get_option_value("filetype", { buf = buf })
+
+    -- last window must be a special filetype
+    if not quit_fts[ft] then return end
+
+    -- if there are other listed buffers (e.g. your 'init.lua'), don't quit
+    local listed = vim.fn.getbufinfo({ buflisted = 1 })
+    -- keep only listed buffers that are not the current special buffer
+    local others = 0
+    for _, info in ipairs(listed) do
+      if info.bufnr ~= buf then others = others + 1 end
     end
+    if others > 0 then return end
+
+    -- Now it's safe to close the editor/tab
+    vim.cmd("quit")
   end,
 })
 
