@@ -1,0 +1,474 @@
+-- convert cs to Cs in command line mode
+vim.fn["utils#Cabbrev"]("cs", "Cs")
+
+-- --- cscope_maps: gtags backend + Telescope picker --------------------------
+local has_telescope = pcall(require, "telescope")
+local ok_csm, csm = pcall(require, "cscope_maps")
+if ok_csm then
+  csm.setup({
+    disable_maps = false,
+    skip_input_prompt = false,
+    -- prefix = "<leader>c",
+    prefix = "<C-c>",
+
+    cscope = {
+      db_file = "./GTAGS",
+      exec = "gtags-cscope",
+      picker = has_telescope and "telescope" or "quickfix",
+      picker_opts = { window_pos = "bottom", window_size = 8 },
+      skip_picker_for_single_result = true,
+      db_build_cmd = { script = "gtags", args = { "--gtagslabel=ctags" } },
+      project_rooter = { enable = true, change_cwd = false },
+      tag = { keymap = true, order = { "cs", "tag_picker", "tag" }, tag_cmd = "tjump" },
+    },
+  })
+end
+
+-- ============================== lua/config/cscope.lua ==============================
+local M = {}
+
+-- ---------- Config ----------
+M.extensions = {
+  "c","h","cpp","hpp","cc","hh","cxx","hxx",
+  "java","kt","kts","scala",
+  "js","jsx","ts","tsx",
+  "go","rs",
+  "py","rb","sh","bash","zsh",
+  "lua","vim","vimrc",
+  "m","mm","swift","zig",
+}
+
+M.ignores = {
+  ".git","node_modules",".venv","venv","__pycache__","target","build","dist","out",
+  ".next",".cache","coverage","bin","obj",".idea",".vscode","vendor",".tox",".pytest_cache",
+}
+
+-- ---------- Utils ----------
+local uv = vim.uv or vim.loop
+local function has(exe) return vim.fn.executable(exe) == 1 end
+
+local function notify(msg, level)
+  local lvl = level or vim.log.levels.INFO
+  local function do_notify() vim.notify(msg, lvl, { title = "Cscope/GTAGS" }) end
+  if vim.in_fast_event() then vim.schedule(do_notify) else do_notify() end
+end
+
+local function is_abs(p)
+  if vim.fn.has("win32") == 1 then
+    return p:match("^%a:[/\\]") or p:match("^\\\\")
+  end
+  return p:sub(1,1) == "/"
+end
+local function abs_join(root, p)
+  if is_abs(p) then return vim.fs.normalize(p) end
+  p = p:gsub("^%./+", "")
+  return vim.fs.normalize(root .. "/" .. p)
+end
+local function to_abs_paths(files, root)
+  for i = 1, #files do files[i] = abs_join(root, files[i]) end
+  return files
+end
+
+local function normalize_dir(p)
+  if not p or p == "" then return nil end
+  p = vim.fn.fnamemodify(p, ":p")
+  local st = uv.fs_stat(p)
+  if st and st.type ~= "directory" then
+    p = vim.fs.dirname(p); st = uv.fs_stat(p)
+  end
+  if not st or st.type ~= "directory" then
+    return nil, ("Not a directory: %s"):format(p)
+  end
+  return p
+end
+
+local function resolve_list(arg, fallback_root)
+  if not arg or arg == "" then
+    local root = fallback_root or vim.loop.cwd()
+    return (vim.fs.normalize(root .. "/cscope.files")), root
+  end
+  local p = vim.fn.fnamemodify(arg, ":p")
+  local st = uv.fs_stat(p)
+  if st and st.type == "directory" then
+    return (vim.fs.normalize(p .. "/cscope.files")), p
+  else
+    return p, vim.fs.dirname(p)
+  end
+end
+
+-- ---------- Async runner ----------
+local function run_cmd_async(cmd, args, cwd, on_done)
+  args = args or {}
+  local function finish(code, lines, err)
+    if not on_done then return end
+    if vim.in_fast_event() then
+      vim.schedule(function() on_done(code, lines, err) end)
+    else
+      on_done(code, lines, err)
+    end
+  end
+  if not cwd then return finish(1, {}, "cwd not resolved") end
+  local st = uv.fs_stat(cwd)
+  if not st or st.type ~= "directory" then
+    return finish(1, {}, "cwd is not a directory: " .. tostring(cwd))
+  end
+
+  if vim.system then
+    vim.system(vim.list_extend({ cmd }, args), { cwd = cwd, text = true }, function(obj)
+      local lines = vim.split(obj.stdout or "", "\n", { trimempty = true })
+      finish(obj.code, lines, obj.stderr)
+    end)
+  else
+    local out, err = {}, {}
+    local ok = vim.fn.jobstart(vim.list_extend({ cmd }, args), {
+      cwd = cwd, stdout_buffered = true, stderr_buffered = true,
+      on_stdout = function(_, data)
+        if not data then return end
+        for _, line in ipairs(data) do if line and line ~= "" then table.insert(out, line) end end
+      end,
+      on_stderr = function(_, data) if data then table.insert(err, table.concat(data, "\n")) end end,
+      on_exit = function(_, code) finish(code, out, table.concat(err, "\n")) end,
+    })
+    if ok <= 0 then finish(1, {}, "jobstart failed") end
+  end
+end
+
+-- ---------- Scanners ----------
+local function scan_async(root, opts, cb)
+  opts = opts or {}
+  local exts    = opts.extensions or M.extensions
+  local ignores = opts.ignores or M.ignores
+
+  local cmd, args
+  if has("fd") or has("fdfind") then
+    cmd = has("fd") and "fd" or "fdfind"
+    args = { "--type", "f", "--hidden", "--follow", "--absolute-path", "." }
+    for _, e in ipairs(exts) do table.insert(args, "-e"); table.insert(args, e) end
+    for _, ig in ipairs(ignores) do table.insert(args, "-E"); table.insert(args, ig) end
+  elseif has("rg") then
+    cmd = "rg"
+    args = { "--files", "--hidden", "--follow" }
+    for _, ig in ipairs(ignores) do table.insert(args, "-g"); table.insert(args, "!" .. ig) end
+    for _, e in ipairs(exts) do table.insert(args, "-g"); table.insert(args, "*." .. e) end
+  else
+    cmd = "find"
+    local name_expr = {}
+    for i, e in ipairs(exts) do
+      if i > 1 then table.insert(name_expr, "-o") end
+      table.insert(name_expr, "-name"); table.insert(name_expr, "*." .. e)
+    end
+    args = { ".", "-type", "f", "\\(", unpack(name_expr), "\\)", "-print" }
+    for _, ig in ipairs(ignores) do
+      table.insert(args, "-not"); table.insert(args, "-path"); table.insert(args, "*/" .. ig .. "/*")
+    end
+  end
+
+  run_cmd_async(cmd, args, root, function(code, files, err)
+    if code ~= 0 then return cb(err or ("scan failed: " .. root)) end
+    if cmd ~= "fd" and cmd ~= "fdfind" then to_abs_paths(files, root) end
+    cb(nil, files or {})
+  end)
+end
+
+local function scan_many_async(roots, opts, cb)
+  if not roots or #roots == 0 then return cb(nil, {}) end
+  local pending = #roots
+  local agg, seen = {}, {}
+  local had_err
+
+  for _, r in ipairs(roots) do
+    scan_async(r, opts, function(err, files)
+      if err then
+        had_err = (had_err or "") .. (had_err and "\n" or "") .. err
+        notify("Scan warning: " .. err, vim.log.levels.WARN)
+      else
+        for _, p in ipairs(files) do
+          p = vim.fs.normalize(p)
+          if not seen[p] then seen[p] = true; table.insert(agg, p) end
+        end
+      end
+      pending = pending - 1
+      if pending == 0 then cb(had_err, agg) end
+    end)
+  end
+end
+
+-- ---------- List IO ----------
+local function read_list(list_path)
+  local paths, set = {}, {}
+  local fh = io.open(list_path, "r")
+  if not fh then return paths, set end
+  for line in fh:lines() do
+    local p = line:gsub("%s+$", "")
+    if p ~= "" then
+      p = vim.fs.normalize(vim.fn.fnamemodify(p, ":p"))
+      if not set[p] then set[p] = true; table.insert(paths, p) end
+    end
+  end
+  fh:close()
+  return paths, set
+end
+
+local function write_list(list_path, paths)
+  local ok, fh = pcall(io.open, list_path, "w")
+  if not ok or not fh then return false end
+  for _, p in ipairs(paths) do fh:write(p, "\n") end
+  fh:close()
+  return true
+end
+
+-- ---------- Builders ----------
+local function build_gtags_with_label(list, list_dir, label, cb)
+  notify(("GTAGS: building (%s)…"):format(label))
+  run_cmd_async("gtags", { "--gtagslabel=" .. label, "-f", list }, list_dir, function(code, _, err)
+    if code == 0 then
+      notify("Built " .. (list_dir .. "/GTAGS"))
+      if cb then cb(nil, list_dir .. "/GTAGS") end
+    else
+      if cb then cb(err or ("gtags failed (" .. label .. ")")) end
+    end
+  end)
+end
+
+function M.build_async(opts, cb)
+  opts = opts or {}
+  local list, list_dir = resolve_list(opts.list, vim.loop.cwd())
+  local use_gtags = has("gtags")
+  local out = use_gtags and (list_dir .. "/GTAGS") or (list_dir .. "/cscope.out")
+
+  local function do_build_with_cscope()
+    if not has("cscope") then
+      notify("Neither `gtags` nor `cscope` found. Install GNU Global.", vim.log.levels.ERROR)
+      if cb then cb("no indexer") end
+      return
+    end
+    notify("Cscope: building database…")
+    run_cmd_async("cscope", { "-bqk", "-i", list, "-f", out }, list_dir, function(code, _, err)
+      if code ~= 0 then
+        notify("cscope build failed: " .. (err or ""), vim.log.levels.ERROR)
+        if cb then cb(err or "cscope build failed") end
+        return
+      end
+      notify("Built " .. out)
+      if cb then cb(nil, out) end
+    end)
+  end
+
+  local st = uv.fs_stat(list)
+  local function start_build()
+    if use_gtags then
+      build_gtags_with_label(list, list_dir, "new-ctags", function(err1)
+        if not err1 then return end
+        build_gtags_with_label(list, list_dir, "ctags", function(err2)
+          if not err2 then return end
+          build_gtags_with_label(list, list_dir, "native", function(err3)
+            if err3 then
+              notify("gtags build failed after all labels; falling back to cscope.", vim.log.levels.WARN)
+              do_build_with_cscope()
+            end
+          end)
+        end)
+      end)
+    else
+      do_build_with_cscope()
+    end
+  end
+
+  if not st or st.size == 0 then
+    notify("File list missing or empty; generating…")
+    -- Default: generate from list_dir only if empty
+    scan_many_async({ list_dir }, {}, function(_, files)
+      if #files == 0 then
+        notify("No files found to build.", vim.log.levels.WARN)
+        if cb then cb("no files") end
+        return
+      end
+      write_list(list, files)
+      start_build()
+    end)
+  else
+    start_build()
+  end
+end
+
+-- ---------- Public helpers for multi-root ----------
+function M.generate_from_roots_async(roots, out, opts, cb)
+  opts = opts or {}
+  notify("Scanning files for tags…")
+  scan_many_async(roots, opts, function(err, files)
+    if err and (not files or #files == 0) then
+      notify("Scan failed: " .. err, vim.log.levels.ERROR)
+      if cb then cb(err) end
+      return
+    end
+    local ok = write_list(out, files or {})
+    if not ok then
+      notify("Cannot write " .. out, vim.log.levels.ERROR)
+      if cb then cb("cannot write file") end
+      return
+    end
+    notify(("Wrote %d paths → %s"):format(#files, out))
+    if cb then cb(nil, out, #files) end
+  end)
+end
+
+function M.add_dirs_to_list_async(args, cb)
+  args = args or {}
+  local list = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+  local roots = args.roots or {}
+  if #roots == 0 then roots = { vim.loop.cwd() } end
+
+  scan_many_async(roots, args, function(err, files)
+    if err then notify("Scan warning: " .. err, vim.log.levels.WARN) end
+    local existing, set = read_list(list)
+    local added = 0
+    for _, p in ipairs(files or {}) do
+      p = vim.fs.normalize(p)
+      if not set[p] then set[p] = true; table.insert(existing, p); added = added + 1 end
+    end
+    if not write_list(list, existing) then
+      notify("Cannot write " .. list, vim.log.levels.ERROR)
+      if cb then cb("write failed") end
+      return
+    end
+    notify(("Appended %d (now %d) → %s"):format(added, #existing, list))
+    if cb then cb(nil, list, added, #existing) end
+  end)
+end
+
+local function parse_roots_from_fargs(fargs)
+  local set, roots = {}, {}
+  if not fargs or #fargs == 0 then
+    return { vim.loop.cwd() }
+  end
+  for _, a in ipairs(fargs) do
+    local r, err = normalize_dir(a)
+    if r then
+      r = vim.fs.normalize(r)
+      if not set[r] then set[r] = true; table.insert(roots, r) end
+    else
+      notify("Skip: " .. a .. " (" .. (err or "invalid") .. ")", vim.log.levels.WARN)
+    end
+  end
+  if #roots == 0 then roots = { vim.loop.cwd() } end
+  return roots
+end
+
+function M.merge_lists_async(args, cb)
+  args = args or {}
+  local target = args.target or vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+  target = vim.fn.fnamemodify(target, ":p")
+
+  local sources = args.sources or {}
+  if #sources == 0 then
+    notify("No source lists provided", vim.log.levels.ERROR)
+    if cb then cb("no sources") end
+    return
+  end
+
+  for i, s in ipairs(sources) do
+    local p = vim.fn.fnamemodify(s, ":p")
+    local st = uv.fs_stat(p)
+    if st and st.type == "directory" then p = vim.fs.normalize(p .. "/cscope.files") end
+    sources[i] = p
+  end
+
+  local out_list, set = read_list(target)
+  local before = #out_list
+  for _, src in ipairs(sources) do
+    local l = read_list(src)
+    l = l and l[1] and l or { l } -- safety
+    local list_paths = (type(l[1]) == "string") and l or l[1]
+    for _, p in ipairs(list_paths) do
+      if not set[p] then set[p] = true; table.insert(out_list, p) end
+    end
+  end
+
+  if not write_list(target, out_list) then
+    notify("Cannot write " .. target, vim.log.levels.ERROR)
+    if cb then cb("write failed") end
+    return
+  end
+  local added = #out_list - before
+  notify(("Merged %d new paths → %s"):format(added, target))
+  if cb then cb(nil, target, added, #out_list) end
+end
+
+function M.unique_list(list_path)
+  list_path = list_path and vim.fn.fnamemodify(list_path, ":p")
+              or vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+  local paths, _ = read_list(list_path)
+  if not write_list(list_path, paths) then
+    notify("Cannot write " .. list_path, vim.log.levels.ERROR)
+    return
+  end
+  notify(("Deduplicated → %s (%d lines)"):format(list_path, #paths))
+end
+
+-- =========================== User commands =========================== --
+-- Usage examples
+-- Overwrite with two dirs:
+-- :CscopeFiles src/ include/
+-- Append three dirs (no duplicates added):
+-- :CscopeFiles! third_party/lib foo/bar baz
+-- or :CscopeFilesAdd third_party/lib foo/bar baz
+-- Build GTAGS:
+-- :CscopeBuild (uses ./cscope.files)
+-- :CscopeBuild ../other/cscope.files
+
+-- :CscopeFiles [dir1] [dir2] ...  -> overwrite CWD ./cscope.files
+-- :CscopeFiles! [dir1] [dir2] ... -> append (de-dup) into CWD ./cscope.files
+vim.api.nvim_create_user_command("CscopeFiles", function(opts)
+  local roots = parse_roots_from_fargs(opts.fargs)
+  local list  = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+  if opts.bang then
+    M.add_dirs_to_list_async({ roots = roots, list = list })
+  else
+    M.generate_from_roots_async(roots, list, {}, nil)
+  end
+end, {
+  nargs = "*",
+  bang = true,
+  complete = "dir",
+  desc = "Write CWD ./cscope.files from [dir1..]; use ! to append (de-dup)",
+})
+
+-- :CscopeFilesAdd [dir1] [dir2] ... -> append multiple folders (de-dup) into CWD ./cscope.files
+vim.api.nvim_create_user_command("CscopeFilesAdd", function(opts)
+  local roots = parse_roots_from_fargs(opts.fargs)
+  local list  = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+  M.add_dirs_to_list_async({ roots = roots, list = list })
+end, {
+  nargs = "*",
+  complete = "dir",
+  desc = "Append [dir1..] into CWD ./cscope.files (de-dup)",
+})
+
+-- :CscopeImport {filelist} [...]  -> merge lists into CWD ./cscope.files (de-dup)
+vim.api.nvim_create_user_command("CscopeImport", function(opts)
+  local args = opts.fargs or {}
+  if #args == 0 then return notify("Usage: :CscopeImport {filelist} [...]", vim.log.levels.WARN) end
+  M.merge_lists_async({
+    target = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files"),
+    sources = args
+  })
+end, { nargs = "+", complete = "file", desc = "Merge file lists into CWD ./cscope.files (de-dup)" })
+
+-- :CscopeUnique [filelist] -> deduplicate a list (default CWD ./cscope.files)
+vim.api.nvim_create_user_command("CscopeUnique", function(opts)
+  local path = opts.args ~= "" and opts.args or nil
+  M.unique_list(path)
+end, { nargs = "?", complete = "file", desc = "De-duplicate a cscope.files (default CWD ./cscope.files)" })
+
+-- :CscopeBuild [filelist] → build GTAGS (preferred) or cscope.out
+vim.api.nvim_create_user_command("CscopeBuild", function(opts)
+  local list
+  if opts.args ~= "" then
+    list = vim.fn.fnamemodify(opts.args, ":p")
+  else
+    list = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+  end
+  M.build_async({ list = list })
+end, { nargs = "?", complete = "file", desc = "Build tags from CWD ./cscope.files or given list" })
+
+return M

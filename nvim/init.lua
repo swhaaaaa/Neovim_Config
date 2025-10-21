@@ -1,23 +1,47 @@
--- load options
-require('options')        
+-- Enhance nvim start up
+vim.loader.enable()
 
+local utils = require("utils")
 
--- load keymappings
-require('keymaps')
+local expected_version = "0.11.3"
+utils.is_compatible_version(expected_version)
 
--- load autocmds
-require('autocmds')
+local config_dir = vim.fn.stdpath("config")
+---@cast config_dir string
 
--- load Packervim
-require('plugins')
+-- some global settings
+require("globals")
 
+-- setting options in nvim
+vim.cmd("source " .. vim.fs.joinpath(config_dir, "viml_conf/options.vim"))
+
+-- various autocommands
+require("custom-autocmd")
+
+-- various custom commands
+require("custom-commands")
+
+-- all the user-defined mappings
+require("mappings")
+
+-- all the plugins installed and their configurations
+vim.cmd("source " .. vim.fs.joinpath(config_dir, "viml_conf/plugins.vim"))
+
+-- diagnostic related config
+require("diagnostic-conf")
 
 -- Set colorscheme
-require('colorscheme')
+--require('colorscheme')
+-- colorscheme settings
+local color_scheme = require("colorschemes")
+
+-- Load a random or specify colorscheme
+-- color_scheme.rand_colorscheme()
+color_scheme.select_colorscheme("everforest")
 
 
 -- Set LSP
-require('lsp')
+-- require('lsp')
 
 -- Manual Installation Clip Tool
 -- sudo apt install xclip -y
