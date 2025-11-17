@@ -17,9 +17,10 @@ set updatetime=500  " For CursorHold events
 
 " Clipboard settings, always use clipboard for all delete, yank, change, put
 " operation, see https://stackoverflow.com/q/30691466/6064933
-if !empty(provider#clipboard#Executable())
-  set clipboard+=unnamedplus
-endif
+" if !empty(provider#clipboard#Executable())
+"   set clipboard+=unnamedplus
+" endif
+set clipboard+=unnamedplus
 
 " Disable creating swapfiles, see https://stackoverflow.com/q/821902/6064933
 set noswapfile
@@ -62,6 +63,9 @@ set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 
 " Break line at predefined characters
 set linebreak
+" keep indent on wrapped lines
+set breakindent
+set breakindentopt=shift:2,sbr
 " Character to show before the lines that have been soft-wrapped
 set showbreak=↪
 
@@ -178,7 +182,9 @@ set diffopt+=context:3  " context for diff
 set diffopt+=internal,indent-heuristic,algorithm:histogram
 set diffopt+=linematch:60
 
-set nowrap  " do no wrap
+" set nowrap  " do no wrap
+" wrap long lines to next screen line
+set wrap
 set noruler
 
 set showcmdloc=statusline
