@@ -149,8 +149,11 @@ keymap.set("x", "<A-j>", '<cmd>call utils#MoveSelection("down")<cr>', { desc = "
 keymap.set("x", "<A-h>", '<cmd>call utils#MoveSelection("left")<cr>', { desc = "move selection left" })
 keymap.set("x", "<A-l>", '<cmd>call utils#MoveSelection("right")<cr>', { desc = "move selection right" })
 
-vim.keymap.set("x", "p", [["_dP]], { desc = "Paste without overwriting register" })
-vim.keymap.set("x", "P", [["_dP]], { desc = "Paste without overwriting register" })
+-- keymap.set("x", "p", [["_dP]], { desc = "Paste without overwriting register" })
+-- keymap.set("x", "P", [["_dP]], { desc = "Paste without overwriting register" })
+-- vim.keymap.set('x', 'p', [["_d"0P]], { desc = 'Visual paste from "0; keep registers' })
+-- vim.keymap.set('x', 'P', [["_d"0P]], { desc = 'Visual paste from "0; keep registers' })
+
 
 -- Go to a certain buffer
 keymap.set("n", "gb", '<cmd>call buf_utils#GoToBuffer(v:count, "forward")<cr>', {
@@ -261,8 +264,6 @@ keymap.set({ "n" }, "<leader>te", function () return ':tabedit ' ..  vim.fn.expa
 
 keymap.set("n", "<A-l>", "xp")
 keymap.set("n", "<A-h>", "x2hp")
-
-
 
 -----------------
 -- Insert mode --
