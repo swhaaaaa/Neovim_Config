@@ -24,18 +24,9 @@ M.colorscheme_conf = {
     vim.g.sonokai_better_performance = 1
     use_theme("sonokai")
   end,
-  edge = function()
-    vim.g.edge_style = "default"
-    vim.g.edge_enable_italic = 1
-    vim.g.edge_better_performance = 1
-    use_theme("edge")
-  end,
-  onedark = function()
-    require("onedark").setup { style = "darker" }
-    require("onedark").load()
-  end,
-  nightfox = function()
-    use_theme("carbonfox")
+  tokyonight = function()
+    require("tokyonight").setup { style = "night" }
+    use_theme("tokyonight")
   end,
   catppuccin = function()
     require("catppuccin").setup { flavour = "mocha" }
@@ -44,15 +35,8 @@ M.colorscheme_conf = {
   kanagawa = function()
     use_theme("kanagawa-dragon")
   end,
-  tokyonight = function()
-    require("tokyonight").setup { style = "night" }
-    use_theme("tokyonight")
-  end,
-  rose_pine = function()
-    use_theme("rose-pine")
-  end,
-  arctic = function()
-    use_theme("arctic")
+  nightfox = function()
+    use_theme("carbonfox")
   end,
 }
 

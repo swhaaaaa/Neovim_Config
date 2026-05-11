@@ -134,11 +134,47 @@ install_if_missing "curl" "curl"        "curl"        "curl"        "curl"      
 # ─── Optional but strongly recommended ───────────────────────────────────────
 step "── Step 3: Recommended Tools ──────────────────────────────"
 
-install_if_missing "rg"    "ripgrep"           "ripgrep"       "ripgrep"       "ripgrep"       "live grep in fzf-lua"
-install_if_missing "fzf"   "fzf"               "fzf"           "fzf"           "fzf"           "fuzzy finder — required by fzf-lua"
-install_if_missing "ctags" "universal-ctags"   "ctags"         "ctags"         "universal-ctags" "symbol browser for Vista.vim"
-install_if_missing "node"  "nodejs"            "nodejs"        "nodejs"        "node"          "required by many LSP servers and Markdown preview"
-install_if_missing "npm"   "npm"               "npm"           "npm"           "node"          "required to install LSP servers and Markdown preview"
+install_if_missing "rg"     "ripgrep"           "ripgrep"       "ripgrep"         "ripgrep"         "live grep in fzf-lua and grug-far"
+install_if_missing "fzf"    "fzf"               "fzf"           "fzf"             "fzf"             "fuzzy finder — required by fzf-lua"
+install_if_missing "ctags"  "universal-ctags"   "ctags"         "ctags"           "universal-ctags" "symbol browser for Vista.vim"
+install_if_missing "cscope" "cscope"            "cscope"        "cscope"          "cscope"          "C/C++ symbol navigation (cscope_maps.nvim)"
+install_if_missing "node"   "nodejs"            "nodejs"        "nodejs"          "node"            "required by many LSP servers and Markdown preview"
+install_if_missing "npm"    "npm"               "npm"           "npm"             "node"            "required to install LSP servers and Markdown preview"
+
+# ack — used by ack.vim as search backend (ripgrep is preferred if available,
+# but ack is kept as a fallback and is the plugin's namesake tool).
+# On Debian/Ubuntu the package is called ack or ack-grep depending on version.
+if command -v ack &>/dev/null || command -v ack-grep &>/dev/null; then
+    success "ack already installed"
+else
+    warn "ack not found (search backend for ack.vim — ripgrep preferred but ack is fallback)"
+    read -rp "  Install ack now? [Y/n] " answer
+    answer="${answer:-Y}"
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        case "$PKG_MGR" in
+            apt)
+                # Ubuntu 20.04+ ships as 'ack'; older releases used 'ack-grep'
+                if apt-cache show ack &>/dev/null 2>&1; then
+                    sudo apt-get install -y ack
+                else
+                    sudo apt-get install -y ack-grep
+                fi
+                ;;
+            dnf)    sudo dnf install -y ack ;;
+            pacman) sudo pacman -S --noconfirm ack ;;
+            brew)   brew install ack ;;
+            *)      warn "Cannot auto-install ack — unknown package manager. Install manually." ;;
+        esac
+
+        if command -v ack &>/dev/null || command -v ack-grep &>/dev/null; then
+            success "ack installed"
+        else
+            warn "ack installation may have failed — check manually"
+        fi
+    else
+        info "Skipping ack. ack.vim will use ripgrep (rg) as backend if available."
+    fi
+fi
 
 # ─── Formatters ───────────────────────────────────────────────────────────────
 step "── Step 4: Formatters ──────────────────────────────────────"
@@ -215,8 +251,79 @@ else
     success "tree-sitter already installed"
 fi
 
+# ─── Debug adapters (DAP) ─────────────────────────────────────────────────────
+step "── Step 5: Debug Adapters (DAP) ─────────────────────────────"
+
+# lldb-dap — C/C++ debug adapter (part of the lldb package)
+# Checks for both the new name (lldb-dap) and the old name (lldb-vscode).
+# On Ubuntu/Debian, apt installs the binary at a versioned path like
+# /usr/lib/llvm-18/bin/lldb-vscode, not on PATH — we find and symlink it.
+
+_find_and_link_lldb() {
+    # Search versioned llvm paths for either binary name
+    local found=""
+    for bin in lldb-dap lldb-vscode; do
+        found=$(find /usr/lib/llvm-*/bin -name "$bin" 2>/dev/null | sort -V | tail -1)
+        [ -n "$found" ] && break
+    done
+
+    if [ -z "$found" ]; then
+        warn "lldb installed but no lldb-dap or lldb-vscode binary found under /usr/lib/llvm-*/"
+        info "  Check your lldb version or install llvm: sudo apt install llvm"
+        return 1
+    fi
+
+    info "  Found: $found"
+    sudo ln -sf "$found" /usr/local/bin/lldb-dap
+    if command -v lldb-dap &>/dev/null; then
+        success "lldb-dap symlinked → /usr/local/bin/lldb-dap"
+    else
+        warn "Symlink created but lldb-dap still not on PATH — check \$PATH includes /usr/local/bin"
+    fi
+}
+
+if command -v lldb-dap &>/dev/null || command -v lldb-vscode &>/dev/null; then
+    success "lldb debug adapter already installed"
+else
+    warn "lldb-dap not found (C/C++ debugger for DAP)"
+    read -rp "  Install lldb now? [Y/n] " answer
+    answer="${answer:-Y}"
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        case "$PKG_MGR" in
+            apt)    sudo apt-get install -y lldb ;;
+            dnf)    sudo dnf install -y lldb ;;
+            pacman) sudo pacman -S --noconfirm lldb ;;
+            brew)   brew install llvm ;;
+            *)      warn "Cannot auto-install lldb — unknown package manager. Install manually." ;;
+        esac
+
+        if command -v lldb-dap &>/dev/null || command -v lldb-vscode &>/dev/null; then
+            success "lldb debug adapter installed and on PATH"
+        else
+            # Binary was installed but not put on PATH (common on Ubuntu/Debian)
+            info "  Binary not on PATH — searching versioned llvm path..."
+            _find_and_link_lldb
+        fi
+    else
+        info "Skipping lldb. C/C++ debugging (DAP) will not work without it."
+    fi
+fi
+
+# debugpy — Python debug adapter
+# NOT installed system-wide here, because it must live inside the same Python
+# environment as the project being debugged. We only check and inform.
+if python3 -c "import debugpy" &>/dev/null 2>&1; then
+    success "debugpy already available in current Python environment"
+else
+    warn "debugpy not found in current Python environment (Python DAP)"
+    info "  debugpy must be installed in each project's virtualenv, not globally."
+    info "  Install it when you need Python debugging:"
+    info "    pip install debugpy"
+    info "  Or inside a venv:  source .venv/bin/activate && pip install debugpy"
+fi
+
 # ─── Backup or remove existing config ────────────────────────────────────────
-step "── Step 5: Config Setup ──────────────────────────────────"
+step "── Step 6: Config Setup ──────────────────────────────────"
 
 if [ -e "$NVIM_CONFIG_DIR" ] || [ -L "$NVIM_CONFIG_DIR" ]; then
     BACKUP_DIR="$HOME/.config/nvim_backup_$(date +%Y%m%d_%H%M%S)"

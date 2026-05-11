@@ -16,6 +16,19 @@ Evolved from a classic Vim setup.
 | node + npm | any | Markdown preview, LSP servers |
 | A [Nerd Font](https://www.nerdfonts.com/) | any | Icons in UI |
 
+**Optional — required for specific features:**
+
+| Tool | Purpose |
+|------|---------|
+| `ripgrep` (`rg`) | fzf-lua live grep, grug-far, ack.vim backend (preferred) |
+| `ack` / `ack-grep` | ack.vim search backend (fallback when rg unavailable) |
+| `fd` / `fdfind` | fzf-lua file listing |
+| `ctags` | Vista symbol outline, cscope |
+| `cscope` | C/C++ symbol navigation |
+| `clangd` | C/C++ LSP |
+| `lldb-dap` or `lldb-vscode` | C/C++ debugger (DAP) |
+| `debugpy` (`pip install debugpy`) | Python debugger (DAP) |
+
 ---
 
 ## Installation
@@ -30,10 +43,11 @@ bash install.sh
 The installer will automatically:
 1. Check / install **Neovim** >= 0.11 if missing
 2. Install required tools: `git`, `curl`
-3. Install recommended tools: `ripgrep`, `fzf`, `ctags`, `node`, `npm`
+3. Install recommended tools: `ripgrep`, `fzf`, `ctags`, `cscope`, `node`, `npm`
 4. Install formatters: `stylua` (via cargo), `ruff` (via pip), `prettier` (via npm)
-5. Backup your existing config, then symlink or copy the new one
-6. Fix `ulimit` open-file limit if too low (writes to `~/.bashrc`)
+5. Install debug adapters: `lldb` for C/C++ (prompted); warn about `debugpy` for Python
+6. Backup your existing config, then symlink or copy the new one
+7. Fix `ulimit` open-file limit if too low (writes to `~/.bashrc`)
 
 Supported package managers: `apt` · `dnf` · `pacman` · `brew`
 
@@ -72,6 +86,7 @@ to install Treesitter parsers.
 |--------|------|
 | `nvim-treesitter` | Syntax highlighting & folding |
 | `mini.ai` | Textobjects (`af`, `if`, `ac`, `ic`, `aa`, `ia`) |
+| `mini.surround` | Add/delete/replace surrounding pairs (`sa`, `sd`, `sr`) |
 
 ### Markdown
 | Plugin | Role |
@@ -129,19 +144,30 @@ to install Treesitter parsers.
 | `better-escape.vim` | Fast `jj`/`jk` escape from insert mode |
 | `live-command.nvim` | Live preview for `:s` substitute |
 | `whitespace.nvim` | Trailing whitespace highlight |
+| `todo-comments.nvim` | Highlight & navigate TODO/FIXME/HACK/NOTE/BUG |
+| `grug-far.nvim` | Interactive project-wide find & replace |
+| `ack.vim` | Search across files using ack / ripgrep (`:Ack`) |
 
-### Cscope
+### C/C++ Tools
 | Plugin | Role |
 |--------|------|
-| `cscope_maps.nvim` | Cscope keymaps for C/C++ navigation |
+| `a.vim` | Toggle between header (`.h`) and source (`.c`/`.cpp`) |
+| `DoxygenToolkit.vim` | Generate Doxygen doc comment blocks |
+| `cscope_maps.nvim` | Cscope keymaps for symbol navigation |
+
+### Debug (DAP)
+| Plugin | Role |
+|--------|------|
+| `nvim-dap` | Debug Adapter Protocol client |
+| `nvim-dap-ui` | Visual debugger UI (scopes, stacks, watches, REPL) |
+| `nvim-dap-python` | Python debug adapter (debugpy) |
 
 ### Colorschemes
-`everforest` · `gruvbox-material` · `sonokai` · `edge` · `onedark` ·
-`nightfox` · `catppuccin` · `kanagawa` · `tokyonight` · `rose-pine` · `arctic`
+`everforest` · `gruvbox-material` · `sonokai` · `tokyonight` · `catppuccin` · `kanagawa` · `nightfox`
 
 Change active theme in `init.lua`:
 ```lua
-color_scheme.select_colorscheme("everforest")  -- change to any key
+color_scheme.select_colorscheme("everforest")  -- change to any key above
 ```
 
 ---
@@ -149,6 +175,15 @@ color_scheme.select_colorscheme("everforest")  -- change to any key
 ## Key Mappings
 
 > Leader key: `,`
+
+### Windows
+| Key | Action |
+|-----|--------|
+| `Ctrl-h/j/k/l` | Switch between split windows |
+| `Ctrl-↑` | Increase window height (+2 lines) |
+| `Ctrl-↓` | Decrease window height (-2 lines) |
+| `Ctrl-→` | Increase window width (+2 columns) |
+| `Ctrl-←` | Decrease window width (-2 columns) |
 
 ### Buffers
 | Key | Action |
@@ -234,6 +269,63 @@ color_scheme.select_colorscheme("everforest")  -- change to any key
 | `Ctrl-y` | Preview line up |
 | `Shift-↓` / `Shift-↑` | Preview scroll (arrow alternative) |
 
+### Surround (mini.surround)
+| Key | Action |
+|-----|--------|
+| `sa{motion}{char}` | Add surround — e.g. `saiw"` wraps word in `"..."` |
+| `sd{char}` | Delete surround — e.g. `sd"` removes surrounding quotes |
+| `sr{old}{new}` | Replace surround — e.g. `sr"'` changes `"..."` to `'...'` |
+| `sf` / `sF` | Find next / previous surrounding |
+
+### TODO Comments
+| Key / Command | Action |
+|---------------|--------|
+| `]t` | Jump to next TODO/FIXME/HACK/NOTE comment |
+| `[t` | Jump to previous TODO comment |
+| `,ft` | List all TODOs in fzf-lua |
+| `:TodoQuickFix` | Load all TODOs into quickfix list |
+
+### Ack (ack.vim)
+| Key | Action |
+|-----|--------|
+| `,ak` | Search word under cursor across project (opens quickfix) |
+| `,akk` | Open `:Ack! ""` prompt — type pattern (spaces allowed), optionally append a path |
+| `v` + `,ak` | Search visual selection across project |
+| `,akc` | Clear Ack match highlights |
+
+> Results open in the quickfix window. Use `,cn` / `,cp` to jump next/prev, or standard `]q` / `[q`. Backend is ripgrep if available, otherwise ack.
+
+### Project Find & Replace (grug-far)
+| Key / Command | Action |
+|---------------|--------|
+| `,rp` | Open grug-far panel (search & replace across project) |
+| `,rw` | Open panel pre-filled with word under cursor |
+| `v` + `,rp` | Open panel pre-filled with visual selection |
+
+### Debug (DAP)
+| Key | Action |
+|-----|--------|
+| `,dc` | Continue / start debug session |
+| `,db` | Toggle breakpoint |
+| `,dB` | Conditional breakpoint (prompts for condition) |
+| `,do` | Step over |
+| `,di` | Step into |
+| `,dO` | Step out |
+| `,dr` | Open REPL |
+| `,dl` | Re-run last debug session |
+| `,dx` | Terminate session |
+| `,du` | Toggle DAP UI (auto-opens with session) |
+
+### C/C++ Tools
+| Key | Action |
+|-----|--------|
+| `,aa` | Switch between `.h` header and `.c`/`.cpp` source |
+| `,av` | Same as `,aa` but opens in a vertical split |
+| `,dd` | Generate Doxygen doc block above current function |
+| `,da` | Insert author/date file header block |
+| `,db` | Insert generic Doxygen block comment |
+| `,dl` | Insert license block |
+
 ### User Commands
 | Command | Action |
 |---------|--------|
@@ -259,6 +351,9 @@ nvim_enhanced/
 │   ├── diagnostic-conf.lua   # LSP diagnostic display config
 │   ├── plugin_specs.lua      # All plugin definitions (Lazy.nvim)
 │   └── config/               # Per-plugin config files
+│       ├── dap.lua           # DAP core: signs, LLDB adapter, keymaps
+│       ├── dap-ui.lua        # DAP UI layout; auto open/close with session
+│       └── ...               # (one file per other plugin)
 ├── viml_conf/
 │   ├── options.vim           # Vim options (folds, tabs, UI)
 │   └── plugins.vim           # VimScript plugin settings
@@ -311,3 +406,19 @@ Install a Nerd Font and configure it in your terminal emulator.
 Press `,fm` to switch from `expr` to `manual` fold mode — this freezes
 folds in their current state so edits don't trigger re-folding.
 Press `,fm` again to re-enable treesitter fold detection.
+
+**DAP: no adapter found for C/C++**
+Install `lldb` and ensure `lldb-dap` (or the older `lldb-vscode`) is on your PATH:
+```bash
+sudo apt install lldb          # Debian/Ubuntu
+brew install llvm              # macOS
+```
+Then verify: `which lldb-dap`
+
+**DAP: Python breakpoints not hitting**
+Install `debugpy` in the Python environment you run your project with:
+```bash
+pip install debugpy
+```
+The adapter uses whichever `python3` is on your PATH at startup.
+

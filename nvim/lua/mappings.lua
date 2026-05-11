@@ -188,6 +188,13 @@ keymap.set("n", "<C-l>", "<C-W>l")
 keymap.set("n", "<C-k>", "<C-W>k")
 keymap.set("n", "<C-j>", "<C-W>j")
 
+-- Resize windows with arrow keys
+-- Up/Down adjust height; Left/Right adjust width
+keymap.set("n", "<C-Up>",    "<cmd>resize +2<CR>",          { silent = true, desc = "increase window height" })
+keymap.set("n", "<C-Down>",  "<cmd>resize -2<CR>",          { silent = true, desc = "decrease window height" })
+keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { silent = true, desc = "increase window width" })
+keymap.set("n", "<C-Left>",  "<cmd>vertical resize -2<CR>", { silent = true, desc = "decrease window width" })
+
 -- Text objects for URL
 keymap.set({ "x", "o" }, "iu", "<cmd>call text_obj#URL()<cr>", { desc = "URL text object" })
 
@@ -314,3 +321,22 @@ keymap.set("n", "<leader>fm", function()
     vim.notify("Foldmethod: expr (treesitter)", vim.log.levels.INFO)
   end
 end, { desc = "toggle fold method expr/manual" })
+
+-- ─── C/C++: Header / Source Toggle (requires a.vim) ──────────────────────────
+-- Only relevant in C/C++ buffers; a.vim is loaded lazily for those filetypes.
+keymap.set("n", "<leader>aa", "<cmd>A<CR>",  { desc = "C/C++: alternate header/source" })
+keymap.set("n", "<leader>av", "<cmd>AV<CR>", { desc = "C/C++: alternate (vertical split)" })
+
+-- ─── C/C++: Doxygen (requires DoxygenToolkit.vim) ────────────────────────────
+keymap.set("n", "<leader>dd", "<cmd>Dox<CR>",       { desc = "Dox: function doc block" })
+keymap.set("n", "<leader>da", "<cmd>DoxAuthor<CR>", { desc = "Dox: author block" })
+keymap.set("n", "<leader>db", "<cmd>DoxBlock<CR>",  { desc = "Dox: block comment" })
+keymap.set("n", "<leader>dl", "<cmd>DoxLic<CR>",    { desc = "Dox: license block" })
+
+-- ─── Ack (mileszs/ack.vim) ───────────────────────────────────────────────────
+-- Full config + keymaps live in lua/config/ack.lua (loaded lazily).
+-- Keymaps are registered there so they only bind once the plugin is sourced.
+-- Documented here for which-key visibility:
+--   <leader>ak   search word under cursor
+--   <leader>akk  open Ack prompt
+--   v<leader>ak  search visual selection

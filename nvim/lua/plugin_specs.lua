@@ -158,6 +158,26 @@ local plugin_specs = {
     end,
   },
 
+  -- mini.surround: add/delete/replace surrounding pairs
+  -- sa{motion}{char} → add,  sd{char} → delete,  sr{old}{new} → replace
+  -- Example: saiw"  wraps word in quotes;  sd"  removes quotes
+  {
+    "echasnovski/mini.surround",
+    version = false,
+    event = "VeryLazy",
+    opts = {
+      mappings = {
+        add            = "sa",
+        delete         = "sd",
+        find           = "sf",
+        find_left      = "sF",
+        highlight      = "sh",
+        replace        = "sr",
+        update_n_lines = "sn",
+      },
+    },
+  },
+
   -- ─── UI ───────────────────────────────────────────────────────────────────────
   {
     "nvim-mini/mini.icons",
@@ -260,24 +280,16 @@ local plugin_specs = {
   },
   { "itchyny/vim-highlighturl", event = "BufReadPost" },
 
-  -- ─── Colorschemes (curated set – remove ones you never use) ──────────────────
+  -- ─── Colorschemes ─────────────────────────────────────────────────────────────
+  -- All lazy-loaded; only the one set in colorschemes.lua is ever loaded at startup.
+  -- Remove any you never use to keep :Lazy clean.
   { "sainnhe/everforest",       lazy = true },
   { "sainnhe/gruvbox-material", lazy = true },
   { "sainnhe/sonokai",          lazy = true },
-  { "sainnhe/edge",             lazy = true },
-  { "navarasu/onedark.nvim",    lazy = true },
-  { "EdenEast/nightfox.nvim",   lazy = true },
+  { "folke/tokyonight.nvim",    lazy = true },
   { "catppuccin/nvim",          name = "catppuccin", lazy = true },
   { "rebelot/kanagawa.nvim",    lazy = true },
-  { "folke/tokyonight.nvim",    lazy = true },
-  { "rose-pine/neovim",         name = "rose-pine", lazy = true },
-  {
-    "rockyzhang24/arctic.nvim",
-    dependencies = { "rktjmp/lush.nvim" },
-    name = "arctic",
-    branch = "v2",
-    lazy = true,
-  },
+  { "EdenEast/nightfox.nvim",   lazy = true },
 
   -- ─── Navigation ───────────────────────────────────────────────────────────────
   {
@@ -371,6 +383,26 @@ local plugin_specs = {
   },
 
   -- ─── Editing Enhancements ─────────────────────────────────────────────────────
+
+  -- ack.vim: search across files using ack (or ripgrep as backend)
+  -- Falls back to ripgrep (rg) automatically if ack is not installed.
+  -- Keymaps:
+  --   <leader>ak   search word under cursor across project
+  --   <leader>akk  open empty Ack prompt (type pattern manually)
+  --   v + <leader>ak  search visual selection across project
+  {
+    "mileszs/ack.vim",
+    cmd = { "Ack", "AckFile", "AckHelp", "AckWindow" },
+    keys = {
+      { "<leader>ak",  mode = "n" },
+      { "<leader>ak",  mode = "v" },
+      { "<leader>akk", mode = "n" },
+    },
+    config = function()
+      require("config.ack")
+    end,
+  },
+
   {
     "numToStr/Comment.nvim",
     event = "BufEnter",
@@ -420,6 +452,98 @@ local plugin_specs = {
     config = function()
       require("config.live-command")
     end,
+  },
+
+  -- ─── TODO Comments ────────────────────────────────────────────────────────────
+  -- Highlights and lets you jump to TODO / FIXME / HACK / NOTE / BUG etc.
+  -- ]t / [t  jump to next / previous todo comment
+  -- <leader>ft  list all TODOs via fzf-lua
+  {
+    "folke/todo-comments.nvim",
+    event = "BufReadPost",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    opts = {},
+    config = function(_, opts)
+      require("todo-comments").setup(opts)
+      vim.keymap.set("n", "]t", function() require("todo-comments").jump_next() end,
+        { desc = "Next TODO comment" })
+      vim.keymap.set("n", "[t", function() require("todo-comments").jump_prev() end,
+        { desc = "Prev TODO comment" })
+      vim.keymap.set("n", "<leader>ft", "<cmd>TodoFzfLua<CR>",
+        { desc = "Find TODOs" })
+    end,
+  },
+
+  -- ─── Project-wide Find & Replace ──────────────────────────────────────────────
+  -- :GrugFar opens the interactive panel; supports ripgrep flags and regex
+  -- <leader>rp   open panel   |   <leader>rw  pre-fill with word under cursor
+  {
+    "MagicDuck/grug-far.nvim",
+    cmd = "GrugFar",
+    config = function()
+      require("grug-far").setup {}
+      vim.keymap.set("n", "<leader>rp", "<cmd>GrugFar<CR>",
+        { desc = "Project find & replace" })
+      vim.keymap.set("n", "<leader>rw", function()
+        require("grug-far").open { prefills = { search = vim.fn.expand("<cword>") } }
+      end, { desc = "Project replace (word under cursor)" })
+      vim.keymap.set("v", "<leader>rp", function()
+        require("grug-far").with_visual_selection {}
+      end, { desc = "Project replace (selection)" })
+    end,
+  },
+
+  -- ─── Debug (DAP) ──────────────────────────────────────────────────────────────
+  -- Install adapters as needed:
+  --   pip install debugpy          → Python
+  --   apt install lldb             → C/C++ (lldb-dap / lldb-vscode)
+  -- Keymaps (normal mode):
+  --   <leader>dc  continue       <leader>db  toggle breakpoint
+  --   <leader>do  step over      <leader>di  step into
+  --   <leader>dO  step out       <leader>du  toggle DAP UI
+  {
+    "mfussenegger/nvim-dap",
+    cmd = { "DapContinue", "DapToggleBreakpoint", "DapStepOver",
+            "DapStepInto", "DapStepOut", "DapTerminate" },
+    config = function()
+      require("config.dap")
+    end,
+  },
+  {
+    "rcarriga/nvim-dap-ui",
+    dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    config = function()
+      require("config.dap-ui")
+    end,
+  },
+  {
+    "mfussenegger/nvim-dap-python",
+    ft = "python",
+    dependencies = "mfussenegger/nvim-dap",
+    config = function()
+      require("dap-python").setup(vim.fn.exepath("python3"))
+    end,
+  },
+
+  -- ─── Doxygen (C/C++) ──────────────────────────────────────────────────────────
+  -- <leader>dd  :Dox       doc block above current function
+  -- <leader>da  :DoxAuthor file-level author/date header
+  -- <leader>db  :DoxBlock  plain block comment
+  -- <leader>dl  :DoxLic    license block
+  {
+    "vim-scripts/DoxygenToolkit.vim",
+    ft = { "c", "cpp" },
+    init = function()
+      vim.g.DoxygenToolkit_authorName = os.getenv("USER") or "Author"
+    end,
+  },
+
+  -- ─── Header / Source Toggle (C/C++) ───────────────────────────────────────────
+  -- <leader>aa  :A   switch .h ↔ .c/.cpp in same window
+  -- <leader>av  :AV  open alternate in vertical split
+  {
+    "vim-scripts/a.vim",
+    ft = { "c", "cpp" },
   },
 
   -- ─── Cscope ───────────────────────────────────────────────────────────────────
