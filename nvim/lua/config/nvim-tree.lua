@@ -58,7 +58,9 @@ nvim_tree.setup {
   git = {
     enable = true,
     ignore = true,
-    timeout = 400,
+    show_on_dirs = true,
+    show_on_open_dirs = true,
+    timeout = 2000,  -- increased from 400ms; raise further for very large repos
   },
   actions = {
     use_system_clipboard = true,

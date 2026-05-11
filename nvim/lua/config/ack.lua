@@ -4,8 +4,11 @@
 -- otherwise falls back to ack, then ack-grep.
 
 if vim.fn.executable("rg") == 1 then
-  -- Use ripgrep as ack backend: matches ack.vim's expected output format
-  vim.g.ackprg = "rg --vimgrep --no-heading --smart-case --follow"
+  -- Use ripgrep as ack backend.
+  -- --fixed-strings (-F): treat the pattern as a literal string, not regex.
+  -- This matches ack's default behaviour and prevents errors when searching
+  -- for C/C++ expressions like "cpha0(spi, n)" that contain regex metacharacters.
+  vim.g.ackprg = "rg --vimgrep --no-heading --smart-case --follow --fixed-strings"
 elseif vim.fn.executable("ack") == 1 then
   -- ack: case-insensitive, follow symlinks, show column numbers (from vimrcs)
   vim.g.ackprg = "ack -H --nocolor --nogroup --column -i --follow"
@@ -44,7 +47,20 @@ map("v", "<leader>ak", function()
 end, { silent = true, desc = "Ack: search visual selection" })
 
 -- Open empty Ack prompt with cursor between quotes — type pattern (spaces allowed)
-map("n", "<leader>akk", ':Ack! ""<Left>', { desc = "Ack: open prompt" })
+-- Uses --fixed-strings by default: safe for C/C++ expressions like "func(a, b)"
+map("n", "<leader>akk", ':Ack! ""<Left>', { desc = "Ack: open prompt (literal)" })
+
+-- :AckRegex {pattern}  — same as :Ack! but without --fixed-strings
+-- Use when you actually need regex: :AckRegex cpha\d+
+vim.api.nvim_create_user_command("AckRegex", function(opts)
+  local saved = vim.g.ackprg
+  vim.g.ackprg = saved:gsub(" %-%-fixed%-strings", "")
+  vim.cmd("Ack! " .. opts.args)
+  vim.g.ackprg = saved
+end, { nargs = "+", desc = "Ack with regex (no --fixed-strings)" })
+
+-- ,akr — open :AckRegex "" prompt for manual regex search
+map("n", "<leader>akr", ':AckRegex ""<Left>', { desc = "Ack: open regex prompt" })
 
 -- Clear any leftover Ack match highlights explicitly
 -- (nohlsearch alone does not clear ack.vim's Search highlights)

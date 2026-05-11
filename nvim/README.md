@@ -286,14 +286,16 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `:TodoQuickFix` | Load all TODOs into quickfix list |
 
 ### Ack (ack.vim)
-| Key | Action |
-|-----|--------|
-| `,ak` | Search word under cursor across project (opens quickfix) |
-| `,akk` | Open `:Ack! ""` prompt — type pattern (spaces allowed), optionally append a path |
-| `v` + `,ak` | Search visual selection across project |
+| Key / Command | Action |
+|---------------|--------|
+| `,ak` | Search word under cursor across project (literal, safe for C/C++) |
+| `,akk` | Open `:Ack! ""` prompt — literal search, spaces allowed |
+| `,akr` | Open `:AckRegex ""` prompt — regex search |
+| `v` + `,ak` | Search visual selection across project (literal) |
 | `,akc` | Clear Ack match highlights |
+| `:AckRegex {pat}` | Search with regex — use when you need `(`, `*`, `\d` etc. |
 
-> Results open in the quickfix window. Use `,cn` / `,cp` to jump next/prev, or standard `]q` / `[q`. Backend is ripgrep if available, otherwise ack.
+> Default backend is ripgrep with `--fixed-strings` so C/C++ expressions like `func(a, b)` work without escaping. Use `,akr` / `:AckRegex` when you need real regex.
 
 ### Project Find & Replace (grug-far)
 | Key / Command | Action |
