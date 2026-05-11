@@ -4,11 +4,39 @@ if not ok then return end
 fzf.setup({
   defaults = { file_icons = "mini" },
   winopts  = {
-    row = 0.5,
-    height = 0.7,
-    -- NOTE: do not set "hl" here; it's deprecated upstream
+    row    = 0.5,
+    height = 0.85,
+    width  = 0.90,
+    preview = {
+      layout     = "horizontal",
+      horizontal = "right:50%",
+      scrollbar  = "float",
+    },
   },
-  files    = { previewer = false },
+  files = {
+    previewer = "builtin",
+  },
+  keymap = {
+    builtin = {
+      ["<C-d>"] = "preview-page-down",
+      ["<C-u>"] = "preview-page-up",
+      ["<C-e>"] = "preview-down",
+      ["<C-y>"] = "preview-up",
+    },
+    fzf = {
+      ["ctrl-f"] = "preview-page-down",
+      ["ctrl-b"] = "preview-page-up",
+    },
+  },
+  previewers = {
+    builtin = {
+      extensions = {
+        ["bin"] = { "xxd" },   -- hex preview for binary files
+        ["ima"] = { "xxd" },
+        ["out"] = { "xxd" },
+      },
+    },
+  },
 })
 
 ---------------------------------------------------------------------------

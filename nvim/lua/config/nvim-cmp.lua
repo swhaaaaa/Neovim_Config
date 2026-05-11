@@ -1,58 +1,56 @@
--- Setup nvim-cmp.
 local cmp = require("cmp")
-
--- The extentions needed by nvim-cmp should be loaded beforehand
-require("cmp_nvim_lsp")
-require("cmp_path")
-require("cmp_buffer")
-require("cmp_omni")
-require("cmp_nvim_ultisnips")
-require("cmp_cmdline")
-
+local luasnip = require("luasnip")
 local MiniIcons = require("mini.icons")
+
+local function has_words_before()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
 
 cmp.setup {
   snippet = {
     expand = function(args)
-      -- For `ultisnips` user.
-      vim.fn["UltiSnips#Anon"](args.body)
+      luasnip.lsp_expand(args.body)
     end,
   },
   mapping = cmp.mapping.preset.insert {
-    ["<Tab>"] = function(fallback)
+    ["<Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      elseif has_words_before() then
+        cmp.complete()
       else
         fallback()
       end
-    end,
-    ["<S-Tab>"] = function(fallback)
+    end, { "i", "s" }),
+    ["<S-Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
       else
         fallback()
       end
-    end,
-    ["<CR>"] = cmp.mapping.confirm { select = true },
+    end, { "i", "s" }),
+    ["<CR>"]  = cmp.mapping.confirm { select = true },
     ["<C-e>"] = cmp.mapping.abort(),
     ["<Esc>"] = cmp.mapping.close(),
---    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
---    ["<C-f>"] = cmp.mapping.scroll_docs(4),
+    ["<C-d>"] = cmp.mapping.scroll_docs(-4),
+    ["<C-f>"] = cmp.mapping.scroll_docs(4),
   },
-  sources = {
-    { name = "nvim_lsp" }, -- For nvim-lsp
-    { name = "ultisnips" }, -- For ultisnips user.
-    { name = "path" }, -- for path completion
-    { name = "buffer", keyword_length = 2 }, -- for buffer word completion
+  sources = cmp.config.sources {
+    { name = "nvim_lsp" },
+    { name = "luasnip" },
+    { name = "async_path" },
+    { name = "buffer", keyword_length = 2 },
   },
   completion = {
     keyword_length = 1,
     completeopt = "menu,noselect",
   },
-  view = {
-    entries = "custom",
-  },
-  -- solution taken from https://github.com/echasnovski/mini.nvim/issues/1007#issuecomment-2258929830
+  view = { entries = "custom" },
   formatting = {
     format = function(_, vim_item)
       local icon, hl = MiniIcons.get("lsp", vim_item.kind)
@@ -63,49 +61,44 @@ cmp.setup {
   },
 }
 
+-- LaTeX / tex: use omni source
 cmp.setup.filetype("tex", {
   sources = {
     { name = "omni" },
-    { name = "ultisnips" }, -- For ultisnips user.
-    { name = "buffer", keyword_length = 2 }, -- for buffer word completion
-    { name = "path" }, -- for path completion
+    { name = "luasnip" },
+    { name = "buffer", keyword_length = 2 },
+    { name = "path" },
   },
 })
 
+-- Search completion
 cmp.setup.cmdline("/", {
   mapping = cmp.mapping.preset.cmdline(),
-  sources = {
-    { name = "buffer" },
-  },
+  sources = { { name = "buffer" } },
 })
 
+-- Command-line completion
 cmp.setup.cmdline(":", {
   mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = "path" },
-  }, {
-    { name = "cmdline" },
-  }),
+  sources = cmp.config.sources(
+    { { name = "async_path" } },
+    { { name = "cmdline" } }
+  ),
   matching = { disallow_symbol_nonprefix_matching = false },
 })
 
---  see https://github.com/hrsh7th/nvim-cmp/wiki/Menu-Appearance#how-to-add-visual-studio-code-dark-theme-colors-to-the-menu
-vim.cmd([[
+-- cmp highlight overrides (VS Code dark theme style)
+vim.cmd [[
   highlight! link CmpItemMenu Comment
-  " gray
   highlight! CmpItemAbbrDeprecated guibg=NONE gui=strikethrough guifg=#808080
-  " blue
   highlight! CmpItemAbbrMatch guibg=NONE guifg=#569CD6
   highlight! CmpItemAbbrMatchFuzzy guibg=NONE guifg=#569CD6
-  " light blue
   highlight! CmpItemKindVariable guibg=NONE guifg=#9CDCFE
   highlight! CmpItemKindInterface guibg=NONE guifg=#9CDCFE
   highlight! CmpItemKindText guibg=NONE guifg=#9CDCFE
-  " pink
   highlight! CmpItemKindFunction guibg=NONE guifg=#C586C0
   highlight! CmpItemKindMethod guibg=NONE guifg=#C586C0
-  " front
   highlight! CmpItemKindKeyword guibg=NONE guifg=#D4D4D4
   highlight! CmpItemKindProperty guibg=NONE guifg=#D4D4D4
   highlight! CmpItemKindUnit guibg=NONE guifg=#D4D4D4
-]])
+]]

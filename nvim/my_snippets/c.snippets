@@ -25,23 +25,6 @@ default:
 $0
 endsnippet
 
-snippet ()
-(${1})${0}
-endsnippet
-
-
-snippet {}
-{
-	${1}
-}
-endsnippet
-
-snippet {};
-{
-    ${1}
-};
-endsnippet
-
 snippet prk
 printk(KERN_EMERG "${1:%s}\n"${1/([^%]|%%)*(%.)?.*/(?2:, :\);)/}$2${1/([^%]|%%)*(%.)?.*/(?2:\);)/}
 endsnippet

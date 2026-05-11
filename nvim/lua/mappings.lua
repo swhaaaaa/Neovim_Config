@@ -29,10 +29,17 @@ keymap.set("n", [[\x]], "<cmd>windo lclose <bar> cclose <cr>", {
   desc = "close qf and location list",
 })
 
--- Delete a buffer, without closing the window, see https://stackoverflow.com/q/4465095/6064933
-keymap.set("n", [[\d]], "<cmd>bprevious <bar> bdelete #<cr>", {
+-- Delete current buffer without closing the window (force works on binary/unlisted too)
+keymap.set("n", [[\d]], function()
+  local cur_buf = vim.api.nvim_win_get_buf(0)
+  local ok = pcall(vim.cmd, "bprevious")
+  if not ok then
+    vim.cmd("enew")
+  end
+  pcall(vim.api.nvim_buf_delete, cur_buf, { force = true })
+end, {
   silent = true,
-  desc = "delete current buffer",
+  desc = "delete current buffer (force)",
 })
 
 keymap.set("n", [[\D]], function()
@@ -40,13 +47,19 @@ keymap.set("n", [[\D]], function()
   local cur_buf = vim.api.nvim_win_get_buf(0)
 
   for _, buf_id in pairs(buf_ids) do
-    -- do not Delete unlisted buffers, which may lead to unexpected errors
-    if vim.api.nvim_get_option_value("buflisted", { buf = buf_id }) and buf_id ~= cur_buf then
-      vim.api.nvim_buf_delete(buf_id, { force = true })
+    if buf_id ~= cur_buf then
+      -- force delete both listed and unlisted (binary, special) buffers
+      pcall(vim.api.nvim_buf_delete, buf_id, { force = true })
     end
   end
+
+  -- also force-delete current buffer if it is not listed (e.g. binary file)
+  local cur_listed = vim.api.nvim_get_option_value("buflisted", { buf = cur_buf })
+  if not cur_listed then
+    pcall(vim.api.nvim_buf_delete, cur_buf, { force = true })
+  end
 end, {
-  desc = "delete other buffers",
+  desc = "delete other buffers (force)",
 })
 
 -- Insert a blank line below or above current line (do not move the cursor),
@@ -115,6 +128,12 @@ keymap.set("n", "<leader>cd", "<cmd>lcd %:p:h<cr><cmd>pwd<cr>", { desc = "change
 
 -- Use Esc to quit builtin terminal
 keymap.set("t", "<Esc>", [[<c-\><c-n>]])
+
+-- Open terminal in a bottom split (15 lines tall)
+keymap.set("n", "<leader>tt", function()
+  vim.cmd("botright 15split | terminal")
+  vim.cmd("startinsert")
+end, { silent = true, desc = "open terminal in split" })
 
 -- Toggle spell checking
 keymap.set("n", "<F12>", "<cmd>set spell!<cr>", { desc = "toggle spell" })
@@ -282,3 +301,16 @@ keymap.set("i", "<C-b>", "<BS>", { desc = "Delete left" })
 -- Delete the character to the right of the cursor
 keymap.set("i", "<C-D>", "<DEL>")
 
+
+-- Toggle fold method between expr (treesitter) and manual
+-- Use <leader>fm to freeze folds after opening them so edits don't re-fold
+keymap.set("n", "<leader>fm", function()
+  if vim.o.foldmethod == "expr" then
+    vim.o.foldmethod = "manual"
+    vim.notify("Foldmethod: manual (folds frozen)", vim.log.levels.INFO)
+  else
+    vim.o.foldmethod = "expr"
+    vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+    vim.notify("Foldmethod: expr (treesitter)", vim.log.levels.INFO)
+  end
+end, { desc = "toggle fold method expr/manual" })

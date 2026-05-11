@@ -1,15 +1,15 @@
 local builtin = require("statuscol.builtin")
-local ffi = require("statuscol.ffidef")
-local C = ffi.C
 
 -- only show fold level up to this level
 local fold_level_limit = 3
 local function foldfunc(args)
+  local ok, ffi = pcall(require, "statuscol.ffidef")
+  if not ok then return builtin.foldfunc(args) end
+  local C = ffi.C
   local foldinfo = C.fold_info(args.wp, args.lnum)
   if foldinfo.level > fold_level_limit then
     return " "
   end
-
   return builtin.foldfunc(args)
 end
 

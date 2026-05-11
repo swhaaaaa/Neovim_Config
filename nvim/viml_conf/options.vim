@@ -220,3 +220,16 @@ set hlsearch
 set incsearch 
 
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Folding
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use treesitter for fold detection
+set foldmethod=expr
+set foldexpr=v:lua.vim.treesitter.foldexpr()
+set foldlevel=99     " open all folds by default
+set foldlevelstart=99
+set foldenable
+
+" After manually opening folds (zE/zR/zo), switch to manual so edits
+" don't re-fold. Press <leader>fe to re-enable expr folding.

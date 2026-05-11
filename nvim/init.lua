@@ -1,50 +1,36 @@
--- Enhance nvim start up
+-- Speed up startup via bytecode cache
 vim.loader.enable()
 
 local utils = require("utils")
 
-local expected_version = "0.11.4"
+local expected_version = "0.12.2"
 utils.is_compatible_version(expected_version)
 
 local config_dir = vim.fn.stdpath("config")
 ---@cast config_dir string
 
--- some global settings
+-- Core settings (must come first)
 require("globals")
 
--- setting options in nvim
+-- Vim options
 vim.cmd("source " .. vim.fs.joinpath(config_dir, "viml_conf/options.vim"))
 
--- various autocommands
+-- Autocommands
 require("custom-autocmd")
 
--- various custom commands
+-- Custom commands
 require("custom-commands")
 
--- all the user-defined mappings
+-- Key mappings
 require("mappings")
 
--- all the plugins installed and their configurations
+-- Plugin manager + all plugins
 vim.cmd("source " .. vim.fs.joinpath(config_dir, "viml_conf/plugins.vim"))
 
--- diagnostic related config
+-- Diagnostic configuration
 require("diagnostic-conf")
 
--- Set colorscheme
---require('colorscheme')
--- colorscheme settings
+-- Colorscheme
 local color_scheme = require("colorschemes")
-
--- Load a random or specify colorscheme
--- color_scheme.rand_colorscheme()
+-- Change "everforest" to any key in colorschemes.lua, or call rand_colorscheme()
 color_scheme.select_colorscheme("everforest")
-
-
--- Set LSP
--- require('lsp')
-
--- Manual Installation Clip Tool
--- sudo apt install xclip -y
-
--- Manual Installation clangd server for LSP
--- sudo apt install clang -y

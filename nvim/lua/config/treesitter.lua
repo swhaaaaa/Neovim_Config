@@ -1,8 +1,20 @@
-require("nvim-treesitter.configs").setup {
-  ensure_installed = { "python", "bash", "c", "cpp", "lua", "vim", "json", "toml" },
-  ignore_install = {}, -- List of parsers to ignore installing
-  highlight = {
-    enable = true, -- false will disable the whole extension
-    disable = { "help" }, -- list of language that will be disabled
-  },
-}
+-- nvim-treesitter new API (v1.0+, no nvim-treesitter.configs module)
+require("nvim-treesitter").setup()
+
+-- Auto-install parsers after lazy finishes loading
+vim.api.nvim_create_autocmd("User", {
+  pattern = "LazyDone",
+  once = true,
+  callback = function()
+    local parsers = {
+      "bash", "c", "cpp", "lua", "python",
+      "vim", "vimdoc", "json", "toml", "yaml",
+      "markdown", "markdown_inline",
+    }
+    for _, lang in ipairs(parsers) do
+      pcall(vim.treesitter.language.add, lang)
+    end
+    -- Use the TSInstall command which is always available
+    vim.cmd("TSInstall! " .. table.concat(parsers, " "))
+  end,
+})
