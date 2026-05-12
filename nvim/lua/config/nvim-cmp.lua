@@ -34,6 +34,22 @@ cmp.setup {
         fallback()
       end
     end, { "i", "s" }),
+    -- <C-j>/<C-k>: jump LuaSnip stops — mirrors UltiSnips C-j/C-k so both
+    -- snippet engines use the same keys for navigating $1 $2 $0 stops.
+    ["<C-j>"] = cmp.mapping(function(fallback)
+      if luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
+    ["<C-k>"] = cmp.mapping(function(fallback)
+      if luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { "i", "s" }),
     ["<CR>"]  = cmp.mapping.confirm { select = true },
     ["<C-e>"] = cmp.mapping.abort(),
     ["<Esc>"] = cmp.mapping.close(),
@@ -42,7 +58,8 @@ cmp.setup {
   },
   sources = cmp.config.sources {
     { name = "nvim_lsp" },
-    { name = "luasnip" },
+    { name = "ultisnips" },  -- UltiSnips snippets (my_snippets/*.snippets)
+    { name = "luasnip" },    -- LuaSnip / friendly-snippets
     { name = "async_path" },
     { name = "buffer", keyword_length = 2 },
   },

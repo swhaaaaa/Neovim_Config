@@ -125,12 +125,15 @@
 |-----|------|--------|
 | `<C-A>` | i | Jump to beginning of line |
 | `<C-E>` | i | Jump to end of line |
-| `<C-h/j/k/l>` | i | Move left/down/up/right |
-| `<C-b>` | i | Delete character to the left |
-| `<C-D>` | i | Delete character to the right |
-| `<c-u>` | i | Uppercase word under cursor |
-| `<c-t>` | i | Title-case word under cursor |
+| `<C-h>` | i | Delete char left (`<BS>`) |
+| `<C-l>` | i | Delete char right (`<Del>`) |
+| `<C-w>` | i | Delete word left — Vim built-in |
+| `<C-u>` | i | Delete to line start — Vim built-in |
+| `<c-u>` | i | Uppercase word under cursor (custom) |
+| `<c-t>` | i | Title-case word under cursor (custom) |
 | `<A-;>` | i | Insert semicolon at end of line |
+| `<C-j>` | i | UltiSnips expand / jump to next `$` stop |
+| `<C-k>` | i | UltiSnips jump to previous `$` stop |
 | `<C-A>` | c | Jump to beginning of command line |
 
 ### Yank Ring (yanky.nvim)

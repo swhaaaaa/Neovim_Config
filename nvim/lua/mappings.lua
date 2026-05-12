@@ -298,18 +298,19 @@ keymap.set("n", "<A-h>", "x2hp")
 -----------------
 -- Mapping jj to <Esc> in Insert Mode, return Normal mode
 -- keymap.set({ "i" }, "jj", "<ESC>")
+-- Vim built-ins available in insert mode without any mapping:
+--   <C-w>  delete word left
+--   <C-u>  delete to line start
 
-keymap.set({ "i" }, "<C-h>", "<Left>", { desc = "move left" })
-keymap.set({ "i" }, "<C-l>", "<Right>", { desc = "move right" })
-keymap.set({ "i" }, "<C-j>", "<Down>", { desc = "move down" })
-keymap.set({ "i" }, "<C-k>", "<Up>", { desc = "move up" })
+keymap.set("i", "<C-h>", "<BS>",  { desc = "delete char left" })
+keymap.set("i", "<C-l>", "<Del>", { desc = "delete char right" })
 
--- Delete the character to the left of the cursor
-keymap.set("i", "<C-b>", "<BS>", { desc = "Delete left" })
-
--- Delete the character to the right of the cursor
-keymap.set("i", "<C-D>", "<DEL>")
-
+-- Swallow <C-j> and <C-k> in plain insert mode so they don't insert garbage
+-- (^@ null byte for C-j, digraph prompt for C-k).
+-- UltiSnips and nvim-cmp override these with higher priority when in a snippet
+-- or when the completion popup is active.
+keymap.set("i", "<C-j>", "<Nop>", { desc = "reserved for UltiSnips expand/jump" })
+keymap.set("i", "<C-k>", "<Nop>", { desc = "reserved for UltiSnips jump back" })
 
 -- Toggle fold method between expr (treesitter) and manual
 -- Use <leader>fm to freeze folds after opening them so edits don't re-fold

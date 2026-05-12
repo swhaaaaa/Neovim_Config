@@ -104,7 +104,6 @@ to install Treesitter parsers.
 | `bufferline.nvim` | Buffer tabs |
 | `dashboard-nvim` | Start screen |
 | `nvim-tree.lua` | File explorer |
-| `dropbar.nvim` | Breadcrumb winbar |
 | `nvim-ufo` | Folding with line count (`↙ N`) |
 | `nvim-statuscol` | Custom sign/number column |
 | `indent-blankline.nvim` | Indent & scope guides (replaces mini.indentscope) |
