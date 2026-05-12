@@ -5,8 +5,12 @@
 -- =============================================================================
 
 -- Default Keymaps
--- <prefix>: <leader>c
--- <prefix>: <C-c>
+-- Active prefix : <leader>c
+-- Inactive      : <C-c>  (previous default, kept as reference)
+--
+-- Conflicts resolved in mappings.lua:
+--   <leader>cd  → <leader>lc  (change cwd)
+--   <leader>cb  → <leader>ub  (cursor blink)
 
 -- Keymaps 	Description
 -- <prefix>s 	find all references to the token under cursor
@@ -31,8 +35,8 @@ if ok_csm then
   csm.setup({
     disable_maps = false,           -- keep plugin's <leader>c{sgcteifd} maps
     skip_input_prompt = false,
-    -- prefix = "<leader>c",
-    prefix = "<C-c>",
+    prefix = "<leader>c",
+    -- prefix = "<C-c>",
     cscope = {
       db_file = "./cscope.out",     -- per-project database file
       exec = "cscope",              -- or "gtags-cscope"

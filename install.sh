@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+# SCRIPT_DIR  = top-level repo folder (where install.sh, build_nvim.sh, README.md live)
+# NVIM_DIR    = the actual nvim config subfolder to install as ~/.config/nvim
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+NVIM_DIR="$SCRIPT_DIR/nvim"
 NVIM_CONFIG_DIR="$HOME/.config/nvim"
 NVIM_DATA_DIR="$HOME/.local/share/nvim"
 
@@ -348,7 +351,7 @@ if [ -d "$NVIM_DATA_DIR" ]; then
 fi
 
 # ─── lazy-lock.json ───────────────────────────────────────────────────────────
-LOCK_FILE="$SCRIPT_DIR/lazy-lock.json"
+LOCK_FILE="$NVIM_DIR/lazy-lock.json"
 if [ -e "$LOCK_FILE" ]; then
     success "lazy-lock.json found — keeping it to preserve pinned plugin versions"
     info "(Delete it manually only if you want a full fresh plugin resolution)"
@@ -357,17 +360,17 @@ fi
 # ─── Install: symlink or copy ─────────────────────────────────────────────────
 echo ""
 info "Choose install method:"
-echo "  1) Symlink (recommended — edits in $SCRIPT_DIR reflect immediately)"
+echo "  1) Symlink (recommended — edits in $NVIM_DIR reflect immediately)"
 echo "  2) Copy    (standalone — no dependency on this directory)"
 read -rp "  Select [1/2, default=1]: " install_method
 install_method="${install_method:-1}"
 
 if [ "$install_method" = "2" ]; then
-    cp -r "$SCRIPT_DIR" "$NVIM_CONFIG_DIR"
+    cp -r "$NVIM_DIR" "$NVIM_CONFIG_DIR"
     success "Copied config to $NVIM_CONFIG_DIR"
 else
-    ln -s "$SCRIPT_DIR" "$NVIM_CONFIG_DIR"
-    success "Symlinked $SCRIPT_DIR → $NVIM_CONFIG_DIR"
+    ln -s "$NVIM_DIR" "$NVIM_CONFIG_DIR"
+    success "Symlinked $NVIM_DIR → $NVIM_CONFIG_DIR"
 fi
 
 # ─── ulimit fix ───────────────────────────────────────────────────────────────

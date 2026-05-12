@@ -34,10 +34,11 @@ Evolved from a classic Vim setup.
 ## Installation
 
 ```bash
-unzip Neovim_Config_enhanced.zip
-cd nvim_enhanced
-bash build_nvim.sh   # optional: build latest nvim from source
-bash install.sh
+git clone <repo-url> nvim-config   # or unzip the archive
+cd nvim-config                     # scripts are now in the top-level folder
+
+bash build_nvim.sh   # optional: build latest Neovim from source
+bash install.sh      # installs tools, then links nvim/ → ~/.config/nvim
 ```
 
 The installer will automatically:
@@ -328,6 +329,22 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `,db` | Insert generic Doxygen block comment |
 | `,dl` | Insert license block |
 
+### Cscope (C/C++ symbol navigation)
+> Set `prefix = "<leader>c"` in `lua/config/cscope.lua` to enable these.
+
+| Key | Action |
+|-----|--------|
+| `<prefix>s` | Find all references to symbol |
+| `<prefix>g` | Find global definition |
+| `<prefix>c` | Find all callers of function |
+| `<prefix>t` | Find text string |
+| `<prefix>e` | Egrep search |
+| `<prefix>f` | Open file under cursor |
+| `<prefix>i` | Find files including this file |
+| `<prefix>d` | Find functions called by function |
+| `<prefix>a` | Find where symbol is assigned |
+| `<prefix>b` | Build cscope database |
+
 ### User Commands
 | Command | Action |
 |---------|--------|
@@ -340,29 +357,32 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 ## File Structure
 
 ```
-nvim_enhanced/
-├── init.lua                  # Entry point
-├── install.sh                # Installer script
+repo/                         # Top-level repository
+├── install.sh                # Installer — sets up tools and links nvim/ to ~/.config/nvim
+├── build_nvim.sh             # Optional — build latest Neovim from source
 ├── README.md                 # This file
-├── lua/
-│   ├── globals.lua           # Global variables
-│   ├── mappings.lua          # Key mappings
-│   ├── custom-autocmd.lua    # Autocommands
-│   ├── custom-commands.lua   # :Format, :LspInfo2, :ReloadConfig
-│   ├── colorschemes.lua      # Colorscheme loader & selector
-│   ├── diagnostic-conf.lua   # LSP diagnostic display config
-│   ├── plugin_specs.lua      # All plugin definitions (Lazy.nvim)
-│   └── config/               # Per-plugin config files
-│       ├── dap.lua           # DAP core: signs, LLDB adapter, keymaps
-│       ├── dap-ui.lua        # DAP UI layout; auto open/close with session
-│       └── ...               # (one file per other plugin)
-├── viml_conf/
-│   ├── options.vim           # Vim options (folds, tabs, UI)
-│   └── plugins.vim           # VimScript plugin settings
-├── my_snippets/              # Custom UltiSnips snippets
-├── after/                    # Filetype-specific overrides
-├── ftdetect/                 # Custom filetype detection
-└── spell/                    # Spell check word lists
+└── nvim/                     # Actual Neovim config (installed as ~/.config/nvim)
+    ├── init.lua              # Entry point
+    ├── lua/
+    │   ├── globals.lua       # Global variables
+    │   ├── mappings.lua      # Key mappings
+    │   ├── custom-autocmd.lua    # Autocommands
+    │   ├── custom-commands.lua   # :Format, :LspInfo2, :ReloadConfig
+    │   ├── colorschemes.lua      # Colorscheme loader & selector
+    │   ├── diagnostic-conf.lua   # LSP diagnostic display config
+    │   ├── plugin_specs.lua      # All plugin definitions (Lazy.nvim)
+    │   └── config/               # Per-plugin config files
+    │       ├── ack.lua           # ack.vim: literal + regex search, keymaps
+    │       ├── dap.lua           # DAP core: signs, LLDB adapter, keymaps
+    │       ├── dap-ui.lua        # DAP UI layout; auto open/close with session
+    │       └── ...               # (one file per other plugin)
+    ├── viml_conf/
+    │   ├── options.vim           # Vim options (folds, tabs, UI)
+    │   └── plugins.vim           # VimScript plugin settings
+    ├── my_snippets/              # Custom UltiSnips snippets
+    ├── after/                    # Filetype-specific overrides
+    ├── ftdetect/                 # Custom filetype detection
+    └── spell/                    # Spell check word lists
 ```
 
 ---

@@ -124,7 +124,8 @@ end, {
 
 -- Change current working directory locally and print cwd after that,
 -- see https://vim.fandom.com/wiki/Set_working_directory_to_the_current_file
-keymap.set("n", "<leader>cd", "<cmd>lcd %:p:h<cr><cmd>pwd<cr>", { desc = "change cwd" })
+-- Note: remapped from <leader>cd to <leader>lc to free <leader>c prefix for cscope
+keymap.set("n", "<leader>lc", "<cmd>lcd %:p:h<cr><cmd>pwd<cr>", { desc = "change cwd (lcd)" })
 
 -- Use Esc to quit builtin terminal
 keymap.set("t", "<Esc>", [[<c-\><c-n>]])
@@ -237,7 +238,8 @@ keymap.set("i", "<C-E>", "<END>")
 -- Go to beginning of command in command-line mode
 keymap.set("c", "<C-A>", "<HOME>")
 
-keymap.set("n", "<leader>cb", function()
+-- Note: remapped from <leader>cb to <leader>ub to free <leader>c prefix for cscope
+keymap.set("n", "<leader>ub", function()
   local cnt = 0
   local blink_times = 7
   local timer = uv.new_timer()
