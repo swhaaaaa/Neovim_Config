@@ -332,3 +332,25 @@ end, { desc = "toggle fold method expr/manual" })
 --   <leader>ak   search word under cursor
 --   <leader>akk  open Ack prompt
 --   v<leader>ak  search visual selection
+
+-- ─── Quickfix ────────────────────────────────────────────────────────────────
+keymap.set("n", "<leader>co", "<cmd>copen<CR>",  { desc = "open quickfix list" })
+keymap.set("n", "<leader>cc", "<cmd>cclose<CR>", { desc = "close quickfix list" })
+keymap.set("n", "]q",         "<cmd>cnext<CR>",  { desc = "next quickfix item" })
+keymap.set("n", "[q",         "<cmd>cprev<CR>",  { desc = "prev quickfix item" })
+keymap.set("n", "]Q",         "<cmd>clast<CR>",  { desc = "last quickfix item" })
+keymap.set("n", "[Q",         "<cmd>cfirst<CR>", { desc = "first quickfix item" })
+
+-- ─── Format on save toggle ───────────────────────────────────────────────────
+-- conform.nvim has format_on_save disabled by default.
+-- Use <leader>tf to toggle it on/off per session.
+keymap.set("n", "<leader>tf", function()
+  local conform = require("conform")
+  if conform.format_on_save then
+    conform.format_on_save = nil
+    vim.notify("Format on save: OFF", vim.log.levels.INFO)
+  else
+    conform.format_on_save = { lsp_fallback = true, timeout_ms = 500 }
+    vim.notify("Format on save: ON", vim.log.levels.INFO)
+  end
+end, { desc = "toggle format on save" })

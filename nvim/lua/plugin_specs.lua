@@ -248,13 +248,6 @@ local plugin_specs = {
     end,
   },
   {
-    "nvimdev/dashboard-nvim",
-    cond = firenvim_not_active,
-    config = function()
-      require("config.dashboard-nvim")
-    end,
-  },
-  {
     "lukas-reineke/indent-blankline.nvim",
     event = "BufReadPost",
     main = "ibl",
@@ -289,11 +282,6 @@ local plugin_specs = {
     config = function()
       require("config.bqf")
     end,
-  },
-  {
-    "stevearc/quicker.nvim",
-    event = "FileType qf",
-    opts = {},
   },
   {
     "luukvbaal/statuscol.nvim",
@@ -354,11 +342,6 @@ local plugin_specs = {
     end,
   },
   {
-    "nvim-telescope/telescope.nvim",
-    cmd = "Telescope",
-    dependencies = { "nvim-telescope/telescope-symbols.nvim" },
-  },
-  {
     "nvim-tree/nvim-tree.lua",
     config = function()
       require("config.nvim-tree")
@@ -392,7 +375,6 @@ local plugin_specs = {
       require("config.neogit")
     end,
   },
-  { "rbong/vim-flog", cmd = { "Flog" } },
   {
     "akinsho/git-conflict.nvim",
     version = "*",
@@ -461,6 +443,56 @@ local plugin_specs = {
   { "tpope/vim-repeat",      event = "VeryLazy" },
   { "tpope/vim-eunuch" },
   { "tpope/vim-obsession",   cmd = "Obsession" },
+
+  -- vim-illuminate: auto-highlight all occurrences of word under cursor.
+  -- Useful for tracking variables/functions across long kernel functions.
+  -- Uses LSP (highest priority), then treesitter, then regex as fallback.
+  -- Navigate between occurrences with ]r / [r
+  {
+    "RRethy/vim-illuminate",
+    event = "BufReadPost",
+    config = function()
+      require("illuminate").configure {
+        providers = { "lsp", "treesitter", "regex" },
+        delay = 200,
+        under_cursor = true,
+        min_count_to_highlight = 2,  -- only highlight if 2+ occurrences
+        filetypes_denylist = { "NvimTree", "fugitive", "help", "qf" },
+      }
+      vim.keymap.set("n", "]r", function() require("illuminate").goto_next_reference() end,
+        { desc = "illuminate: next reference" })
+      vim.keymap.set("n", "[r", function() require("illuminate").goto_prev_reference() end,
+        { desc = "illuminate: prev reference" })
+    end,
+  },
+
+  -- trouble.nvim: better diagnostics, quickfix, LSP references list UI.
+  -- Replaces the plain quickfix/loclist window with a structured, navigable panel.
+  -- :Trouble diagnostics   — project-wide LSP errors/warnings
+  -- :Trouble lsp           — LSP references, definitions, implementations
+  -- :Trouble qflist        — quickfix list in trouble UI
+  -- <leader>xx  toggle diagnostics  |  <leader>xq  quickfix  |  <leader>xl  loclist
+  {
+    "folke/trouble.nvim",
+    dependencies = { "nvim-mini/mini.icons" },
+    cmd = "Trouble",
+    keys = {
+      { "<leader>xx", "<cmd>Trouble diagnostics toggle<CR>",
+        desc = "trouble: project diagnostics" },
+      { "<leader>xb", "<cmd>Trouble diagnostics toggle filter.buf=0<CR>",
+        desc = "trouble: buffer diagnostics" },
+      { "<leader>xl", "<cmd>Trouble loclist toggle<CR>",
+        desc = "trouble: location list" },
+      { "<leader>xq", "<cmd>Trouble qflist toggle<CR>",
+        desc = "trouble: quickfix list" },
+      { "<leader>xs", "<cmd>Trouble symbols toggle<CR>",
+        desc = "trouble: symbols" },
+    },
+    opts = {
+      focus = true,
+      warn_no_results = false,
+    },
+  },
   { "andymass/vim-matchup",  event = "BufRead" },
   { "simnalamburt/vim-mundo", cmd = { "MundoToggle", "MundoShow" } },
   {
@@ -631,17 +663,6 @@ local plugin_specs = {
     end,
   },
 
-  -- ─── Lisp IDE ─────────────────────────────────────────────────────────────────
-  {
-    "vlime/vlime",
-    enabled = function()
-      return utils.executable("sbcl")
-    end,
-    config = function(plugin)
-      vim.opt.rtp:append(plugin.dir .. "/vim")
-    end,
-    ft = { "lisp" },
-  },
 }
 
 ---@diagnostic disable-next-line: missing-fields

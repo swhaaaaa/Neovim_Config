@@ -39,6 +39,7 @@
 | `<leader>cl` | n | Toggle cursor column highlight |
 | `<leader>fm` | n | Toggle fold method: treesitter ↔ manual (freeze folds) |
 | `<F12>` | n/i | Toggle spell check |
+| `<leader>tf` | n | Toggle format on save (conform.nvim) |
 
 ---
 
@@ -189,6 +190,15 @@
 ---
 
 ## Navigation
+
+### vim-illuminate (word highlight)
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `]r` | n | Jump to next occurrence of word under cursor |
+| `[r` | n | Jump to previous occurrence |
+
+> Automatically highlights all occurrences of the word under cursor using LSP → treesitter → regex (in priority order). Only activates when there are 2+ occurrences.
 
 ### LSP Definitions & References (Glance)
 
@@ -446,6 +456,35 @@ Two snippet engines are available:
 
 ---
 
+## Trouble (Diagnostics & Quickfix UI)
+
+| Key / Command | Mode | Action |
+|---------------|------|--------|
+| `<leader>xx` | n | Toggle project-wide diagnostics |
+| `<leader>xb` | n | Toggle buffer diagnostics |
+| `<leader>xl` | n | Toggle location list |
+| `<leader>xq` | n | Toggle quickfix list |
+| `<leader>xs` | n | Toggle symbols list |
+| `:Trouble diagnostics` | — | Project-wide LSP errors/warnings |
+| `:Trouble lsp` | — | LSP references, definitions, implementations |
+| `:Trouble qflist` | — | Quickfix list in Trouble UI |
+
+---
+
+## Quickfix
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<leader>co` | n | Open quickfix list |
+| `<leader>cc` | n | Close quickfix list |
+| `]q` | n | Next quickfix item |
+| `[q` | n | Previous quickfix item |
+| `]Q` | n | Last quickfix item |
+| `[Q` | n | First quickfix item |
+| `\x` | n | Close quickfix and location list |
+
+---
+
 ## User Commands
 
 | Command | Action |
@@ -469,6 +508,7 @@ Two snippet engines are available:
 | `:CscopeUnique [filelist]` | De-duplicate `cscope.files` |
 | `:Lazy` | Open plugin manager UI |
 | `:Lazy sync` | Update all plugins |
+| `:Lazy clean` | Remove unused plugins |
 | `:Mason` | Open LSP/tool installer UI |
 | `:DapContinue` | Start or continue debug session |
 | `:DapTerminate` | Terminate debug session |

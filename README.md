@@ -103,21 +103,19 @@ to install Treesitter parsers.
 |--------|------|
 | `lualine.nvim` | Status line |
 | `bufferline.nvim` | Buffer tabs |
-| `dashboard-nvim` | Start screen |
 | `nvim-tree.lua` | File explorer |
 | `nvim-ufo` | Folding with line count (`↙ N`) |
 | `nvim-statuscol` | Custom sign/number column |
-| `indent-blankline.nvim` | Indent & scope guides (replaces mini.indentscope) |
+| `indent-blankline.nvim` | Indent & scope guides |
 | `nvim-colorizer` | Hex color preview |
 | `nvim-notify` | Notification popups |
-| `nvim-bqf` + `quicker.nvim` | Enhanced quickfix window |
+| `nvim-bqf` | Enhanced quickfix window |
 | `mini.icons` | File/LSP icons |
 
 ### Navigation
 | Plugin | Role |
 |--------|------|
 | `fzf-lua` | Fuzzy finder with preview (files, grep, buffers) |
-| `telescope.nvim` | Symbol/emoji picker |
 | `hop.nvim` | EasyMotion-style jump |
 | `nvim-hlslens` | Search result count & highlights |
 | `vista.vim` | Symbol outline (ctags) |
@@ -131,7 +129,6 @@ to install Treesitter parsers.
 | `diffview.nvim` | Side-by-side diff viewer |
 | `git-conflict.nvim` | Conflict marker highlighting |
 | `gitlinker.nvim` | Copy permalink to GitHub/GitLab |
-| `vim-flog` | Git branch graph |
 
 ### Editing
 | Plugin | Role |
@@ -148,6 +145,8 @@ to install Treesitter parsers.
 | `todo-comments.nvim` | Highlight & navigate TODO/FIXME/HACK/NOTE/BUG |
 | `grug-far.nvim` | Interactive project-wide find & replace |
 | `ack.vim` | Search across files using ack / ripgrep (`:Ack`) |
+| `vim-illuminate` | Auto-highlight all occurrences of word under cursor |
+| `trouble.nvim` | Better diagnostics & quickfix UI |
 
 ### C/C++ Tools
 | Plugin | Role |
