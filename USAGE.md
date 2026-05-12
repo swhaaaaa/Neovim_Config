@@ -40,6 +40,7 @@
 | `<leader>fm` | n | Toggle fold method: treesitter ↔ manual (freeze folds) |
 | `<F12>` | n/i | Toggle spell check |
 | `<leader>tf` | n | Toggle format on save (conform.nvim) |
+| `,` then wait | n | which-key popup — press `,` and hold ~0.5s to see all keymaps grouped by prefix |
 
 ---
 
@@ -336,7 +337,9 @@
 
 ## Debug (DAP)
 
-> **Setup required:** Install `lldb` (C/C++) and/or `pip install debugpy` (Python) before use.
+> **Setup required:** Install `codelldb` (preferred) or `lldb` (fallback) for C/C++, and `debugpy` for Python.
+> - C/C++: `:MasonInstall codelldb`  or  `sudo apt install lldb`
+> - Python: `pip install debugpy` (per virtualenv)
 
 | Key | Mode | Action |
 |-----|------|--------|

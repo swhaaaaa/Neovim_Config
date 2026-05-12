@@ -139,12 +139,19 @@ local plugin_specs = {
     event = "BufWritePre",
     opts = {
       formatters_by_ft = {
+        c          = { "clang_format" },
+        cpp        = { "clang_format" },
         lua        = { "stylua" },
         python     = { "ruff_format" },
         javascript = { "prettier" },
         typescript = { "prettier" },
       },
       format_on_save = false,
+      -- clang_format reads .clang-format in project root automatically.
+      -- For kernel work, create a .clang-format with:
+      --   BasedOnStyle: Linux
+      --   IndentWidth: 8
+      --   UseTab: Always
     },
   },
 

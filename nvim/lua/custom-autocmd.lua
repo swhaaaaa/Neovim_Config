@@ -307,3 +307,17 @@ api.nvim_create_autocmd("VimLeavePre", {
   end,
   desc = "auto-save obsession session on exit",
 })
+
+-- ─── Spell check inside comments/strings for C/C++ ────────────────────────────
+-- Enables spell only for comment and string syntax groups, not identifiers.
+-- This catches typos in /* comments */ without flagging spi_gpio_txrx_word_mode0.
+-- Toggle spell entirely with <F12>; this just sets the default for C/C++ files.
+api.nvim_create_autocmd("FileType", {
+  group = api.nvim_create_augroup("c_spell", { clear = true }),
+  pattern = { "c", "cpp" },
+  callback = function()
+    vim.opt_local.spell        = true
+    vim.opt_local.spellcapcheck = ""   -- no capital letter enforcement
+  end,
+  desc = "enable spell check in C/C++ files (comments/strings only via syntax)",
+})

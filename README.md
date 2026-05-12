@@ -26,7 +26,8 @@ Evolved from a classic Vim setup.
 | `ctags` | Vista symbol outline, cscope |
 | `cscope` | C/C++ symbol navigation |
 | `clangd` | C/C++ LSP |
-| `lldb-dap` or `lldb-vscode` | C/C++ debugger (DAP) |
+| `lldb-dap` or `lldb-vscode` | C/C++ debugger (DAP fallback) |
+| `codelldb` (`:MasonInstall codelldb`) | C/C++ debugger (DAP preferred — better struct pretty-print) |
 | `debugpy` (`pip install debugpy`) | Python debugger (DAP) |
 
 ---

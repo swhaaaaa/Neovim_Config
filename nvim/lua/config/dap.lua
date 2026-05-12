@@ -1,8 +1,9 @@
 -- lua/config/dap.lua
 -- Core nvim-dap setup. Language adapters are registered here when the
 -- corresponding tool is found on PATH. Install adapters as needed:
---   pip install debugpy          (Python)
---   apt install lldb             (C/C++ → lldb-dap or lldb-vscode)
+--   pip install debugpy                   (Python)
+--   apt install lldb                      (C/C++ → lldb-dap or lldb-vscode)
+--   :MasonInstall codelldb                (C/C++ → preferred, better struct pretty-print)
 
 local ok, dap = pcall(require, "dap")
 if not ok then return end
@@ -22,41 +23,82 @@ vim.fn.sign_define("DapStopped", {
   linehl = "DapStoppedLine", numhl = "",
 })
 
--- ── LLDB adapter for C / C++ / Rust ───────────────────────────────────────
--- Supports both the old lldb-vscode and the new lldb-dap binary names.
-local lldb_exec = vim.fn.executable("lldb-dap") == 1 and "lldb-dap"
-              or  vim.fn.executable("lldb-vscode") == 1 and "lldb-vscode"
-              or  nil
+-- ── C/C++ configurations (shared by both adapters) ────────────────────────
+local c_cpp_cfg = {
+  {
+    name    = "Launch executable",
+    type    = "codelldb",   -- will fall back to lldb if codelldb not found
+    request = "launch",
+    program = function()
+      return vim.fn.input("Executable: ", vim.fn.getcwd() .. "/", "file")
+    end,
+    cwd         = "${workspaceFolder}",
+    stopOnEntry = false,
+    args        = {},
+  },
+  {
+    name    = "Launch with args",
+    type    = "codelldb",
+    request = "launch",
+    program = function()
+      return vim.fn.input("Executable: ", vim.fn.getcwd() .. "/", "file")
+    end,
+    args = function()
+      local args = vim.fn.input("Args: ")
+      return vim.split(args, " ", { trimempty = true })
+    end,
+    cwd         = "${workspaceFolder}",
+    stopOnEntry = false,
+  },
+  {
+    name    = "Attach to PID",
+    type    = "codelldb",
+    request = "attach",
+    pid     = require("dap.utils").pick_process,
+    args    = {},
+  },
+}
 
-if lldb_exec then
-  dap.adapters.lldb = {
-    type    = "executable",
-    command = lldb_exec,
-    name    = "lldb",
+-- ── codelldb adapter (preferred — install via :MasonInstall codelldb) ─────
+-- Better than lldb-dap for modern clang builds and kernel struct pretty-print.
+local mason_bin = vim.fn.stdpath("data") .. "/mason/bin/codelldb"
+if vim.fn.executable(mason_bin) == 1 or vim.fn.executable("codelldb") == 1 then
+  local codelldb_cmd = vim.fn.executable(mason_bin) == 1 and mason_bin or "codelldb"
+  dap.adapters.codelldb = {
+    type    = "server",
+    port    = "${port}",
+    executable = {
+      command = codelldb_cmd,
+      args    = { "--port", "${port}" },
+    },
   }
+  dap.configurations.c   = c_cpp_cfg
+  dap.configurations.cpp = c_cpp_cfg
 
-  local lldb_cfg = {
-    {
-      name    = "Launch (lldb)",
-      type    = "lldb",
-      request = "launch",
-      program = function()
-        return vim.fn.input("Executable: ", vim.fn.getcwd() .. "/", "file")
-      end,
-      cwd         = "${workspaceFolder}",
-      stopOnEntry = false,
-      args        = {},
-    },
-    {
-      name    = "Attach to PID (lldb)",
-      type    = "lldb",
-      request = "attach",
-      pid     = require("dap.utils").pick_process,
-      args    = {},
-    },
-  }
-  dap.configurations.c   = lldb_cfg
-  dap.configurations.cpp = lldb_cfg
+-- ── LLDB adapter fallback (apt install lldb) ───────────────────────────────
+else
+  local lldb_exec = vim.fn.executable("lldb-dap") == 1 and "lldb-dap"
+                or  vim.fn.executable("lldb-vscode") == 1 and "lldb-vscode"
+                or  nil
+
+  if lldb_exec then
+    dap.adapters.codelldb = {
+      type    = "executable",
+      command = lldb_exec,
+      name    = "lldb",
+    }
+    -- remap type to lldb for the fallback adapter
+    local lldb_cfg = vim.deepcopy(c_cpp_cfg)
+    for _, cfg in ipairs(lldb_cfg) do cfg.type = "codelldb" end
+    dap.configurations.c   = lldb_cfg
+    dap.configurations.cpp = lldb_cfg
+  else
+    vim.notify(
+      "DAP: no C/C++ adapter found.\n" ..
+      "Run :MasonInstall codelldb  or  sudo apt install lldb",
+      vim.log.levels.WARN
+    )
+  end
 end
 
 -- ── Keymaps ────────────────────────────────────────────────────────────────
