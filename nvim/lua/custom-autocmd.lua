@@ -290,3 +290,20 @@ api.nvim_create_autocmd("BufReadPost", {
     end
   end,
 })
+
+-- ─── Auto-save session on exit (vim-obsession) ────────────────────────────────
+-- Automatically saves the current session when Neovim exits, so your open
+-- buffers, window layout, and working directory are restored next time.
+-- Only activates if a session is already being tracked (Obsession is running).
+-- Start tracking: :Obsession {file}  or  :Obsession (uses Session.vim in cwd)
+-- Stop tracking:  :Obsession  (toggles off)
+api.nvim_create_autocmd("VimLeavePre", {
+  group = api.nvim_create_augroup("auto_save_session", { clear = true }),
+  callback = function()
+    -- Only save if obsession is actively tracking (g:this_obsession is set)
+    if vim.g.this_obsession then
+      vim.cmd("silent! Obsession")
+    end
+  end,
+  desc = "auto-save obsession session on exit",
+})

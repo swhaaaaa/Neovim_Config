@@ -86,6 +86,7 @@ to install Treesitter parsers.
 | Plugin | Role |
 |--------|------|
 | `nvim-treesitter` | Syntax highlighting & folding |
+| `nvim-treesitter-context` | Shows current function/block at top while scrolling |
 | `mini.ai` | Textobjects (`af`, `if`, `ac`, `ic`, `aa`, `ia`) |
 | `mini.surround` | Add/delete/replace surrounding pairs (`sa`, `sd`, `sr`) |
 
@@ -151,8 +152,7 @@ to install Treesitter parsers.
 ### C/C++ Tools
 | Plugin | Role |
 |--------|------|
-| `a.vim` | Toggle between header (`.h`) and source (`.c`/`.cpp`) |
-| `DoxygenToolkit.vim` | Generate Doxygen doc comment blocks |
+| `clangd_extensions.nvim` | Inlay hints, AST view, symbol info, memory usage |
 | `cscope_maps.nvim` | Cscope keymaps for symbol navigation |
 
 ### Debug (DAP)
@@ -321,12 +321,11 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 ### C/C++ Tools
 | Key | Action |
 |-----|--------|
-| `,aa` | Switch between `.h` header and `.c`/`.cpp` source |
-| `,av` | Same as `,aa` but opens in a vertical split |
-| `,dd` | Generate Doxygen doc block above current function |
-| `,da` | Insert author/date file header block |
-| `,db` | Insert generic Doxygen block comment |
-| `,dl` | Insert license block |
+| `,as` | Switch header/source (clangd) |
+| `,ih` | Toggle inlay hints |
+| `,si` | Symbol info |
+| `,at` | View AST |
+| `,mu` | clangd memory usage |
 
 ### Cscope (C/C++ symbol navigation)
 > Set `prefix = "<leader>c"` in `lua/config/cscope.lua` to enable these.

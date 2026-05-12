@@ -86,6 +86,19 @@ local plugin_specs = {
       require("config.lsp")
     end,
   },
+
+  -- clangd_extensions: enhances clangd with inlay hints, better AST view,
+  -- and memory usage display. Useful for C/C++ kernel development.
+  -- Inlay hints show parameter names and types inline, e.g.:
+  --   spi_gpio_txrx_word_mode0(spi: *spi_device, nsecs: u32, ...)
+  -- Toggle inlay hints: <leader>ih
+  {
+    "p00f/clangd_extensions.nvim",
+    ft = { "c", "cpp" },
+    config = function()
+      require("config.clangd_extensions")
+    end,
+  },
   {
     "dnlhc/glance.nvim",
     event = "VeryLazy",
@@ -142,6 +155,35 @@ local plugin_specs = {
     build = ":TSUpdate",
     config = function()
       require("config.treesitter")
+    end,
+  },
+
+  -- nvim-treesitter-context: shows current function/struct/block at top of window
+  -- while scrolling through long files. Max 3 lines to avoid taking too much space.
+  -- Useful in kernel source where functions can be hundreds of lines long.
+  -- Toggle with :TSContextToggle  or  <leader>tc (mapped below in config)
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    event = "BufReadPost",
+    dependencies = "nvim-treesitter/nvim-treesitter",
+    opts = {
+      enable            = true,
+      max_lines         = 3,   -- max lines the context window can take
+      min_window_height = 20,  -- don't show in very short windows
+      line_numbers      = true,
+      multiline_threshold = 1, -- only show single-line context entries
+      trim_scope        = "outer",
+      mode              = "cursor",
+      separator         = "─",
+    },
+    config = function(_, opts)
+      require("treesitter-context").setup(opts)
+      vim.keymap.set("n", "<leader>tc", "<cmd>TSContextToggle<CR>",
+        { silent = true, desc = "toggle treesitter context" })
+      -- Jump to context (e.g. jump to the function signature from inside its body)
+      vim.keymap.set("n", "[C", function()
+        require("treesitter-context").go_to_context(vim.v.count1)
+      end, { silent = true, desc = "jump to context (treesitter)" })
     end,
   },
   -- nvim-treesitter-textobjects removed: its plugin/nvim-treesitter-textobjects.vim
@@ -520,27 +562,6 @@ local plugin_specs = {
     config = function()
       require("dap-python").setup(vim.fn.exepath("python3"))
     end,
-  },
-
-  -- ─── Doxygen (C/C++) ──────────────────────────────────────────────────────────
-  -- <leader>dd  :Dox       doc block above current function
-  -- <leader>da  :DoxAuthor file-level author/date header
-  -- <leader>db  :DoxBlock  plain block comment
-  -- <leader>dl  :DoxLic    license block
-  {
-    "vim-scripts/DoxygenToolkit.vim",
-    ft = { "c", "cpp" },
-    init = function()
-      vim.g.DoxygenToolkit_authorName = os.getenv("USER") or "Author"
-    end,
-  },
-
-  -- ─── Header / Source Toggle (C/C++) ───────────────────────────────────────────
-  -- <leader>aa  :A   switch .h ↔ .c/.cpp in same window
-  -- <leader>av  :AV  open alternate in vertical split
-  {
-    "vim-scripts/a.vim",
-    ft = { "c", "cpp" },
   },
 
   -- ─── Cscope ───────────────────────────────────────────────────────────────────

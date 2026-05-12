@@ -325,17 +325,6 @@ keymap.set("n", "<leader>fm", function()
   end
 end, { desc = "toggle fold method expr/manual" })
 
--- ─── C/C++: Header / Source Toggle (requires a.vim) ──────────────────────────
--- Only relevant in C/C++ buffers; a.vim is loaded lazily for those filetypes.
-keymap.set("n", "<leader>aa", "<cmd>A<CR>",  { desc = "C/C++: alternate header/source" })
-keymap.set("n", "<leader>av", "<cmd>AV<CR>", { desc = "C/C++: alternate (vertical split)" })
-
--- ─── C/C++: Doxygen (requires DoxygenToolkit.vim) ────────────────────────────
-keymap.set("n", "<leader>dd", "<cmd>Dox<CR>",       { desc = "Dox: function doc block" })
-keymap.set("n", "<leader>da", "<cmd>DoxAuthor<CR>", { desc = "Dox: author block" })
-keymap.set("n", "<leader>db", "<cmd>DoxBlock<CR>",  { desc = "Dox: block comment" })
-keymap.set("n", "<leader>dl", "<cmd>DoxLic<CR>",    { desc = "Dox: license block" })
-
 -- ─── Ack (mileszs/ack.vim) ───────────────────────────────────────────────────
 -- Full config + keymaps live in lua/config/ack.lua (loaded lazily).
 -- Keymaps are registered there so they only bind once the plugin is sourced.

@@ -234,6 +234,14 @@
 |-----|--------|
 | `<space>u` | Toggle Mundo undo tree |
 
+### Treesitter Context
+
+| Key / Command | Action |
+|---------------|--------|
+| `<leader>tc` | Toggle treesitter context bar |
+| `[C` | Jump up to current context (e.g. jump to function signature) |
+| `:TSContextToggle` | Same as `<leader>tc` |
+
 ### Vista (symbol outline)
 
 | Key | Action |
@@ -392,21 +400,20 @@ Two snippet engines are available:
 
 ## C/C++ Tools
 
-### Header / Source Toggle (a.vim)
+### Header / Source Toggle (clangd)
 
 | Key | Action |
 |-----|--------|
-| `<leader>aa` | Switch between `.h` and `.c`/`.cpp` |
-| `<leader>av` | Same, in a vertical split |
+| `<leader>as` | Switch between `.h` and `.c`/`.cpp` (LSP-aware) |
 
-### Doxygen (DoxygenToolkit.vim)
+### clangd Extensions
 
-| Key | Action |
-|-----|--------|
-| `<leader>dd` | Generate doc block above current function |
-| `<leader>da` | Insert author/date file header |
-| `<leader>db` | Insert generic block comment |
-| `<leader>dl` | Insert license block |
+| Key / Command | Action |
+|---------------|--------|
+| `<leader>ih` | Toggle inlay hints (parameter names/types shown inline) |
+| `<leader>si` | Show symbol info (type, canonical declaration) |
+| `<leader>at` | View AST for node under cursor |
+| `<leader>mu` | Show clangd memory usage |
 
 ### Force Syntax Override
 
@@ -451,7 +458,8 @@ Two snippet engines are available:
 | `:TodoFzfLua` | List all TODO/FIXME/HACK/NOTE comments via fzf-lua |
 | `:TodoQuickFix` | Load all TODO comments into quickfix list |
 | `:DiffviewOpen` | Open full project diff tree |
-| `:Obsession` | Start/toggle session recording (vim-obsession) |
+| `:Obsession` | Start/toggle session recording (auto-saves on exit) |
+| `:Obsession {file}` | Start recording to a specific session file |
 | `:Vista!!` | Toggle symbol outline (also `<space>t`) |
 | `:MundoToggle` | Toggle visual undo tree (also `<space>u`) |
 | `:CscopeFiles [dir...]` | Generate `cscope.files` from dirs (default: cwd) |
