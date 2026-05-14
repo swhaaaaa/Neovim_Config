@@ -17,12 +17,13 @@ wk.add {
   { "<leader>g",  group = "git" },
   { "<leader>gg", group = "neogit" },
   { "<leader>h",  group = "git hunks" },
-  { "<leader>r",  group = "replace (grug-far)" },
+  { "<leader>l",  group = "LSP peek (glance)" },
+  { "<leader>m",  group = "meson build" },
+  { "<leader>r",  group = "replace / rename" },
+  { "<leader>w",  group = "LSP workspace" },
   { "<leader>x",  group = "trouble / diagnostics" },
   { "<leader>ak", group = "ack search" },
   { "<leader>n",  group = "file explorer" },
   { "<leader>t",  group = "toggle" },
   { "<leader>u",  group = "UI toggles" },
-  -- space groups
-  { "<space>g",   group = "LSP peek (glance)" },
 }

@@ -81,7 +81,7 @@ local plugin_specs = {
   -- ─── LSP ─────────────────────────────────────────────────────────────────────
   {
     "neovim/nvim-lspconfig",
-    event = "User FilePost",
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
       require("config.lsp")
     end,
@@ -168,7 +168,7 @@ local plugin_specs = {
   -- nvim-treesitter-context: shows current function/struct/block at top of window
   -- while scrolling through long files. Max 3 lines to avoid taking too much space.
   -- Useful in kernel source where functions can be hundreds of lines long.
-  -- Toggle with :TSContextToggle  or  <leader>tc (mapped below in config)
+  -- Toggle with <leader>ux  |  Jump to context with [C
   {
     "nvim-treesitter/nvim-treesitter-context",
     event = "BufReadPost",
@@ -185,8 +185,11 @@ local plugin_specs = {
     },
     config = function(_, opts)
       require("treesitter-context").setup(opts)
-      vim.keymap.set("n", "<leader>tc", "<cmd>TSContextToggle<CR>",
-        { silent = true, desc = "toggle treesitter context" })
+      -- Note: <leader>tc is reserved for tabclose (mappings.lua)
+      -- Using <leader>ux for treesitter context toggle
+      vim.keymap.set("n", "<leader>ux", function()
+        require("treesitter-context").toggle()
+      end, { silent = true, desc = "toggle treesitter context" })
       -- Jump to context (e.g. jump to the function signature from inside its body)
       vim.keymap.set("n", "[C", function()
         require("treesitter-context").go_to_context(vim.v.count1)

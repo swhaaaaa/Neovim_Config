@@ -69,13 +69,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
       }
     end)
     map("n", "<C-k>", vim.lsp.buf.signature_help)
-    map("n", "<space>rn", vim.lsp.buf.rename, { desc = "varialbe rename" })
-    map("n", "<space>ca", vim.lsp.buf.code_action, { desc = "LSP code action" })
-    map("n", "<space>wa", vim.lsp.buf.add_workspace_folder, { desc = "add workspace folder" })
-    map("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, { desc = "remove workspace folder" })
-    map("n", "<space>wl", function()
+    map("n", "<leader>rn", vim.lsp.buf.rename,       { desc = "LSP: rename symbol" })
+    map("n", "<leader>ca", vim.lsp.buf.code_action,  { desc = "LSP: code action" })
+    map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder,    { desc = "LSP: add workspace folder" })
+    map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, { desc = "LSP: remove workspace folder" })
+    map("n", "<leader>wl", function()
       vim.print(vim.lsp.buf.list_workspace_folders())
-    end, { desc = "list workspace folder" })
+    end, { desc = "LSP: list workspace folders" })
 
     -- Set some key bindings conditional on server capabilities
     -- Disable ruff hover feature in favor of Pyright
@@ -115,12 +115,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 local capabilities = require("lsp_utils").get_default_capabilities()
 
-vim.lsp.config("*", {
+-- Neovim 0.11+: use bracket syntax for vim.lsp.config
+vim.lsp.config["*"] = {
   capabilities = capabilities,
   flags = {
     debounce_text_changes = 500,
   },
-})
+}
 
 -- A mapping from lsp server name to the executable name
 local enabled_lsp_servers = {

@@ -205,10 +205,9 @@
 
 | Key | Mode | Action |
 |-----|------|--------|
-| `<space>gd` | n | Peek definitions (Glance) |
-| `<space>gr` | n | Peek references (Glance) |
-| `<space>gi` | n | Peek implementations (Glance) |
-| `<leader>K` | n | Show type definition in float |
+| `<leader>ld` | n | Peek definitions (Glance) |
+| `<leader>lr` | n | Peek references (Glance) |
+| `<leader>li` | n | Peek implementations (Glance) |
 
 ### Cscope (C/C++ symbol navigation)
 
@@ -249,9 +248,8 @@
 
 | Key / Command | Action |
 |---------------|--------|
-| `<leader>tc` | Toggle treesitter context bar |
+| `<leader>ux` | Toggle treesitter context bar on/off |
 | `[C` | Jump up to current context (e.g. jump to function signature) |
-| `:TSContextToggle` | Same as `<leader>tc` |
 
 ### Vista (symbol outline)
 
@@ -265,11 +263,18 @@
 
 | Key | Mode | Action |
 |-----|------|--------|
-| `<space>gd` | n | Peek definitions (Glance popup) |
-| `<space>gr` | n | Peek references (Glance popup) |
-| `<space>gi` | n | Peek implementations (Glance popup) |
-| `<leader>K` | n | Hover type definition |
-| Standard LSP keys apply — see `:help lsp-defaults` for `gd`, `K`, `<space>rn`, `<space>ca` |
+| `<leader>ld` | n | Peek definitions (Glance popup) |
+| `<leader>lr` | n | Peek references (Glance popup) |
+| `<leader>li` | n | Peek implementations (Glance popup) |
+| `<leader>rn` | n | Rename symbol |
+| `<leader>ca` | n | Code action |
+| `<leader>wa` | n | Add workspace folder |
+| `<leader>wr` | n | Remove workspace folder |
+| `<leader>wl` | n | List workspace folders |
+| `gd` | n | Go to definition (location list if multiple) |
+| `K` | n | Hover documentation |
+| `<C-k>` | n | Signature help |
+| `<C-]>` | n | Go to definition (direct) |
 
 ### LSP Diagnostics
 
@@ -488,6 +493,36 @@ Two snippet engines are available:
 
 ---
 
+## Meson Build
+
+| Key / Command | Action |
+|---------------|--------|
+| `<leader>ms` | `:MesonSetup` — setup cwd + create `compile_commands.json` symlink |
+| `<leader>mb` | `:MesonBuild` — compile in a terminal split |
+| `<leader>ml` | `:MesonLink` — (re)create symlink only (builddir already exists) |
+
+**Usage examples:**
+```
+:MesonSetup                               → setup current directory
+:MesonSetup sdbusplus                     → setup ./sdbusplus only
+:MesonSetup sdbusplus phosphor-logging    → setup both in parallel
+:MesonSetup ./*                           → setup ALL subdirs in cwd
+:MesonSetup ./packages/*                  → setup all subdirs of packages/
+:MesonSetup sdbusplus phosphor-logging bmcweb phosphor-host-ipmid
+                                          → setup all four in parallel
+```
+
+All setups run in parallel. Each package gets its own `builddir/` and `compile_commands.json` symlink. LSP restarts once after all packages complete.
+
+**Typical workflow for new OpenBMC packages:**
+```
+,lc                                         ← cd to packages parent folder
+:MesonSetup sdbusplus phosphor-logging      ← setup both packages
+:LspInfo2                                   ← verify clangd attached
+```
+
+---
+
 ## User Commands
 
 | Command | Action |
@@ -515,6 +550,10 @@ Two snippet engines are available:
 | `:Mason` | Open LSP/tool installer UI |
 | `:DapContinue` | Start or continue debug session |
 | `:DapTerminate` | Terminate debug session |
+| `:MesonSetup [pkg1 pkg2 ...]` | `meson setup` on one or more package dirs in parallel + symlink `compile_commands.json` |
+| `:MesonBuild [pkgdir]` | `meson compile -C builddir` in pkgdir or cwd (errors if builddir missing) |
+| `:MesonLink [dir]` | Only (re)create `compile_commands.json` symlink without re-running setup |
+| `:LspRestart` | Restart LSP clients for current buffer |
 
 ---
 
