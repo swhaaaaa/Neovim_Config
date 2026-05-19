@@ -100,5 +100,7 @@ nvim_tree.setup {
   },
 }
 
-keymap.set("n", "<leader>nn", "<cmd>NvimTreeToggle<CR>",      { desc = "Explorer: toggle" })
-keymap.set("n", "<leader>nf", "<cmd>NvimTreeFindFile<CR>",    { desc = "Explorer: reveal file in tree" })
+-- NERDTree takes <leader>nn and <leader>nf (see config/nerdtree.lua)
+-- nvim-tree uses <leader>ne (explorer) and <leader>nr (reveal)
+keymap.set("n", "<leader>ne", "<cmd>NvimTreeToggle<CR>",   { desc = "nvim-tree: toggle" })
+keymap.set("n", "<leader>nr", "<cmd>NvimTreeFindFile<CR>", { desc = "nvim-tree: reveal file in tree" })

@@ -404,6 +404,26 @@ local plugin_specs = {
       require("config.nvim-tree")
     end,
   },
+  -- NERDTree: classic VimScript file explorer
+  -- Key advantage over nvim-tree: :NERDTreeFind reveals file WITHOUT changing root
+  -- Use <leader>nf to reveal current file anywhere on disk
+  {
+    "preservim/nerdtree",
+    cmd = { "NERDTree", "NERDTreeToggle", "NERDTreeFind", "NERDTreeFocus" },
+    init = function()
+      -- Keymaps must be in init (runs at startup) not config (runs after load)
+      -- because NERDTree is lazy-loaded via cmd
+      vim.keymap.set("n", "<leader>nn", "<cmd>NERDTreeToggle<CR>",
+        { silent = true, desc = "NERDTree: toggle" })
+      vim.keymap.set("n", "<leader>nf", "<cmd>NERDTreeFind<CR>",
+        { silent = true, desc = "NERDTree: reveal current file" })
+      vim.keymap.set("n", "<leader>nF", "<cmd>NERDTreeFocus<CR>",
+        { silent = true, desc = "NERDTree: focus" })
+    end,
+    config = function()
+      require("config.nerdtree")
+    end,
+  },
   {
     "liuchengxu/vista.vim",
     enabled = function()

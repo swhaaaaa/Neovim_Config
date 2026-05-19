@@ -366,21 +366,31 @@
 
 ## File Explorer
 
-### nvim-tree (project sidebar)
+### NERDTree (classic — recommended for cross-directory navigation)
 
-| Key | Mode | Action |
-|-----|------|--------|
-| `<leader>nn` | n | Toggle nvim-tree sidebar |
-| `<leader>nf` | n | Reveal current file (re-roots if needed) |
+| Key | Action |
+|-----|--------|
+| `<leader>nn` | Toggle NERDTree sidebar |
+| `<leader>nf` | **Reveal current file** (works outside current root — key advantage) |
+| `<leader>nF` | Focus NERDTree window |
+
+> Inside NERDTree: `o` open · `i` open split · `s` open vsplit · `t` open tab · `m` file menu (rename/delete/create) · `I` toggle hidden · `R` refresh · `?` help
+
+### nvim-tree (Lua — good for project browsing)
+
+| Key | Action |
+|-----|--------|
+| `<leader>ne` | Toggle nvim-tree sidebar |
+| `<leader>nr` | Reveal current file (only works within current root) |
 
 > Inside nvim-tree: `a` create · `d` delete · `r` rename · `x` cut · `c` copy · `p` paste · `R` refresh · `?` help
 
 ### oil.nvim (buffer-style navigator)
 
-| Key | Mode | Action |
-|-----|------|--------|
-| `-` | n | Open current file's directory as a buffer |
-| `<leader>-` | n | Same, in a floating window |
+| Key | Action |
+|-----|--------|
+| `-` | Open current file's directory as a buffer |
+| `<leader>-` | Same, in a floating window |
 
 > Inside oil buffer: edit like a normal buffer — delete line = delete file, add line = create file, rename line = rename file. Press `<CR>` to open, `-` to go up, `g.` toggle hidden, `q` close.
 

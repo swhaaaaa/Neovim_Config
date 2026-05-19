@@ -23,7 +23,7 @@ wk.add {
   { "<leader>w",  group = "LSP workspace" },
   { "<leader>x",  group = "trouble / diagnostics" },
   { "<leader>ak", group = "ack search" },
-  { "<leader>n",  group = "file explorer" },
+  { "<leader>n",  group = "file explorer (n=NERDTree, ne/nr=nvim-tree)" },
   { "<leader>t",  group = "toggle" },
   { "<leader>u",  group = "UI toggles" },
 }
