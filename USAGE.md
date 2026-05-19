@@ -364,14 +364,25 @@
 
 ---
 
-## File Explorer (nvim-tree)
+## File Explorer
+
+### nvim-tree (project sidebar)
 
 | Key | Mode | Action |
 |-----|------|--------|
-| `<leader>nn` | n | Toggle file explorer |
-| `<leader>nf` | n | Reveal current file in explorer |
+| `<leader>nn` | n | Toggle nvim-tree sidebar |
+| `<leader>nf` | n | Reveal current file (re-roots if needed) |
 
 > Inside nvim-tree: `a` create · `d` delete · `r` rename · `x` cut · `c` copy · `p` paste · `R` refresh · `?` help
+
+### oil.nvim (buffer-style navigator)
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `-` | n | Open current file's directory as a buffer |
+| `<leader>-` | n | Same, in a floating window |
+
+> Inside oil buffer: edit like a normal buffer — delete line = delete file, add line = create file, rename line = rename file. Press `<CR>` to open, `-` to go up, `g.` toggle hidden, `q` close.
 
 ---
 

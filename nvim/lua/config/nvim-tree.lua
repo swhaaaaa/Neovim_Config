@@ -101,4 +101,4 @@ nvim_tree.setup {
 }
 
 keymap.set("n", "<leader>nn", "<cmd>NvimTreeToggle<CR>",      { desc = "Explorer: toggle" })
-keymap.set("n", "<leader>nf", "<cmd>NvimTreeFindFile<CR>",    { desc = "Explorer: reveal file" })
+keymap.set("n", "<leader>nf", "<cmd>NvimTreeFindFile<CR>",    { desc = "Explorer: reveal file in tree" })

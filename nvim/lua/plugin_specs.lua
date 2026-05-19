@@ -351,6 +351,53 @@ local plugin_specs = {
       require("config.fzf-lua")
     end,
   },
+  -- oil.nvim: edit filesystem like a buffer — complement to nvim-tree
+  -- Press - to open the directory of the current file (vim-vinegar style)
+  -- No root concept — freely navigate any directory
+  -- Delete line = delete file, add line = create file, edit line = rename
+  {
+    "stevearc/oil.nvim",
+    dependencies = { "nvim-mini/mini.icons" },
+    lazy = false,   -- load immediately (recommended by author)
+    opts = {
+      default_file_explorer = false,  -- keep netrw disabled, don't replace it
+      columns = { "icon", "size" },
+      view_options = {
+        show_hidden = true,           -- show dotfiles
+      },
+      float = {
+        padding = 2,
+        max_width = 80,
+        max_height = 30,
+      },
+      use_default_keymaps = false,  -- disable defaults to prevent conflicts
+                                    -- (<C-h> default conflicts with window nav)
+      keymaps = {
+        ["<CR>"]  = "actions.select",
+        ["<C-s>"] = "actions.select_vsplit",
+        ["<C-t>"] = "actions.select_tab",
+        ["<C-p>"] = "actions.preview",
+        ["-"]     = "actions.parent",
+        ["_"]     = "actions.open_cwd",
+        ["gs"]    = "actions.change_sort",
+        ["g."]    = "actions.toggle_hidden",
+        ["gf"]    = "actions.open_terminal",
+        ["gr"]    = "actions.refresh",
+        ["q"]     = "actions.close",
+        ["?"]     = "actions.show_help",
+        -- <C-h> intentionally omitted — conflicts with <C-w>h (window left)
+      },
+    },
+    config = function(_, opts)
+      require("oil").setup(opts)
+      -- - opens oil for current file's directory
+      vim.keymap.set("n", "-", "<cmd>Oil<CR>",
+        { desc = "oil: open parent directory" })
+      -- <leader>- opens oil as a floating window
+      vim.keymap.set("n", "<leader>-", "<cmd>Oil --float<CR>",
+        { desc = "oil: open parent directory (float)" })
+    end,
+  },
   {
     "nvim-tree/nvim-tree.lua",
     config = function()

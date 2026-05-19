@@ -104,7 +104,8 @@ to install Treesitter parsers.
 |--------|------|
 | `lualine.nvim` | Status line |
 | `bufferline.nvim` | Buffer tabs |
-| `nvim-tree.lua` | File explorer |
+| `nvim-tree.lua` | Sidebar file explorer |
+| `oil.nvim` | Buffer-style file navigator (`-` key) |
 | `nvim-ufo` | Folding with line count (`↙ N`) |
 | `nvim-statuscol` | Custom sign/number column |
 | `indent-blankline.nvim` | Indent & scope guides |
