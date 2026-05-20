@@ -273,7 +273,7 @@
 | `<leader>wl` | n | List workspace folders |
 | `gd` | n | Go to definition (location list if multiple) |
 | `K` | n | Hover documentation |
-| `<C-k>` | n | Signature help |
+| `<leader>sh` | n | Signature help (moved from `<C-k>` — reserved for window navigation) |
 | `<C-]>` | n | Go to definition (direct) |
 
 ### LSP Diagnostics
