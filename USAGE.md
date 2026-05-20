@@ -366,24 +366,15 @@
 
 ## File Explorer
 
-### NERDTree (classic — recommended for cross-directory navigation)
+### NERDTree (sidebar tree)
 
 | Key | Action |
 |-----|--------|
 | `<leader>nn` | Toggle NERDTree sidebar |
-| `<leader>nf` | **Reveal current file** (works outside current root — key advantage) |
+| `<leader>nf` | Reveal current file (works outside current root) |
 | `<leader>nF` | Focus NERDTree window |
 
 > Inside NERDTree: `o` open · `i` open split · `s` open vsplit · `t` open tab · `m` file menu (rename/delete/create) · `I` toggle hidden · `R` refresh · `?` help
-
-### nvim-tree (Lua — good for project browsing)
-
-| Key | Action |
-|-----|--------|
-| `<leader>ne` | Toggle nvim-tree sidebar |
-| `<leader>nr` | Reveal current file (only works within current root) |
-
-> Inside nvim-tree: `a` create · `d` delete · `r` rename · `x` cut · `c` copy · `p` paste · `R` refresh · `?` help
 
 ### oil.nvim (buffer-style navigator)
 

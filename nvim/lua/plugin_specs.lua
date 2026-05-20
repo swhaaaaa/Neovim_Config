@@ -351,7 +351,7 @@ local plugin_specs = {
       require("config.fzf-lua")
     end,
   },
-  -- oil.nvim: edit filesystem like a buffer — complement to nvim-tree
+  -- oil.nvim: edit filesystem like a buffer
   -- Press - to open the directory of the current file (vim-vinegar style)
   -- No root concept — freely navigate any directory
   -- Delete line = delete file, add line = create file, edit line = rename
@@ -396,12 +396,6 @@ local plugin_specs = {
       -- <leader>- opens oil as a floating window
       vim.keymap.set("n", "<leader>-", "<cmd>Oil --float<CR>",
         { desc = "oil: open parent directory (float)" })
-    end,
-  },
-  {
-    "nvim-tree/nvim-tree.lua",
-    config = function()
-      require("config.nvim-tree")
     end,
   },
   -- NERDTree: classic VimScript file explorer
@@ -534,7 +528,7 @@ local plugin_specs = {
         delay = 200,
         under_cursor = true,
         min_count_to_highlight = 2,  -- only highlight if 2+ occurrences
-        filetypes_denylist = { "NvimTree", "fugitive", "help", "qf" },
+        filetypes_denylist = { "nerdtree", "fugitive", "help", "qf" },
       }
       vim.keymap.set("n", "]r", function() require("illuminate").goto_next_reference() end,
         { desc = "illuminate: next reference" })
