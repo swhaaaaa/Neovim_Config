@@ -68,7 +68,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
         close_events = { "CursorMoved", "BufLeave", "WinLeave", "LSPDetach" },
       }
     end)
-    map("n", "<C-k>", vim.lsp.buf.signature_help)
+    -- <C-k> reserved for window navigation (mappings.lua)
+    -- signature help moved to <leader>sh
+    map("n", "<leader>sh", vim.lsp.buf.signature_help, { desc = "LSP: signature help" })
     map("n", "<leader>rn", vim.lsp.buf.rename,       { desc = "LSP: rename symbol" })
     map("n", "<leader>ca", vim.lsp.buf.code_action,  { desc = "LSP: code action" })
     map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder,    { desc = "LSP: add workspace folder" })
