@@ -192,7 +192,7 @@
 
 ## Navigation
 
-### vim-illuminate (word highlight)
+### vim-illuminate (auto word highlight)
 
 | Key | Mode | Action |
 |-----|------|--------|
@@ -200,6 +200,19 @@
 | `[r` | n | Jump to previous occurrence |
 
 > Automatically highlights all occurrences of the word under cursor using LSP → treesitter → regex (in priority order). Only activates when there are 2+ occurrences.
+
+### vim-mark (manual multi-word highlight)
+
+Like the classic `mark.vim` — manually mark words you want to track while reading source code. Each word gets a different color.
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<leader>mk` | n | Toggle highlight word under cursor |
+| `<leader>mk` | v | Toggle highlight visual selection |
+| `<leader>mK` | n | Clear all marks |
+| `{N}<leader>mk` | n | Mark with specific color N (1-6) |
+
+> Supports 6 simultaneous highlight colors. Use `*` / `#` to search within marked words.
 
 ### LSP Definitions & References (Glance)
 

@@ -25,30 +25,20 @@ vim.g.ackhighlight = 0
 -- ── Keymaps ────────────────────────────────────────────────────────────────
 local map = vim.keymap.set
 
--- Search word under cursor across the project (Ack! = no auto-jump)
-map("n", "<leader>ak", function()
-  local word = vim.fn.expand("<cword>")
-  if word == "" then
-    vim.notify("No word under cursor", vim.log.levels.WARN)
-    return
-  end
-  vim.cmd("Ack! " .. vim.fn.shellescape(word))
-end, { silent = true, desc = "Ack: search word under cursor" })
+-- Search word under cursor (mirrors: nmap <leader>ak :Ack! <C-R>=expand("<cword>")<CR>)
+map("n", "<leader>ak",
+  ':Ack! <C-R>=expand("<cword>")<CR>',
+  { desc = "Ack: search word under cursor" })
 
--- Search visual selection across the project
-map("v", "<leader>ak", function()
-  local saved = vim.fn.getreg("z")
-  local saved_type = vim.fn.getregtype("z")
-  vim.cmd([[noautocmd normal! "zy]])
-  local sel = vim.fn.getreg("z"):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
-  vim.fn.setreg("z", saved, saved_type)
-  if sel == "" then return end
-  vim.cmd("Ack! " .. vim.fn.shellescape(sel))
-end, { silent = true, desc = "Ack: search visual selection" })
+-- Search visual selection (mirrors: vmap <leader>ak y:Ack! "<C-R>0")
+map("v", "<leader>ak",
+  'y:Ack! "<C-R>0"<CR>',
+  { desc = "Ack: search visual selection" })
 
--- Open empty Ack prompt with cursor between quotes — type pattern (spaces allowed)
--- Uses --fixed-strings by default: safe for C/C++ expressions like "func(a, b)"
-map("n", "<leader>akk", ':Ack! ""<Left>', { desc = "Ack: open prompt (literal)" })
+-- Open empty Ack prompt (mirrors: map <leader>akk :Ack! "" <left><left>)
+map("n", "<leader>akk",
+  ':Ack! "" <left><left>',
+  { desc = "Ack: open prompt" })
 
 -- :AckRegex {pattern}  — same as :Ack! but without --fixed-strings
 -- Use when you actually need regex: :AckRegex cpha\d+
@@ -63,10 +53,8 @@ end, { nargs = "+", desc = "Ack with regex (no --fixed-strings)" })
 map("n", "<leader>akr", ':AckRegex ""<Left>', { desc = "Ack: open regex prompt" })
 
 -- Clear any leftover Ack match highlights explicitly
--- (nohlsearch alone does not clear ack.vim's Search highlights)
 map("n", "<leader>akc", function()
   vim.cmd("nohlsearch")
-  -- Clear all match highlights set by ack.vim in every window
   vim.cmd("call clearmatches()")
   vim.notify("Ack highlights cleared", vim.log.levels.INFO)
 end, { silent = true, desc = "Ack: clear highlights" })

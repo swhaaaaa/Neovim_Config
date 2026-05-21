@@ -537,6 +537,33 @@ local plugin_specs = {
     end,
   },
 
+  -- vim-ingo-library: required dependency for vim-mark (must load first)
+  {
+    "inkarkat/vim-ingo-library",
+    lazy = false,
+  },
+  -- vim-mark: highlight multiple words simultaneously in different colors
+  -- <leader>m   toggle highlight word under cursor
+  -- <leader>M   clear mark under cursor / clear all
+  -- <leader>n   jump to next mark
+  -- {N}<leader>m  mark with specific color N (1-6)
+  {
+    "inkarkat/vim-mark",
+    dependencies = { "inkarkat/vim-ingo-library" },
+    lazy = false,
+    init = function()
+      -- Disable ALL default mappings to avoid any conflicts
+      vim.g.mw_no_mappings = 1
+    end,
+    config = function()
+      vim.schedule(function()
+        local map = vim.keymap.set
+        map({"n","v"}, "<leader>mk", "<Plug>MarkSet",      { desc = "Mark: toggle mark" })
+        map("n",       "<leader>mK", "<Plug>MarkAllClear", { desc = "Mark: clear all" })
+      end)
+    end,
+  },
+
   -- trouble.nvim: better diagnostics, quickfix, LSP references list UI.
   -- Replaces the plain quickfix/loclist window with a structured, navigable panel.
   -- :Trouble diagnostics   — project-wide LSP errors/warnings

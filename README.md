@@ -148,6 +148,7 @@ to install Treesitter parsers.
 | `grug-far.nvim` | Interactive project-wide find & replace |
 | `ack.vim` | Search across files using ack / ripgrep (`:Ack`) |
 | `vim-illuminate` | Auto-highlight all occurrences of word under cursor |
+| `vim-mark` | Manually highlight multiple words in different colors (`<leader>m`) |
 | `trouble.nvim` | Better diagnostics & quickfix UI |
 
 ### C/C++ Tools
