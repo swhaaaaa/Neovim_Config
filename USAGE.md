@@ -118,8 +118,6 @@
 | `c` / `C` / `cc` | n | Change without polluting the yank register |
 | `<` / `>` | v | Indent and stay in visual mode |
 | `$` | v | Go to last non-blank character (not EOL) |
-| `H` | n/v | Jump to first non-blank character of line |
-| `L` | n/v | Jump to last non-blank character of line |
 
 ### Insert Mode Helpers
 
@@ -157,7 +155,6 @@
 |-----|------|--------|
 | `n` / `N` | n | Next / previous match with count overlay |
 | `*` / `#` | n | Search word under cursor forward / backward |
-| `<leader><CR>` | n | Clear search highlight |
 
 ### Hop (in-buffer jump)
 
