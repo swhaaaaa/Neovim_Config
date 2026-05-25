@@ -539,30 +539,20 @@ local plugin_specs = {
     end,
   },
 
-  -- vim-ingo-library: required dependency for vim-mark (must load first)
-  {
-    "inkarkat/vim-ingo-library",
-    lazy = false,
-  },
   -- vim-mark: highlight multiple words simultaneously in different colors
-  -- <leader>m   toggle highlight word under cursor
-  -- <leader>M   clear mark under cursor / clear all
-  -- <leader>n   jump to next mark
-  -- {N}<leader>m  mark with specific color N (1-6)
+  -- <leader>mk  toggle highlight word under cursor (n/v)
+  -- <leader>mK  clear all marks
+  -- {N}<leader>mk  mark with specific color N (1-6)
   {
     "inkarkat/vim-mark",
     dependencies = { "inkarkat/vim-ingo-library" },
-    lazy = false,
+    keys = {
+      { "<leader>mk", "<Plug>MarkSet",      mode = { "n", "v" }, desc = "Mark: toggle mark" },
+      { "<leader>mK", "<Plug>MarkAllClear", mode = "n",          desc = "Mark: clear all" },
+    },
     init = function()
-      -- Disable ALL default mappings to avoid any conflicts
+      -- Must be set before plugin loads to disable default mappings
       vim.g.mw_no_mappings = 1
-    end,
-    config = function()
-      vim.schedule(function()
-        local map = vim.keymap.set
-        map({"n","v"}, "<leader>mk", "<Plug>MarkSet",      { desc = "Mark: toggle mark" })
-        map("n",       "<leader>mK", "<Plug>MarkAllClear", { desc = "Mark: clear all" })
-      end)
     end,
   },
 
