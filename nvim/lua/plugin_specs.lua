@@ -309,10 +309,11 @@ local plugin_specs = {
     end,
   },
   {
-    "rcarriga/nvim-notify",
-    event = "VeryLazy",
+    "folke/snacks.nvim",
+    priority = 1000,  -- load early so vim.notify is overridden before other plugins use it
+    lazy = false,
     config = function()
-      require("config.nvim-notify")
+      require("config.snacks")
     end,
   },
   { "itchyny/vim-highlighturl", event = "BufReadPost" },

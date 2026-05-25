@@ -110,7 +110,7 @@ to install Treesitter parsers.
 | `nvim-statuscol` | Custom sign/number column |
 | `indent-blankline.nvim` | Indent & scope guides |
 | `nvim-colorizer` | Hex color preview |
-| `nvim-notify` | Notification popups |
+| `snacks.nvim` | Notification popups (replaces nvim-notify) + nicer `vim.ui.input` for LSP rename / input prompts |
 | `nvim-bqf` | Enhanced quickfix window |
 | `mini.icons` | File/LSP icons |
 
@@ -362,6 +362,7 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `:Format` | Format current buffer (conform.nvim / LSP fallback) |
 | `:LspInfo2` | Show active LSP clients for current buffer |
 | `:ReloadConfig` | Reload `init.lua` without restarting |
+| `:lua Snacks.notifier.show_history()` | Browse past notifications (snacks.nvim) |
 
 ---
 

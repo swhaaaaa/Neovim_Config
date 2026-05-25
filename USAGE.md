@@ -22,8 +22,9 @@
 14. [C/C++ Tools](#cc-tools)
 15. [Spelling](#spelling)
 16. [Terminal](#terminal)
-17. [User Commands](#user-commands)
-18. [Tips & Workflows](#tips--workflows)
+17. [Notifications](#notifications)
+18. [User Commands](#user-commands)
+19. [Tips & Workflows](#tips--workflows)
 
 ---
 
@@ -491,6 +492,20 @@ Two snippet engines are available:
 
 ---
 
+## Notifications
+
+Notifications are handled by **snacks.nvim** (replaces nvim-notify). All `vim.notify()` calls throughout the config use it automatically.
+
+| Command | Action |
+|---------|--------|
+| `:lua Snacks.notifier.show_history()` | Browse all past notifications in a popup |
+
+> Notifications stack from the **bottom-right** upward. Style: `fancy` (icon + title bar). Timeout: 1500 ms.
+>
+> `vim.ui.input()` is also handled by snacks — LSP rename prompts and other input dialogs appear as a floating input box instead of the command line.
+
+---
+
 ## Trouble (Diagnostics & Quickfix UI)
 
 | Key / Command | Mode | Action |
@@ -554,6 +569,7 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 
 | Command | Action |
 |---------|--------|
+| `:lua Snacks.notifier.show_history()` | Browse past notifications |
 | `:Format` | Format current buffer (conform.nvim with LSP fallback) |
 | `:LspInfo2` | Show active LSP clients for current buffer |
 | `:ReloadConfig` | Reload `init.lua` without restarting Neovim |
