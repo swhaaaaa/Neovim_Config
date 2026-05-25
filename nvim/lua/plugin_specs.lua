@@ -33,7 +33,11 @@ local plugin_specs = {
           require("luasnip").config.set_config(opts)
           -- Load friendly-snippets (VSCode format)
           require("luasnip.loaders.from_vscode").lazy_load()
-          -- NOTE: custom my_snippets/ use UltiSnips syntax — loaded by UltiSnips directly
+          -- Load my_snippets/ via snipmate loader (all files except markdown/snippets
+          -- which use UltiSnips !p Python interpolation — still handled by UltiSnips)
+          require("luasnip.loaders.from_snipmate").lazy_load({
+            paths = { vim.fn.stdpath("config") .. "/my_snippets" },
+          })
         end,
       },
       -- Autopairs integrated with cmp confirm
@@ -57,24 +61,25 @@ local plugin_specs = {
       "hrsh7th/cmp-omni",
       "https://codeberg.org/FelipeLema/cmp-async-path.git",
       "saadparwaiz1/cmp_luasnip",
-      "quangnguyen30192/cmp-nvim-ultisnips",  -- UltiSnips source for nvim-cmp
     },
     config = function()
       require("config.nvim-cmp")
     end,
   },
 
-  -- UltiSnips kept for .snippets file format support
+  -- UltiSnips: kept only for markdown.snippets and snippets.snippets which use
+  -- !p Python interpolation that LuaSnip's snipmate loader cannot handle.
+  -- All other my_snippets/ files are loaded by LuaSnip above.
+  -- honza/vim-snippets removed — covered by friendly-snippets via LuaSnip.
   {
     "SirVer/ultisnips",
     init = function()
-      vim.g.UltiSnipsExpandTrigger = "<c-j>"
-      vim.g.UltiSnipsEnableSnipMate = 0
-      vim.g.UltiSnipsJumpForwardTrigger = "<c-j>"
+      vim.g.UltiSnipsExpandTrigger       = "<c-j>"
+      vim.g.UltiSnipsEnableSnipMate      = 0
+      vim.g.UltiSnipsJumpForwardTrigger  = "<c-j>"
       vim.g.UltiSnipsJumpBackwardTrigger = "<c-k>"
-      vim.g.UltiSnipsSnippetDirectories = { "UltiSnips", "my_snippets" }
+      vim.g.UltiSnipsSnippetDirectories  = { "my_snippets" }
     end,
-    dependencies = { "honza/vim-snippets" },
     event = "InsertEnter",
   },
 
