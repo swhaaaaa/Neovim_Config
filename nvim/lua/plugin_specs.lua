@@ -33,11 +33,9 @@ local plugin_specs = {
           require("luasnip").config.set_config(opts)
           -- Load friendly-snippets (VSCode format)
           require("luasnip.loaders.from_vscode").lazy_load()
-          -- Load my_snippets/ via snipmate loader (all files except markdown/snippets
-          -- which use UltiSnips !p Python interpolation — still handled by UltiSnips)
-          require("luasnip.loaders.from_snipmate").lazy_load({
-            paths = { vim.fn.stdpath("config") .. "/my_snippets" },
-          })
+          -- NOTE: my_snippets/ uses UltiSnips-specific syntax (quoted triggers,
+          -- regex r-flag, !p Python interpolation) incompatible with LuaSnip's
+          -- snipmate loader — still loaded by UltiSnips directly.
         end,
       },
       -- Autopairs integrated with cmp confirm
