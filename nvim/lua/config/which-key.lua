@@ -27,4 +27,8 @@ wk.add {
   { "<leader>n",  group = "file explorer (NERDTree)" },
   { "<leader>t",  group = "toggle" },
   { "<leader>u",  group = "UI toggles" },
+  -- UI toggle entries
+  { "<leader>ub", desc = "blink cursor to locate it" },
+  { "<leader>uc", desc = "pick colorscheme (fzf-lua)" },
+  { "<leader>ux", desc = "toggle treesitter context bar" },
 }

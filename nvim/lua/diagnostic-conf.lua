@@ -5,7 +5,7 @@ local api = vim.api
 diagnostic.config {
   underline = false,
   virtual_text = false,
-  virtual_lines = false,
+  virtual_lines = { only_on_cursor = true },
   signs = {
     text = {
       [diagnostic.severity.ERROR] = "🆇",

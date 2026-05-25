@@ -10,7 +10,7 @@ Evolved from a classic Vim setup.
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| Neovim | >= 0.11 | Required |
+| Neovim | >= 0.11 | Required (`smoothscroll`, `virtual_lines` need 0.10+) |
 | git | any | Plugin manager & git plugins |
 | curl | any | Downloads |
 | node + npm | any | Markdown preview, LSP servers |
@@ -167,7 +167,7 @@ to install Treesitter parsers.
 ### Colorschemes
 `everforest` · `gruvbox-material` · `sonokai` · `tokyonight` · `catppuccin` · `kanagawa` · `nightfox`
 
-Change active theme in `init.lua`:
+Pick a theme interactively with `<leader>uc` (fzf-lua picker). To set a permanent default, edit the last line of `init.lua`:
 ```lua
 color_scheme.select_colorscheme("everforest")  -- change to any key above
 ```
@@ -240,6 +240,8 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `K` | Hover documentation |
 | `,ca` | Code action |
 | `,rn` | Rename symbol |
+
+> **Diagnostics**: virtual lines are shown inline beneath the cursor line only (`virtual_lines = { only_on_cursor = true }`). A float with full detail (source, prefix) opens automatically on `CursorHold`.
 
 ### Completion
 | Key | Action |
@@ -344,6 +346,15 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `<prefix>d` | Find functions called by function |
 | `<prefix>a` | Find where symbol is assigned |
 | `<prefix>b` | Build cscope database |
+
+### UI Toggles
+| Key | Action |
+|-----|--------|
+| `<leader>ub` | Blink cursor column/line to locate cursor |
+| `<leader>uc` | Pick colorscheme interactively (fzf-lua) |
+| `<leader>ux` | Toggle treesitter context bar |
+| `<leader>tf` | Toggle format-on-save (conform.nvim) |
+| `<leader>fm` | Toggle fold method: treesitter expr ↔ manual |
 
 ### User Commands
 | Command | Action |

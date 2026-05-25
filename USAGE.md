@@ -36,6 +36,7 @@
 | `<leader>sv` | n | Reload `init.lua` without restarting |
 | `<leader>lc` | n | Change working directory to current file's folder |
 | `<leader>ub` | n | Blink cursor to find its position |
+| `<leader>uc` | n | Pick colorscheme interactively (fzf-lua) |
 | `<leader>cl` | n | Toggle cursor column highlight |
 | `<leader>fm` | n | Toggle fold method: treesitter ↔ manual (freeze folds) |
 | `<F12>` | n/i | Toggle spell check |
@@ -293,6 +294,10 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `[d` / `]d` | Previous / next diagnostic |
 | `<space>e` | Show diagnostic float |
 | `<space>q` | Add diagnostics to location list |
+| `<space>qb` | Add current buffer diagnostics to quickfix |
+| `<space>qw` | Add all open files' diagnostics to quickfix |
+
+> Diagnostic virtual lines appear inline beneath the cursor line only. A float with full detail opens automatically on `CursorHold` when the cursor sits on a diagnostic.
 
 ---
 
@@ -624,7 +629,9 @@ pip install debugpy   # once per virtualenv
 - `:AckRegex pattern` — same regex mode from command line
 
 ### Switch colorscheme
-Edit the last line of `nvim/init.lua`:
+Press `<leader>uc` to open an interactive fzf-lua picker over all 7 schemes. The change takes effect immediately.
+
+To set a permanent default, edit the last line of `nvim/init.lua`:
 ```lua
 color_scheme.select_colorscheme("tokyonight")
 -- options: everforest · gruvbox_material · sonokai · tokyonight

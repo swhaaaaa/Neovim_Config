@@ -341,6 +341,22 @@ keymap.set("n", "[q",         "<cmd>cprev<CR>",  { desc = "prev quickfix item" }
 keymap.set("n", "]Q",         "<cmd>clast<CR>",  { desc = "last quickfix item" })
 keymap.set("n", "[Q",         "<cmd>cfirst<CR>", { desc = "first quickfix item" })
 
+-- ─── Colorscheme picker ──────────────────────────────────────────────────────
+keymap.set("n", "<leader>uc", function()
+  local color_scheme = require("colorschemes")
+  local keys = vim.tbl_keys(color_scheme.colorscheme_conf)
+  table.sort(keys)
+  require("fzf-lua").fzf_exec(keys, {
+    prompt = "Colorscheme> ",
+    winopts = { height = 0.4, width = 0.3, preview = { hidden = "hidden" } },
+    actions = {
+      ["default"] = function(selected)
+        if selected[1] then color_scheme.select_colorscheme(selected[1]) end
+      end,
+    },
+  })
+end, { desc = "pick colorscheme" })
+
 -- ─── Format on save toggle ───────────────────────────────────────────────────
 -- conform.nvim has format_on_save disabled by default.
 -- Use <leader>tf to toggle it on/off per session.

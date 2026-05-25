@@ -74,6 +74,7 @@ set wildmode=list:longest
 
 " Minimum lines to keep above and below cursor when scrolling
 set scrolloff=10
+set smoothscroll
 
 " Use mouse to select and resize windows, etc.
 set mouse=n
