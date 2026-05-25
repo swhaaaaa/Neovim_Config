@@ -59,6 +59,7 @@ local plugin_specs = {
       "hrsh7th/cmp-omni",
       "https://codeberg.org/FelipeLema/cmp-async-path.git",
       "saadparwaiz1/cmp_luasnip",
+      "quangnguyen30192/cmp-nvim-ultisnips",  -- UltiSnips source for my_snippets/
     },
     config = function()
       require("config.nvim-cmp")
