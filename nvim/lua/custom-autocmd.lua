@@ -235,6 +235,14 @@ api.nvim_create_autocmd("BufReadPre", {
       vim.bo.swapfile = false
       vim.bo.bufhidden = "unload"
       vim.bo.undolevels = -1
+
+      -- Restore eventignore after the buffer is displayed so the rest of
+      -- the session is not affected (plugins, gitsigns, lualine, etc.)
+      api.nvim_create_autocmd("BufWinEnter", {
+        buffer = ev.buf,
+        once   = true,
+        callback = function() vim.o.eventignore = "" end,
+      })
     end
   end,
 })
