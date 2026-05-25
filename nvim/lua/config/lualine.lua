@@ -215,6 +215,7 @@ require("lualine").setup {
   },
   sections = {
     lualine_a = {
+      { "mode" },
       {
         "filename",
         symbols = {
