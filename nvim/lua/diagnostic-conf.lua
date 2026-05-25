@@ -26,6 +26,9 @@ diagnostic.config {
   },
 }
 
+-- disabled by default; toggle with <leader>ud
+diagnostic.enable(false)
+
 -- set quickfix list from diagnostics in a certain buffer, not the whole workspace
 local set_qflist = function(buf_num, severity)
   local diagnostics = nil
