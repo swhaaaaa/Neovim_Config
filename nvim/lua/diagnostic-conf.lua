@@ -54,7 +54,7 @@ vim.keymap.set("n", "<space>qb", function()
 end, { desc = "put buffer diagnostics to qf" })
 
 -- automatically show diagnostic in float win for current line
-vim.g.diagnostic_float_enabled = true
+vim.g.diagnostic_float_enabled = false
 
 vim.keymap.set("n", "<leader>uD", function()
   vim.g.diagnostic_float_enabled = not vim.g.diagnostic_float_enabled
