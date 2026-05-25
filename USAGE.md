@@ -58,7 +58,7 @@
 | `<leader>fr` | n | Recent files (oldfiles) |
 | `<leader>fb` | n | Open buffers |
 | `<leader>fh` | n | Help tags |
-| `<leader>ft` | n | Buffer tags (ctags) |
+| `<leader>ft` | n | Buffer tags — fuzzy jump to symbol in current buffer (requires ctags) |
 | `<leader>fd` | n | Live grep in a specific folder (prompted) |
 | `<leader>fD` | n | Find files in a specific folder (prompted) |
 | `<leader>sd` | n/v | Grep in a specific folder (prompted) |

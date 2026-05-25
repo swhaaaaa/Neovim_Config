@@ -198,7 +198,15 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 |-----|--------|
 | `<Space>f` | Fuzzy find files with preview (fzf-lua) |
 | `,fg` | Live grep / ripgrep with preview |
-| `<leader>ao` | Toggle aerial symbol outline |
+
+### Navigation
+| Key | Action |
+|-----|--------|
+| `f` | Hop jump (EasyMotion-style) |
+| `*` / `#` / `n` / `N` | Search with hlslens highlights |
+| `]f` / `[f` | Jump to next/previous function (mini.ai) |
+| `]c` / `[c` | Jump to next/previous class (mini.ai) |
+| `<leader>ao` | Toggle aerial symbol outline (LSP/treesitter) |
 
 ### Folding
 | Key | Action |
@@ -209,14 +217,6 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `zo` | Open fold under cursor |
 | `zO` | Open fold recursively |
 | `,fm` | Toggle fold method (expr ↔ manual) — freeze folds while editing |
-
-### Navigation
-| Key | Action |
-|-----|--------|
-| `f` | Hop jump (EasyMotion-style) |
-| `*` / `#` / `n` / `N` | Search with hlslens highlights |
-| `]f` / `[f` | Jump to next/previous function (mini.ai) |
-| `]c` / `[c` | Jump to next/previous class (mini.ai) |
 
 ### Terminal
 | Key | Action |
