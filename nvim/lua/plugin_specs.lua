@@ -101,7 +101,11 @@ local plugin_specs = {
   },
   {
     "dnlhc/glance.nvim",
-    event = "VeryLazy",
+    keys = {
+      { "<leader>ld", "<cmd>Glance definitions<cr>",     desc = "LSP: peek definitions" },
+      { "<leader>lr", "<cmd>Glance references<cr>",      desc = "LSP: peek references" },
+      { "<leader>li", "<cmd>Glance implementations<cr>", desc = "LSP: peek implementations" },
+    },
     config = function()
       require("config.glance")
     end,
