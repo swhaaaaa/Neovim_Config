@@ -167,7 +167,7 @@ api.nvim_create_autocmd("BufEnter", {
   desc = "Quit only if the last *real* window is a special FT and no other listed buffers exist",
   callback = function()
     -- mark “special” filetypes that can be sole window
-    local quit_fts = { qf = true, help = true, NvimTree = true, vista = true }
+    local quit_fts = { qf = true, help = true, NvimTree = true, aerial = true }
 
     -- collect non-floating windows in current tab
     local real_wins = {}
