@@ -38,6 +38,13 @@ local set_qflist = function(buf_num, severity)
   vim.cmd([[copen]])
 end
 
+-- toggle diagnostics globally
+vim.keymap.set("n", "<leader>ud", function()
+  local enabled = vim.diagnostic.is_enabled()
+  vim.diagnostic.enable(not enabled)
+  vim.notify(enabled and "Diagnostics disabled" or "Diagnostics enabled", vim.log.levels.INFO, { title = "diagnostic" })
+end, { desc = "toggle diagnostics" })
+
 -- this puts diagnostics from opened files to quickfix
 vim.keymap.set("n", "<space>qw", diagnostic.setqflist, { desc = "put window diagnostics to qf" })
 

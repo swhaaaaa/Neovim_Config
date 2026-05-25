@@ -38,6 +38,7 @@
 | `<leader>lc` | n | Change working directory to current file's folder |
 | `<leader>ub` | n | Blink cursor to find its position |
 | `<leader>uc` | n | Pick colorscheme interactively (fzf-lua) |
+| `<leader>ud` | n | Toggle diagnostics on/off (global) |
 | `<leader>cl` | n | Toggle cursor column highlight |
 | `<leader>fm` | n | Toggle fold method: treesitter ↔ manual (freeze folds) |
 | `<F12>` | n/i | Toggle spell check |
