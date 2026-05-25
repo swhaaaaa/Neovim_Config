@@ -27,12 +27,12 @@ local map = vim.keymap.set
 
 -- Search word under cursor (mirrors: nmap <leader>ak :Ack! <C-R>=expand("<cword>")<CR>)
 map("n", "<leader>ak",
-  ':Ack! <C-R>=expand("<cword>")<CR>',
+  ':Ack! <C-R>=expand("<cword>")<CR> ',
   { desc = "Ack: search word under cursor" })
 
 -- Search visual selection — pre-fills command line so path/options can be appended
 map("v", "<leader>ak",
-  'y:Ack! "<C-R>0"',
+  'y:Ack! "<C-R>0" ',
   { desc = "Ack: search visual selection (pre-fill)" })
 
 -- Open empty Ack prompt (mirrors: map <leader>akk :Ack! "" <left><left>)
