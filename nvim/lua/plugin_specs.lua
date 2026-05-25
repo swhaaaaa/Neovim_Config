@@ -173,6 +173,10 @@ local plugin_specs = {
     "nvim-treesitter/nvim-treesitter-context",
     event = "BufReadPost",
     dependencies = "nvim-treesitter/nvim-treesitter",
+    keys = {
+      { "<leader>ux", function() require("treesitter-context").toggle() end,                  desc = "toggle treesitter context" },
+      { "[C",         function() require("treesitter-context").go_to_context(vim.v.count1) end, desc = "jump to context (treesitter)" },
+    },
     opts = {
       enable            = true,
       max_lines         = 3,   -- max lines the context window can take
@@ -180,20 +184,11 @@ local plugin_specs = {
       line_numbers      = true,
       multiline_threshold = 1, -- only show single-line context entries
       trim_scope        = "outer",
-      mode              = "cursor",
+      mode              = "topline",
       separator         = "─",
     },
     config = function(_, opts)
       require("treesitter-context").setup(opts)
-      -- Note: <leader>tc is reserved for tabclose (mappings.lua)
-      -- Using <leader>ux for treesitter context toggle
-      vim.keymap.set("n", "<leader>ux", function()
-        require("treesitter-context").toggle()
-      end, { silent = true, desc = "toggle treesitter context" })
-      -- Jump to context (e.g. jump to the function signature from inside its body)
-      vim.keymap.set("n", "[C", function()
-        require("treesitter-context").go_to_context(vim.v.count1)
-      end, { silent = true, desc = "jump to context (treesitter)" })
     end,
   },
   -- nvim-treesitter-textobjects removed: its plugin/nvim-treesitter-textobjects.vim
@@ -419,12 +414,18 @@ local plugin_specs = {
       require("config.nerdtree")
     end,
   },
+  -- aerial.nvim: LSP/treesitter symbol outline (no ctags required)
+  -- Must load on BufReadPost so it registers its LSP on_attach hook before
+  -- language servers attach — otherwise symbols are never populated.
+  -- Toggle: <leader>ao
   {
-    "liuchengxu/vista.vim",
-    enabled = function()
-      return utils.executable("ctags")
+    "stevearc/aerial.nvim",
+    event = "BufReadPost",
+    keys = { { "<leader>ao", "<cmd>AerialToggle<CR>", desc = "aerial: toggle symbol outline" } },
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-mini/mini.icons" },
+    config = function()
+      require("config.aerial")
     end,
-    dependencies = { "nvim-tree/nvim-web-devicons" },
   },
 
   -- ─── Git ──────────────────────────────────────────────────────────────────────

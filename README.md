@@ -23,7 +23,7 @@ Evolved from a classic Vim setup.
 | `ripgrep` (`rg`) | fzf-lua live grep, grug-far, ack.vim backend (preferred) |
 | `ack` / `ack-grep` | ack.vim search backend (fallback when rg unavailable) |
 | `fd` / `fdfind` | fzf-lua file listing |
-| `ctags` | Vista symbol outline, cscope |
+| `ctags` | cscope |
 | `cscope` | C/C++ symbol navigation |
 | `clangd` | C/C++ LSP |
 | `lldb-dap` or `lldb-vscode` | C/C++ debugger (DAP fallback) |
@@ -120,7 +120,7 @@ to install Treesitter parsers.
 | `fzf-lua` | Fuzzy finder with preview (files, grep, buffers) |
 | `hop.nvim` | EasyMotion-style jump |
 | `nvim-hlslens` | Search result count & highlights |
-| `vista.vim` | Symbol outline (ctags) |
+| `aerial.nvim` | Symbol outline via LSP/treesitter — no ctags needed (`<leader>ao`) |
 
 ### Git
 | Plugin | Role |
@@ -198,7 +198,7 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 |-----|--------|
 | `<Space>f` | Fuzzy find files with preview (fzf-lua) |
 | `,fg` | Live grep / ripgrep with preview |
-| `<Space>t` | Toggle Vista symbol outline |
+| `<leader>ao` | Toggle aerial symbol outline |
 
 ### Folding
 | Key | Action |

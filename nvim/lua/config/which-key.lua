@@ -24,6 +24,7 @@ wk.add {
   { "<leader>w",  group = "LSP workspace" },
   { "<leader>x",  group = "trouble / diagnostics" },
   { "<leader>ak", group = "ack search" },
+  { "<leader>ao", desc = "aerial: toggle symbol outline" },
   { "<leader>n",  group = "file explorer (NERDTree)" },
   { "<leader>t",  group = "toggle" },
   { "<leader>u",  group = "UI toggles" },

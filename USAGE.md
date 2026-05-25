@@ -263,11 +263,13 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `<leader>ux` | Toggle treesitter context bar on/off |
 | `[C` | Jump up to current context (e.g. jump to function signature) |
 
-### Vista (symbol outline)
+### Aerial (symbol outline — LSP/treesitter)
 
 | Key | Action |
 |-----|--------|
-| `<space>t` | Toggle Vista symbol outline |
+| `<leader>ao` | Toggle aerial symbol outline |
+
+> aerial.nvim uses LSP and treesitter — no ctags required. Works in any file with an LSP server or treesitter parser attached.
 
 ---
 
@@ -580,7 +582,7 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 | `:DiffviewOpen` | Open full project diff tree |
 | `:Obsession` | Start/toggle session recording (auto-saves on exit) |
 | `:Obsession {file}` | Start recording to a specific session file |
-| `:Vista!!` | Toggle symbol outline (also `<space>t`) |
+| `:AerialToggle` | Toggle symbol outline (also `<leader>ao`) |
 | `:MundoToggle` | Toggle visual undo tree (also `<space>u`) |
 | `:CscopeFiles [dir...]` | Generate `cscope.files` from dirs (default: cwd) |
 | `:CscopeFiles! [dir...]` | Append dirs to existing `cscope.files` (de-dup) |
