@@ -524,6 +524,10 @@ local plugin_specs = {
   {
     "RRethy/vim-illuminate",
     event = "BufReadPost",
+    keys = {
+      { "]r", function() require("illuminate").goto_next_reference() end, desc = "illuminate: next reference" },
+      { "[r", function() require("illuminate").goto_prev_reference() end, desc = "illuminate: prev reference" },
+    },
     config = function()
       require("illuminate").configure {
         providers = { "lsp", "treesitter", "regex" },
@@ -532,10 +536,6 @@ local plugin_specs = {
         min_count_to_highlight = 2,  -- only highlight if 2+ occurrences
         filetypes_denylist = { "nerdtree", "fugitive", "help", "qf" },
       }
-      vim.keymap.set("n", "]r", function() require("illuminate").goto_next_reference() end,
-        { desc = "illuminate: next reference" })
-      vim.keymap.set("n", "[r", function() require("illuminate").goto_prev_reference() end,
-        { desc = "illuminate: prev reference" })
     end,
   },
 
