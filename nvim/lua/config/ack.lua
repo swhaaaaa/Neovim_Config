@@ -30,10 +30,10 @@ map("n", "<leader>ak",
   ':Ack! <C-R>=expand("<cword>")<CR>',
   { desc = "Ack: search word under cursor" })
 
--- Search visual selection (mirrors: vmap <leader>ak y:Ack! "<C-R>0")
+-- Search visual selection — pre-fills command line so path/options can be appended
 map("v", "<leader>ak",
-  'y:Ack! "<C-R>0"<CR>',
-  { desc = "Ack: search visual selection" })
+  'y:Ack! "<C-R>0"',
+  { desc = "Ack: search visual selection (pre-fill)" })
 
 -- Open empty Ack prompt (mirrors: map <leader>akk :Ack! "" <left><left>)
 map("n", "<leader>akk",
