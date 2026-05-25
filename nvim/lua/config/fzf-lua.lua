@@ -193,7 +193,7 @@ end, { nargs = "+", complete = "dir", desc = "files in multiple directories" })
 vim.keymap.set("n", "<leader>ff", "<cmd>FzfLua files<CR>",     { desc = "Fuzzy find files",     silent = true })
 vim.keymap.set("n", "<leader>fg", "<cmd>FzfLua live_grep<CR>", { desc = "Fuzzy grep (ripgrep)", silent = true })
 vim.keymap.set("n", "<leader>fh", "<cmd>FzfLua helptags<CR>",  { desc = "Help tags",             silent = true })
-vim.keymap.set("n", "<leader>ft", "<cmd>FzfLua btags<CR>",     { desc = "Buffer tags",           silent = true })
+vim.keymap.set("n", "<leader>fB", "<cmd>FzfLua btags<CR>",     { desc = "Buffer tags (ctags)",   silent = true })
 vim.keymap.set("n", "<leader>fb", "<cmd>FzfLua buffers<CR>",   { desc = "Open buffers",          silent = true })
 vim.keymap.set("n", "<leader>fr", "<cmd>FzfLua oldfiles<CR>",  { desc = "Recent files",          silent = true })
 

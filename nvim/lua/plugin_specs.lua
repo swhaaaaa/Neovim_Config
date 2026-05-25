@@ -628,7 +628,7 @@ local plugin_specs = {
   -- ─── TODO Comments ────────────────────────────────────────────────────────────
   -- Highlights and lets you jump to TODO / FIXME / HACK / NOTE / BUG etc.
   -- ]t / [t  jump to next / previous todo comment
-  -- <leader>ft  list all TODOs via fzf-lua
+  -- <leader>ft  list all TODOs via fzf-lua  |  <leader>fB  buffer tags (ctags)
   {
     "folke/todo-comments.nvim",
     event = "BufReadPost",

@@ -58,7 +58,8 @@
 | `<leader>fr` | n | Recent files (oldfiles) |
 | `<leader>fb` | n | Open buffers |
 | `<leader>fh` | n | Help tags |
-| `<leader>ft` | n | Buffer tags — fuzzy jump to symbol in current buffer (requires ctags) |
+| `<leader>ft` | n | Find TODO/FIXME/HACK/NOTE comments (todo-comments) |
+| `<leader>fB` | n | Buffer tags — fuzzy jump to symbol in current buffer (requires ctags) |
 | `<leader>fd` | n | Live grep in a specific folder (prompted) |
 | `<leader>fD` | n | Find files in a specific folder (prompted) |
 | `<leader>sd` | n/v | Grep in a specific folder (prompted) |
