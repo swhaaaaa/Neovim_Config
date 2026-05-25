@@ -522,7 +522,7 @@ local plugin_specs = {
   },
   { "machakann/vim-swap",    event = "VeryLazy" },
   { "tpope/vim-repeat",      event = "VeryLazy" },
-  { "tpope/vim-eunuch" },
+  { "tpope/vim-eunuch", event = "VeryLazy" },
   { "tpope/vim-obsession",   cmd = "Obsession" },
 
   -- vim-illuminate: auto-highlight all occurrences of word under cursor.

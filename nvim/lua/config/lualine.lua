@@ -30,18 +30,14 @@ local async_git_status_update = function()
   local now = vim.uv.now()
   if now - last_fetch_time < 300000 then return end
   last_fetch_time = now
+  -- Fetch in background to refresh remote refs for next poll
   async_cmd("git fetch origin", on_exit_fetch)
-  if not git_status_cache.fetch_success then
-    return
-  end
 
-  -- Get the number of commits behind
+  -- Always run rev-list — uses locally known refs, no need to wait for fetch
   -- the @{upstream} notation is inspired by post: https://www.reddit.com/r/neovim/comments/t48x5i/git_branch_aheadbehind_info_status_line_component/
-  -- note that here we should use double dots instead of triple dots
   local behind_cmd_str = "git rev-list --count HEAD..@{upstream}"
   async_cmd(behind_cmd_str, handle_numeric_result("behind_count"))
 
-  -- Get the number of commits ahead
   local ahead_cmd_str = "git rev-list --count @{upstream}..HEAD"
   async_cmd(ahead_cmd_str, handle_numeric_result("ahead_count"))
 end
