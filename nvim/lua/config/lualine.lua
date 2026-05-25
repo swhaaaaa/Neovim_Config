@@ -1,6 +1,7 @@
 local fn = vim.fn
 
 local git_status_cache = {}
+local last_fetch_time = 0
 
 local on_exit_fetch = function(result)
   if result.code == 0 then
@@ -25,7 +26,10 @@ local async_cmd = function(cmd_str, on_exit)
 end
 
 local async_git_status_update = function()
-  -- Fetch the latest changes from the remote repository (replace 'origin' if needed)
+  -- Throttle: fetch at most once every 5 minutes to avoid network calls every second
+  local now = vim.uv.now()
+  if now - last_fetch_time < 300000 then return end
+  last_fetch_time = now
   async_cmd("git fetch origin", on_exit_fetch)
   if not git_status_cache.fetch_success then
     return

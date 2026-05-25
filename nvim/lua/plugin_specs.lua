@@ -507,7 +507,7 @@ local plugin_specs = {
 
   {
     "numToStr/Comment.nvim",
-    event = "BufEnter",
+    event = "VeryLazy",
     dependencies = {
       {
         "JoosepAlviste/nvim-ts-context-commentstring",
@@ -542,7 +542,7 @@ local plugin_specs = {
         delay = 200,
         under_cursor = true,
         min_count_to_highlight = 2,  -- only highlight if 2+ occurrences
-        filetypes_denylist = { "nerdtree", "fugitive", "help", "qf" },
+        filetypes_denylist = { "nerdtree", "fugitive", "help", "qf", "aerial" },
       }
     end,
   },
@@ -697,7 +697,7 @@ local plugin_specs = {
   { "nvim-lua/plenary.nvim", lazy = true },
   {
     "dhananjaylatkar/cscope_maps.nvim",
-    event = "BufEnter",
+    event = "VeryLazy",
     config = function()
       require("config.cscope")
     end,
