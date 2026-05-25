@@ -633,15 +633,14 @@ local plugin_specs = {
     "folke/todo-comments.nvim",
     event = "BufReadPost",
     dependencies = { "nvim-lua/plenary.nvim" },
+    keys = {
+      { "]t",         function() require("todo-comments").jump_next() end, desc = "Next TODO comment" },
+      { "[t",         function() require("todo-comments").jump_prev() end, desc = "Prev TODO comment" },
+      { "<leader>ft", "<cmd>TodoFzfLua<CR>",                               desc = "Find TODOs" },
+    },
     opts = {},
     config = function(_, opts)
       require("todo-comments").setup(opts)
-      vim.keymap.set("n", "]t", function() require("todo-comments").jump_next() end,
-        { desc = "Next TODO comment" })
-      vim.keymap.set("n", "[t", function() require("todo-comments").jump_prev() end,
-        { desc = "Prev TODO comment" })
-      vim.keymap.set("n", "<leader>ft", "<cmd>TodoFzfLua<CR>",
-        { desc = "Find TODOs" })
     end,
   },
 
