@@ -40,12 +40,6 @@ local function canonical_buffer_to_plain_hex(buf)
   local out = {}
   local failed_lines = 0
 
-  -- Sample first line for debugging
-  if #lines > 0 then
-    local sample = lines[1]
-    vim.notify(string.format("Sample line (len=%d): [%s]", #sample, sample), vim.log.levels.INFO)
-  end
-
   for i, l in ipairs(lines) do
     local hex = parse_hex_bytes_from_xxd_line(l)
     if #hex > 0 then

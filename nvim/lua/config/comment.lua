@@ -10,7 +10,10 @@
 -- `gc` - Toggles the region using linewise comment
 -- `gb` - Toggles the region using blockwise comment
 
-require("Comment").setup({
+local ok, comment = pcall(require, "Comment")
+if not ok then return end
+
+comment.setup({
   padding = true,           -- space between comment and text
   sticky  = true,           -- keep cursor position
   ignore  = "^$",           -- ignore empty lines

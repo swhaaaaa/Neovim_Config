@@ -19,9 +19,10 @@ function! buf_utils#GoToBuffer(count, direction) abort
     return
   endif
 
-  " Do not use {count} for gB (it is less useful)
   if a:direction ==# 'forward'
     silent execute('buffer' . a:count)
+  elseif a:direction ==# 'backward'
+    bprevious
   endif
 endfunction
 
