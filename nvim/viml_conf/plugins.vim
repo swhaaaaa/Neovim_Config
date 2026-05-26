@@ -13,12 +13,6 @@ call utils#Cabbrev('ps',  'Lazy sync')
 "                   Plugin Settings (VimScript)           "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"""" vista.vim
-let g:vista#renderer#icons = { 'member': '' }
-let g:vista_echo_cursor = 0
-let g:vista_stay_on_open = 0
-nnoremap <silent> <Space>t :<C-U>Vista!!<CR>
-
 """" vim-mundo
 let g:mundo_verbose_graph = 0
 let g:mundo_width = 80

@@ -123,11 +123,16 @@ vim.api.nvim_create_user_command("MesonSetup", function(opts)
       end
     else
       -- Filter glob results to directories only
+      local before = #pkgdirs
       for _, match in ipairs(expanded) do
         local abs = vim.fn.fnamemodify(match, ":p"):gsub("/$", "")
         if vim.fn.isdirectory(abs) == 1 then
           table.insert(pkgdirs, abs)
         end
+      end
+      if #pkgdirs == before then
+        vim.notify("Glob matched " .. #expanded .. " file(s) but no directories: " .. arg,
+          vim.log.levels.WARN, { title = "Meson" })
       end
     end
   end
