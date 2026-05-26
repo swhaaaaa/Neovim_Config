@@ -288,7 +288,11 @@ local plugin_specs = {
   {
     "catgoose/nvim-colorizer.lua",
     event = "BufReadPost",
-    opts = {},
+    opts = {
+      user_default_options = {
+        names = false,  -- CSS color names ("blue", "red") cause false positives in non-CSS files
+      },
+    },
   },
   {
     "kevinhwang91/nvim-bqf",
