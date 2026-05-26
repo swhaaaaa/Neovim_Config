@@ -290,8 +290,112 @@ end, {
   desc = "compile current C/C++ file with -g -O0 for DAP debugging",
 })
 
+-- ─── OpenBMC / Yocto kernel LSP setup ───────────────────────────────────────
+-- :KernelSetup [openbmc_build_root]
+--
+-- One-shot command to get clangd working on a Yocto-built Linux kernel:
+--   1. Auto-discovers KSRC = tmp/work-shared/*/kernel-source/
+--   2. Auto-discovers KBLD = tmp/work/*/linux-*/*/linux-*-standard-build/
+--   3. Runs gen_compile_commands.py  →  KSRC/compile_commands.json
+--   4. Writes KSRC/.clangd stripping GCC-only flags clangd can't parse
+--   5. Restarts LSP
+--
+-- Usage:
+--   :KernelSetup /path/to/build_ventura2_quanta    (explicit build root)
+--   :KernelSetup                                   (uses cwd)
+vim.api.nvim_create_user_command("KernelSetup", function(opts)
+  local buildroot = (opts.args ~= "" and vim.fn.fnamemodify(opts.args, ":p") or vim.fn.getcwd())
+  buildroot = buildroot:gsub("/$", "")
+
+  if vim.fn.isdirectory(buildroot) == 0 then
+    vim.notify("KernelSetup: not a directory: " .. buildroot, vim.log.levels.ERROR)
+    return
+  end
+
+  -- Discover kernel source dir
+  local ksrc_list = vim.fn.glob(buildroot .. "/tmp/work-shared/*/kernel-source", false, true)
+  if #ksrc_list == 0 then
+    vim.notify("KernelSetup: kernel source not found under\n  " .. buildroot .. "/tmp/work-shared/",
+      vim.log.levels.ERROR)
+    return
+  end
+  local ksrc = ksrc_list[1]
+
+  -- Discover kernel build dir (contains .cmd files needed by gen_compile_commands.py)
+  local kbld_list = vim.fn.glob(buildroot .. "/tmp/work/*/linux-*/*/linux-*-standard-build", false, true)
+  if #kbld_list == 0 then
+    vim.notify("KernelSetup: kernel build dir not found under\n  " .. buildroot .. "/tmp/work/",
+      vim.log.levels.ERROR)
+    return
+  end
+  local kbld = kbld_list[1]
+
+  local gen_script = ksrc .. "/scripts/clang-tools/gen_compile_commands.py"
+  if vim.fn.filereadable(gen_script) == 0 then
+    vim.notify("KernelSetup: gen_compile_commands.py not found at\n  " .. gen_script,
+      vim.log.levels.ERROR)
+    return
+  end
+
+  local out_json = ksrc .. "/compile_commands.json"
+
+  vim.notify(
+    string.format("KernelSetup: generating compile_commands.json\n  src: %s\n  bld: %s", ksrc, kbld),
+    vim.log.levels.INFO, { title = "KernelSetup" })
+
+  vim.fn.jobstart({ "python3", gen_script, "-d", kbld, "-o", out_json }, {
+    on_exit = function(_, code)
+      vim.schedule(function()
+        if code ~= 0 then
+          vim.notify("KernelSetup: gen_compile_commands.py failed (exit " .. code .. ")",
+            vim.log.levels.ERROR, { title = "KernelSetup" })
+          return
+        end
+
+        -- Write .clangd to strip flags that GCC supports but clangd/LLVM rejects
+        local clangd_path = ksrc .. "/.clangd"
+        local f = io.open(clangd_path, "w")
+        if not f then
+          vim.notify("KernelSetup: failed to write " .. clangd_path,
+            vim.log.levels.ERROR, { title = "KernelSetup" })
+          return
+        end
+        f:write(table.concat({
+          "CompileFlags:",
+          "  Remove:",
+          "    - -mabi=aapcs-linux",
+          "    - -fcanon-prefix-map",
+          "    - -fno-var-tracking",
+          "    - -femit-struct-debug-baseonly",
+          "    - -fno-allow-store-data-races",
+          "    - -fno-ipa-sra",
+          "    - -mno-fdpic",
+          "    - -fno-dwarf2-cfi-asm",
+          "    - -mstack-protector-guard=tls",
+          "    - -mstack-protector-guard-offset=*",
+          "    - -fstrict-flex-arrays=*",
+          "    - -Wa,-mno-warn-deprecated",
+          "    - -fuse-ld=*",
+          "",
+        }, "\n"))
+        f:close()
+
+        vim.notify(
+          string.format("KernelSetup done\n  %s\n  %s\nRestarting LSP...", out_json, clangd_path),
+          vim.log.levels.INFO, { title = "KernelSetup" })
+        lsp_restart()
+      end)
+    end,
+  })
+end, {
+  nargs = "?",
+  complete = "dir",
+  desc = "Generate compile_commands.json + .clangd for OpenBMC/Yocto kernel, then restart LSP",
+})
+
 -- Keymaps
 vim.keymap.set("n", "<leader>ms", "<cmd>MesonSetup<CR>", { desc = "meson: setup cwd + link" })
 vim.keymap.set("n", "<leader>mb", "<cmd>MesonBuild<CR>", { desc = "meson: build" })
 vim.keymap.set("n", "<leader>ml", "<cmd>MesonLink<CR>",  { desc = "meson: link compile_commands.json" })
+vim.keymap.set("n", "<leader>ks", "<cmd>KernelSetup<CR>", { desc = "kernel: gen compile_commands + .clangd (OpenBMC/Yocto)" })
 

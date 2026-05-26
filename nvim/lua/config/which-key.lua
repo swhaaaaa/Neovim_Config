@@ -17,6 +17,8 @@ wk.add {
   { "<leader>g",  group = "git" },
   { "<leader>gg", group = "neogit" },
   { "<leader>h",  group = "git hunks" },
+  { "<leader>k",  group = "kernel (OpenBMC/Yocto)" },
+  { "<leader>ks", desc = "kernel: gen compile_commands + .clangd" },
   { "<leader>l",  group = "LSP peek (glance)" },
   { "<leader>m",  group = "meson" },
   { "<leader>mk", group = "mark (vim-mark)" },

@@ -23,8 +23,10 @@
 15. [Spelling](#spelling)
 16. [Terminal](#terminal)
 17. [Notifications](#notifications)
-18. [User Commands](#user-commands)
-19. [Tips & Workflows](#tips--workflows)
+18. [Meson Build](#meson-build)
+19. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
+20. [User Commands](#user-commands)
+21. [Tips & Workflows](#tips--workflows)
 
 ---
 
@@ -606,6 +608,40 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 
 ---
 
+## OpenBMC / Yocto Kernel LSP
+
+`:KernelSetup` automates the full process of enabling clangd on a Yocto-built Linux kernel.
+
+| Key / Command | Action |
+|---------------|--------|
+| `<leader>ks` | `:KernelSetup` — generate `compile_commands.json` + `.clangd`, restart LSP |
+| `:KernelSetup [build_root]` | Same — pass build root explicitly (default: cwd) |
+
+**What it does automatically:**
+1. Finds `tmp/work-shared/*/kernel-source/` → kernel source root (`KSRC`)
+2. Finds `tmp/work/*/linux-*/*/linux-*-standard-build/` → kernel build dir (`KBLD`)
+3. Runs `gen_compile_commands.py -d KBLD -o KSRC/compile_commands.json`
+4. Writes `KSRC/.clangd` to strip GCC-only flags that clangd cannot parse
+5. Restarts LSP
+
+**Usage:**
+```
+:KernelSetup /path/to/build_ventura2_quanta    ← explicit build root
+:KernelSetup                                   ← uses cwd if already cd'd there
+```
+
+**Typical workflow:**
+```
+:KernelSetup /media/swh/.../build_ventura2_quanta
+→ wait for "KernelSetup done" notification
+→ open any file under tmp/work-shared/ventura2/kernel-source/
+→ clangd attaches automatically — gd, K, references all work
+```
+
+> clangd needs `compile_commands.json` at the project root to understand cross-compilation flags. Re-run `:KernelSetup` if the kernel is rebuilt (Yocto may regenerate the build dir).
+
+---
+
 ## User Commands
 
 | Command | Action |
@@ -638,6 +674,7 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 | `:MesonSetup [pkg1 pkg2 ...]` | `meson setup` on one or more package dirs in parallel + symlink `compile_commands.json` |
 | `:MesonBuild [pkgdir]` | `meson compile -C builddir` in pkgdir or cwd (errors if builddir missing) |
 | `:MesonLink [dir]` | Only (re)create `compile_commands.json` symlink without re-running setup |
+| `:KernelSetup [build_root]` | Generate `compile_commands.json` + `.clangd` for OpenBMC/Yocto kernel, then restart LSP |
 | `:LspRestart` | Restart LSP clients for current buffer |
 
 ---
