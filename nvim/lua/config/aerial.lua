@@ -23,17 +23,28 @@ aerial.setup {
   highlight_on_hover = false,
   highlight_on_jump  = false,
 
-  -- E5248 fix: mini.icons.tweak_lsp_kind() prepends icon glyphs + space to
-  -- every vim.lsp.protocol.SymbolKind entry (e.g. "Class" → "󰌗 Class").
-  -- Aerial reads SymbolKind to populate symbol.kind, so it gets "󰌗 Class".
-  -- Naively doing "Aerial" .. symbol.kind produces "Aerial󰌗 Class" which
-  -- contains non-ASCII and space — E5248 invalid group name characters.
-  -- Fix: extract only the trailing letters word from symbol.kind.
+  -- mini.icons.tweak_lsp_kind() prepends icon glyphs + space to every
+  -- vim.lsp.protocol.SymbolKind entry (e.g. "Class" → "󰌗 Class").
+  -- Aerial reads SymbolKind for symbol.kind, so get_highlight receives the
+  -- mangled string. Fix: extract only the trailing word.
   get_highlight = function(symbol, is_icon, _)
     local kind = (symbol.kind or ""):match("[A-Za-z]+$") or "Normal"
     return "Aerial" .. kind .. (is_icon and "Icon" or "")
   end,
 }
+
+-- mini.icons.tweak_lsp_kind() causes aerial's get_icon to receive mangled
+-- kind strings ("󰌗 Class"), which then get passed verbatim to
+-- mini_icons.get("lsp", ...) and M.default_icons[...], both of which fail
+-- and return "?". Fix: wrap get_icon to strip the glyph prefix first.
+local aerial_cfg_ok, aerial_cfg = pcall(require, "aerial.config")
+if aerial_cfg_ok then
+  local orig_get_icon = aerial_cfg.get_icon
+  aerial_cfg.get_icon = function(bufnr, kind, collapsed)
+    local clean = (kind or ""):match("[A-Za-z]+$") or kind
+    return orig_get_icon(bufnr, clean, collapsed)
+  end
+end
 
 vim.keymap.set("n", "<leader>ao", "<cmd>AerialToggle<CR>",
   { silent = true, desc = "aerial: toggle symbol outline" })
