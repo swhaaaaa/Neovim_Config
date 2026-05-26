@@ -67,7 +67,13 @@ end
 local function show_canonical_from_file()
   local path = fn.expand("%:p")
   if path ~= "" and fn.filereadable(path) == 1 then
-    cmd(string.format("%%!xxd -g 1 -c 16 %s", fn.fnameescape(path)))
+    -- Use vim.fn.system() instead of %!xxd file to avoid E5677 EPIPE:
+    -- %!cmd pipes the buffer to stdin AND passes the filename; xxd reads
+    -- from the file and closes stdin, so Neovim gets EPIPE writing the buffer.
+    local xxd_out = fn.system(string.format("xxd -g 1 -c 16 %s", fn.fnameescape(path)))
+    local lines = vim.split(xxd_out, "\n", { plain = true })
+    if lines[#lines] == "" then table.remove(lines) end
+    api.nvim_buf_set_lines(0, 0, -1, false, lines)
   else
     vim.notify("Buffer has no readable file on disk; save once for perfect HexOn view.", vim.log.levels.WARN)
     cmd([[%!xxd -g 1 -c 16]])
