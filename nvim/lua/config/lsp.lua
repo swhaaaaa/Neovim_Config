@@ -91,7 +91,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- but disable this feature by default, so you may need to enable inlay hint in the LSP server config.
     -- vim.lsp.inlay_hint.enable(true, {buffer=bufnr})
 
-    -- The blow command will highlight the current variable and its usages in the buffer.
+    -- The below command will highlight the current variable and its usages in the buffer.
     if client.server_capabilities.documentHighlightProvider then
       local gid = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
       vim.api.nvim_create_autocmd("CursorHold", {

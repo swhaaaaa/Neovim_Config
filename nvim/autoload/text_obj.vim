@@ -23,7 +23,6 @@ function! text_obj#URL() abort
     let [_url, _idx_start, _idx_end] = matchstrpos(line_text, url_pattern, _idx_end)
   endwhile
 
-  " echo url_infos
   " If no URL is found, do nothing.
   if len(url_infos) == 0
     return

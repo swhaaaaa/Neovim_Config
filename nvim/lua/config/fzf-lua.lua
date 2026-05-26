@@ -63,7 +63,7 @@ local function norm_dir(p)
 end
 
 local function common_ancestor(paths)
-  if #paths == 0 then return vim.loop.cwd() end
+  if #paths == 0 then return uv.cwd() end
   local sep = package.config:sub(1,1)
   local parts = vim.split(paths[1], sep, { plain = true })
   for i = 2, #paths do
@@ -127,7 +127,7 @@ local _queued_query = nil
 -- Commands
 ---------------------------------------------------------------------------
 vim.api.nvim_create_user_command("GrepHere", function(opts)
-  local dir = opts.args ~= "" and norm_dir(opts.args) or vim.loop.cwd()
+  local dir = opts.args ~= "" and norm_dir(opts.args) or uv.cwd()
   if not dir then
     vim.notify("Not a directory: "..opts.args, vim.log.levels.ERROR)
     return
@@ -144,7 +144,7 @@ vim.api.nvim_create_user_command("GrepHere", function(opts)
 end, { nargs = "?", complete = "dir", desc = "live_grep in one directory" })
 
 vim.api.nvim_create_user_command("FilesHere", function(opts)
-  local dir = opts.args ~= "" and norm_dir(opts.args) or vim.loop.cwd()
+  local dir = opts.args ~= "" and norm_dir(opts.args) or uv.cwd()
   if not dir then
     vim.notify("Not a directory: "..opts.args, vim.log.levels.ERROR)
     return
