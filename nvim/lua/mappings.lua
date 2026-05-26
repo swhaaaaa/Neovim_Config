@@ -1,5 +1,5 @@
 local keymap = vim.keymap
-local uv = vim.uv
+local uv = vim.uv or vim.loop
 
 -- Save key strokes (now we do not need to press shift to enter command mode).
 keymap.set({ "n", "x" }, ";", ":")

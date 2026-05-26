@@ -55,6 +55,12 @@ wk.add {
   { "<leader>dl", desc = "DAP: run last" },
   { "<leader>dx", desc = "DAP: terminate" },
   { "<leader>du", desc = "toggle DAP UI" },
+  -- quickfix
+  { "<leader>co", desc = "open quickfix list" },
+  { "<leader>cc", desc = "close quickfix list" },
+  -- diagnostic → quickfix
+  { "<space>qw",  desc = "window diagnostics → quickfix" },
+  { "<space>qb",  desc = "buffer diagnostics → quickfix" },
   -- todo-comments jumps
   { "]t", desc = "next TODO comment" },
   { "[t", desc = "prev TODO comment" },

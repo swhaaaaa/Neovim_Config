@@ -1,4 +1,6 @@
-require("snacks").setup {
+local ok, snacks = pcall(require, "snacks")
+if not ok then return end
+snacks.setup {
   notifier = {
     enabled  = true,
     timeout  = 1500,

@@ -1,5 +1,7 @@
 -- nvim-treesitter new API (v1.0+, no nvim-treesitter.configs module)
-require("nvim-treesitter").setup()
+local ok, ts = pcall(require, "nvim-treesitter")
+if not ok then return end
+ts.setup()
 
 -- Auto-install parsers after lazy finishes loading
 vim.api.nvim_create_autocmd("User", {

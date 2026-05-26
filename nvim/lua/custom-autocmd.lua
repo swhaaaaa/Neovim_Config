@@ -127,7 +127,7 @@ local number_toggle_group = api.nvim_create_augroup("numbertoggle", { clear = tr
 api.nvim_create_autocmd({ "BufEnter", "FocusGained", "InsertLeave", "WinEnter" }, {
   pattern = "*",
   group = number_toggle_group,
-  desc = "togger line number",
+  desc = "toggle line number",
   callback = function()
     if vim.wo.number then
       vim.wo.relativenumber = true
@@ -137,7 +137,7 @@ api.nvim_create_autocmd({ "BufEnter", "FocusGained", "InsertLeave", "WinEnter" }
 
 api.nvim_create_autocmd({ "BufLeave", "FocusLost", "InsertEnter", "WinLeave" }, {
   group = number_toggle_group,
-  desc = "togger line number",
+  desc = "toggle line number",
   callback = function()
     if vim.wo.number then
       vim.wo.relativenumber = false
