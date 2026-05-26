@@ -98,8 +98,8 @@ vim.api.nvim_create_user_command("MesonSetup", function(opts)
 
   -- No args → operate on cwd
   if #args == 0 then
-    meson_setup_one(cwd, "builddir", function(_)
-      lsp_restart()
+    meson_setup_one(cwd, "builddir", function(ok)
+      if ok then lsp_restart() end
     end)
     return
   end
@@ -145,14 +145,21 @@ vim.api.nvim_create_user_command("MesonSetup", function(opts)
   vim.notify(string.format("Setting up %d package(s)...", #pkgdirs),
     vim.log.levels.INFO, { title = "Meson" })
 
-  local total = #pkgdirs
-  local done  = 0
+  local total    = #pkgdirs
+  local done     = 0
+  local failures = 0
   for _, pkgdir in ipairs(pkgdirs) do
-    meson_setup_one(pkgdir, "builddir", function(_)
+    meson_setup_one(pkgdir, "builddir", function(ok)
       done = done + 1
+      if not ok then failures = failures + 1 end
       if done == total then
-        vim.notify("All packages set up. Restarting LSP...",
-          vim.log.levels.INFO, { title = "Meson" })
+        if failures == 0 then
+          vim.notify("All packages set up. Restarting LSP...",
+            vim.log.levels.INFO, { title = "Meson" })
+        else
+          vim.notify(string.format("%d/%d package(s) failed. Restarting LSP anyway...", failures, total),
+            vim.log.levels.WARN, { title = "Meson" })
+        end
         lsp_restart()
       end
     end)
