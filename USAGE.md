@@ -385,6 +385,18 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 
 ---
 
+## Task Runner (overseer.nvim)
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<leader>ot` | n | Toggle task list panel |
+| `<leader>or` | n | Run a task template (picker) |
+| `<leader>oR` | n | Run a shell command as a task (`OverseerShell`) |
+
+> Inside the task list panel: `<CR>` run action, `q` close, `<C-l>` / `<C-h>` increase/decrease detail.
+
+---
+
 ## File Explorer
 
 ### NERDTree (sidebar tree)

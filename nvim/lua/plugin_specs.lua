@@ -163,6 +163,7 @@ local plugin_specs = {
     },
   },
 
+
   -- ─── Treesitter ───────────────────────────────────────────────────────────────
   {
     "nvim-treesitter/nvim-treesitter",
@@ -658,6 +659,24 @@ local plugin_specs = {
       vim.keymap.set("v", "<leader>rp", function()
         require("grug-far").with_visual_selection {}
       end, { desc = "Project replace (selection)" })
+    end,
+  },
+
+  -- ─── Task Runner ──────────────────────────────────────────────────────────────
+  -- overseer.nvim: async task runner and job orchestrator
+  -- Unifies build/test/lint workflows with a persistent task list panel.
+  -- Keymaps: <leader>ot (toggle panel), <leader>or (run task template),
+  --          <leader>oR (run shell cmd via OverseerShell)
+  {
+    "stevearc/overseer.nvim",
+    cmd  = { "OverseerToggle", "OverseerRun", "OverseerShell", "OverseerTaskAction" },
+    keys = {
+      { "<leader>ot", "<cmd>OverseerToggle<CR>", desc = "overseer: toggle task list" },
+      { "<leader>or", "<cmd>OverseerRun<CR>",    desc = "overseer: run task template" },
+      { "<leader>oR", "<cmd>OverseerShell<CR>",  desc = "overseer: run shell command" },
+    },
+    config = function()
+      require("config.overseer")
     end,
   },
 

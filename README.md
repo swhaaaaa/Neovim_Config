@@ -157,6 +157,11 @@ to install Treesitter parsers.
 | `clangd_extensions.nvim` | Inlay hints, AST view, symbol info, memory usage |
 | `cscope_maps.nvim` | Cscope keymaps for symbol navigation |
 
+### Task Runner
+| Plugin | Role |
+|--------|------|
+| `overseer.nvim` | Task runner with toggleable panel — run build/test/shell tasks (`<leader>o`) |
+
 ### Debug (DAP)
 | Plugin | Role |
 |--------|------|
@@ -346,6 +351,13 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `<prefix>d` | Find functions called by function |
 | `<prefix>a` | Find where symbol is assigned |
 | `<prefix>b` | Build cscope database |
+
+### Task Runner (overseer.nvim)
+| Key | Action |
+|-----|--------|
+| `<leader>ot` | Toggle task list panel |
+| `<leader>or` | Run a task template (picker) |
+| `<leader>oR` | Run a shell command as a task (`OverseerShell`) |
 
 ### UI Toggles
 | Key | Action |
