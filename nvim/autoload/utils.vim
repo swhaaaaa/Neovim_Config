@@ -62,7 +62,6 @@ function! utils#SwitchLine(src_line_idx, direction) abort
   endif
 endfunction
 
-" TODO: the behavior is not correct.
 function! utils#MoveSelection(direction) abort
   " Only operate when we're in any visual mode (v, V, or Ctrl-V)
   if mode() !~# 'v' && mode() !~# 'V' && mode() !=# "\<C-v>"
