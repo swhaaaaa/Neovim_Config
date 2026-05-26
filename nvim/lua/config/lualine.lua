@@ -138,8 +138,10 @@ local function mixed_indent()
   if mixed_same_line ~= nil and mixed_same_line > 0 then
     return "MI:" .. mixed_same_line
   end
-  local space_indent_cnt = fn.searchcount({ pattern = space_pat, max_count = 1e3 }).total
-  local tab_indent_cnt = fn.searchcount({ pattern = tab_pat, max_count = 1e3 }).total
+  local space_result = fn.searchcount({ pattern = space_pat, max_count = 1e3 })
+  local tab_result   = fn.searchcount({ pattern = tab_pat,   max_count = 1e3 })
+  local space_indent_cnt = (space_result and space_result.total) or 0
+  local tab_indent_cnt   = (tab_result   and tab_result.total)   or 0
   if space_indent_cnt > tab_indent_cnt then
     return "MI:" .. tab_indent
   else

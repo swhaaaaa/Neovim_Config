@@ -4,7 +4,8 @@ local MiniIcons = require("mini.icons")
 
 local function has_words_before()
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+  local line_text = vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]
+  return col ~= 0 and line_text ~= nil and line_text:sub(col, col):match("%s") == nil
 end
 
 cmp.setup {
