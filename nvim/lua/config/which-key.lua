@@ -18,7 +18,7 @@ wk.add {
   { "<leader>gg", group = "neogit" },
   { "<leader>h",  group = "git hunks" },
   { "<leader>l",  group = "LSP peek (glance)" },
-  { "<leader>m",  group = "meson / mark" },
+  { "<leader>m",  group = "meson" },
   { "<leader>mk", group = "mark (vim-mark)" },
   { "<leader>ms", desc = "meson setup" },
   { "<leader>mb", desc = "meson build" },
@@ -37,7 +37,7 @@ wk.add {
   { "<leader>ub", desc = "blink cursor to locate it" },
   { "<leader>uc", desc = "pick colorscheme (fzf-lua)" },
   { "<leader>ud", desc = "toggle diagnostics" },
-  { "<leader>uD", desc = "toggle diagnostic float balloon" },
+  { "<leader>uD", desc = "toggle diagnostic float" },
   { "<leader>ux", desc = "toggle treesitter context bar" },
   -- DAP entries
   { "<leader>dc", desc = "DAP: continue" },
