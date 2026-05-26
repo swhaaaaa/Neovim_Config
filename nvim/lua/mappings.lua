@@ -306,9 +306,9 @@ keymap.set("i", "<C-h>", "<BS>",  { desc = "delete char left" })
 keymap.set("i", "<C-l>", "<Del>", { desc = "delete char right" })
 
 -- Swallow <C-j> and <C-k> in plain insert mode so they don't insert garbage
--- (^@ null byte for C-j, digraph prompt for C-k).
--- UltiSnips and nvim-cmp override these with higher priority when in a snippet
--- or when the completion popup is active.
+-- (^@ null byte for C-j, digraph prompt for C-k). <Nop> is the correct
+-- fallback even if UltiSnips/nvim-cmp fail to load — silent is better than
+-- garbage. The plugins override these at higher priority when active.
 keymap.set("i", "<C-j>", "<Nop>", { desc = "reserved for UltiSnips expand/jump" })
 keymap.set("i", "<C-k>", "<Nop>", { desc = "reserved for UltiSnips jump back" })
 

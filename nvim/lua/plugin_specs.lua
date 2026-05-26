@@ -5,7 +5,7 @@ local lazypath = plugin_dir .. "/lazy.nvim"
 
 if not vim.uv.fs_stat(lazypath) then
   vim.fn.system {
-    "git", "clone", "--filter=blob:none",
+    "git", "clone", "--filter=blob:none", "--depth=1",
     "https://github.com/folke/lazy.nvim.git",
     "--branch=stable",
     lazypath,

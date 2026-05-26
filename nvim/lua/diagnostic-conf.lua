@@ -26,7 +26,8 @@ diagnostic.config {
   },
 }
 
--- disabled by default; toggle with <leader>ud
+-- Diagnostics are disabled by default to keep buffers clean while browsing.
+-- Use <leader>ud to enable them on demand, or <leader>uD to toggle the float.
 diagnostic.enable(false)
 
 -- set quickfix list from diagnostics in a certain buffer, not the whole workspace

@@ -40,10 +40,13 @@ M.colorscheme_conf = {
   end,
 }
 
+-- Seed once at module load time so rand_colorscheme() produces a different
+-- result each session without re-seeding on every call.
+math.randomseed(os.time())
+
 --- Load a random colorscheme from the configured list.
 M.rand_colorscheme = function()
   local keys = vim.tbl_keys(M.colorscheme_conf)
-  math.randomseed(os.time())
   local scheme = keys[math.random(#keys)]
   M.colorscheme_conf[scheme]()
 end
