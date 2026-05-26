@@ -28,7 +28,7 @@ Evolved from a classic Vim setup.
 | `clangd` | C/C++ LSP |
 | `lldb-dap` or `lldb-vscode` | C/C++ debugger (DAP fallback) |
 | `codelldb` (`:MasonInstall codelldb`) | C/C++ debugger (DAP preferred — better struct pretty-print) |
-| `debugpy` (`pip install debugpy`) | Python debugger (DAP) |
+| `debugpy` | Python debugger (DAP) — `sudo apt install python3-debugpy` or `pip install debugpy` |
 
 ---
 
@@ -47,7 +47,7 @@ The installer will automatically:
 2. Install required tools: `git`, `curl`
 3. Install recommended tools: `ripgrep`, `fzf`, `ctags`, `cscope`, `node`, `npm`
 4. Install formatters: `stylua` (via cargo), `ruff` (via pip), `prettier` (via npm)
-5. Install debug adapters: `lldb` for C/C++ (prompted); warn about `debugpy` for Python
+5. Install debug adapters: `lldb` for C/C++ (prompted); `debugpy` for Python (prompted); note `:MasonInstall codelldb` for preferred C/C++ adapter
 6. Backup your existing config, then symlink or copy the new one
 7. Fix `ulimit` open-file limit if too low (writes to `~/.bashrc`)
 

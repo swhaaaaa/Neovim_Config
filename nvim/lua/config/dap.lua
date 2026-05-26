@@ -101,6 +101,22 @@ else
   end
 end
 
+-- ── Ensure normal mode when debugger stops ────────────────────────────────
+-- TermOpen autocmd (custom-autocmd.lua) calls startinsert for all terminals,
+-- including DAP adapter buffers. Force normal mode on every stopped event.
+dap.listeners.after.event_stopped["dap_core"] = function()
+  vim.schedule(function()
+    local mode = vim.api.nvim_get_mode().mode
+    if mode == "i" or mode == "ic" or mode == "ix" then
+      vim.cmd("stopinsert")
+    elseif mode == "t" then
+      vim.api.nvim_feedkeys(
+        vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, true, true), "n", false
+      )
+    end
+  end)
+end
+
 -- ── Keymaps ────────────────────────────────────────────────────────────────
 local map = vim.keymap.set
 map("n", "<leader>dc", dap.continue,          { desc = "DAP: continue" })

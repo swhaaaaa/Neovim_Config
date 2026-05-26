@@ -215,6 +215,48 @@ end, {
   desc = "create compile_commands.json symlink from [builddir]",
 })
 
+-- ─── GCC / G++ debug build helper ────────────────────────────────────────────
+-- :GccDebug [output]
+-- Compile the current C or C++ file with -g -O0 for DAP debugging.
+-- Output binary defaults to <same-dir>/<stem>; override with an argument.
+--   :GccDebug            → builds src/foo.c → src/foo
+--   :GccDebug /tmp/foo   → builds into /tmp/foo
+vim.api.nvim_create_user_command("GccDebug", function(opts)
+  local src = vim.fn.expand("%:p")
+  if src == "" then
+    vim.notify("GccDebug: no file loaded", vim.log.levels.ERROR)
+    return
+  end
+
+  local ft = vim.bo.filetype
+  if ft ~= "c" and ft ~= "cpp" then
+    vim.notify("GccDebug: C/C++ file required (current filetype: " .. ft .. ")",
+      vim.log.levels.ERROR)
+    return
+  end
+
+  local compiler = ft == "c" and "gcc" or "g++"
+  if vim.fn.executable(compiler) == 0 then
+    vim.notify("GccDebug: '" .. compiler .. "' not found on PATH",
+      vim.log.levels.ERROR)
+    return
+  end
+
+  local output = opts.args ~= ""
+    and opts.args
+    or (vim.fn.expand("%:p:h") .. "/" .. vim.fn.expand("%:t:r"))
+
+  local cmd = string.format("%s -g -O0 -o %s %s",
+    compiler, vim.fn.shellescape(output), vim.fn.shellescape(src))
+
+  vim.notify(cmd, vim.log.levels.INFO, { title = "GccDebug" })
+  vim.cmd("botright 8split | terminal " .. cmd)
+end, {
+  nargs = "?",
+  complete = "file",
+  desc = "compile current C/C++ file with -g -O0 for DAP debugging",
+})
+
 -- Keymaps
 vim.keymap.set("n", "<leader>ms", "<cmd>MesonSetup<CR>", { desc = "meson: setup cwd + link" })
 vim.keymap.set("n", "<leader>mb", "<cmd>MesonBuild<CR>", { desc = "meson: build" })

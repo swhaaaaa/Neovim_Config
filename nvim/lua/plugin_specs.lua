@@ -286,7 +286,7 @@ local plugin_specs = {
   },
   {
     "catgoose/nvim-colorizer.lua",
-    event = "BufReadPre",
+    event = "BufReadPost",
     opts = {},
   },
   {
@@ -673,6 +673,18 @@ local plugin_specs = {
     "mfussenegger/nvim-dap",
     cmd = { "DapContinue", "DapToggleBreakpoint", "DapStepOver",
             "DapStepInto", "DapStepOut", "DapTerminate" },
+    keys = {
+      { "<leader>dc", desc = "DAP: continue" },
+      { "<leader>do", desc = "DAP: step over" },
+      { "<leader>di", desc = "DAP: step into" },
+      { "<leader>dO", desc = "DAP: step out" },
+      { "<leader>db", desc = "DAP: toggle breakpoint" },
+      { "<leader>dB", desc = "DAP: conditional breakpoint" },
+      { "<leader>dL", desc = "DAP: log point" },
+      { "<leader>dr", desc = "DAP: open REPL" },
+      { "<leader>dl", desc = "DAP: run last" },
+      { "<leader>dx", desc = "DAP: terminate" },
+    },
     config = function()
       require("config.dap")
     end,
@@ -680,6 +692,8 @@ local plugin_specs = {
   {
     "rcarriga/nvim-dap-ui",
     dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    event = "VeryLazy",
+    keys = { { "<leader>du", desc = "toggle DAP UI" } },
     config = function()
       require("config.dap-ui")
     end,
@@ -747,7 +761,6 @@ local plugin_specs = {
     "MeanderingProgrammer/render-markdown.nvim",
     ft = { "markdown" },
     dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-mini/mini.icons" },
-    opts = {},
     config = function()
       require("render-markdown").setup {}
       vim.api.nvim_create_autocmd("FileType", {

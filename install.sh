@@ -312,17 +312,59 @@ else
     fi
 fi
 
-# debugpy — Python debug adapter
-# NOT installed system-wide here, because it must live inside the same Python
-# environment as the project being debugged. We only check and inform.
-if python3 -c "import debugpy" &>/dev/null 2>&1; then
-    success "debugpy already available in current Python environment"
+# codelldb — preferred C/C++ adapter (better struct pretty-print than lldb-dap)
+# Installed via Mason inside Neovim — cannot be installed from the shell.
+MASON_CODELLDB="$HOME/.local/share/nvim/mason/bin/codelldb"
+if [ -f "$MASON_CODELLDB" ] || command -v codelldb &>/dev/null; then
+    success "codelldb already installed"
 else
-    warn "debugpy not found in current Python environment (Python DAP)"
-    info "  debugpy must be installed in each project's virtualenv, not globally."
-    info "  Install it when you need Python debugging:"
-    info "    pip install debugpy"
-    info "  Or inside a venv:  source .venv/bin/activate && pip install debugpy"
+    info "codelldb (preferred C/C++ adapter) is not yet installed."
+    info "  After first Neovim launch, run inside Neovim: :MasonInstall codelldb"
+    info "  (lldb installed above is used as a fallback until then)"
+fi
+
+# debugpy — Python debug adapter
+# On Debian/Ubuntu with externally-managed Python (PEP 668), install the system
+# package. On other distros or inside a virtualenv, use pip.
+if python3 -c "import debugpy" &>/dev/null 2>&1; then
+    success "debugpy already available"
+else
+    warn "debugpy not found (Python DAP adapter)"
+    read -rp "  Install debugpy now? [Y/n] " answer
+    answer="${answer:-Y}"
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        case "$PKG_MGR" in
+            apt)
+                if apt-cache show python3-debugpy &>/dev/null 2>&1; then
+                    sudo apt-get install -y python3-debugpy
+                else
+                    pip3 install debugpy --user 2>/dev/null || pip install debugpy --user
+                fi
+                ;;
+            dnf)
+                sudo dnf install -y python3-debugpy 2>/dev/null \
+                    || pip3 install debugpy --user
+                ;;
+            pacman)
+                sudo pacman -S --noconfirm python-debugpy 2>/dev/null \
+                    || pip3 install debugpy --user
+                ;;
+            brew)   pip3 install debugpy ;;
+            *)      pip3 install debugpy --user 2>/dev/null || pip install debugpy --user ;;
+        esac
+
+        if python3 -c "import debugpy" &>/dev/null 2>&1; then
+            success "debugpy installed"
+        else
+            warn "debugpy not importable after install."
+            info "  If using a virtualenv, also install inside it:"
+            info "    source .venv/bin/activate && pip install debugpy"
+        fi
+    else
+        info "Skipping debugpy."
+        info "  System-wide:  sudo apt install python3-debugpy"
+        info "  Per-virtualenv: source .venv/bin/activate && pip install debugpy"
+    fi
 fi
 
 # ─── Backup or remove existing config ────────────────────────────────────────

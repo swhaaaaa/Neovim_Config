@@ -32,7 +32,20 @@ dapui.setup {
 }
 
 -- Auto open/close the UI when a debug session starts/ends
-dap.listeners.after.event_initialized["dapui_config"]  = function() dapui.open {} end
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  local code_win = vim.api.nvim_get_current_win()
+  dapui.open {}
+  vim.schedule(function()
+    if vim.api.nvim_win_is_valid(code_win) then
+      vim.api.nvim_set_current_win(code_win)
+    end
+  end)
+end
+-- TermOpen autocmd (custom-autocmd.lua) calls startinsert for all terminals,
+-- including the DAP REPL. Force normal mode whenever the debugger stops.
+dap.listeners.after.event_stopped["dapui_config"]      = function()
+  vim.schedule(function() vim.cmd("stopinsert") end)
+end
 dap.listeners.before.event_terminated["dapui_config"]  = function() dapui.close {} end
 dap.listeners.before.event_exited["dapui_config"]      = function() dapui.close {} end
 

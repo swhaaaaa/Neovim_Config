@@ -111,8 +111,15 @@ api.nvim_create_autocmd("TermOpen", {
     vim.wo.relativenumber = false
     vim.wo.number = false
 
-    -- Go to insert mode by default to start typing command
-    vim.cmd("startinsert")
+    -- Defer startinsert so background terminals (e.g. DAP adapter) don't steal
+    -- insert mode. By the time the callback runs, DAP has moved focus away;
+    -- startinsert only fires if this terminal is still the current buffer.
+    local buf = vim.api.nvim_get_current_buf()
+    vim.schedule(function()
+      if vim.api.nvim_get_current_buf() == buf then
+        vim.cmd("startinsert")
+      end
+    end)
   end,
 })
 

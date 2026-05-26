@@ -364,8 +364,8 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 ## Debug (DAP)
 
 > **Setup required:** Install `codelldb` (preferred) or `lldb` (fallback) for C/C++, and `debugpy` for Python.
-> - C/C++: `:MasonInstall codelldb`  or  `sudo apt install lldb`
-> - Python: `pip install debugpy` (per virtualenv)
+> - C/C++: `:MasonInstall codelldb` (preferred)  or  `sudo apt install lldb` (fallback — `install.sh` handles this)
+> - Python: `sudo apt install python3-debugpy` (system)  or  `pip install debugpy` (per virtualenv) — `install.sh` handles this
 
 | Key | Mode | Action |
 |-----|------|--------|
@@ -596,6 +596,7 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 | `:Lazy sync` | Update all plugins |
 | `:Lazy clean` | Remove unused plugins |
 | `:Mason` | Open LSP/tool installer UI |
+| `:GccDebug [output]` | Compile current C/C++ file with `-g -O0` for DAP (output defaults to same dir/name as source) |
 | `:DapContinue` | Start or continue debug session |
 | `:DapTerminate` | Terminate debug session |
 | `:MesonSetup [pkg1 pkg2 ...]` | `meson setup` on one or more package dirs in parallel + symlink `compile_commands.json` |
@@ -634,12 +635,22 @@ When treesitter re-folds while you type:
 3. Edit freely
 4. Press `,fm` again to re-enable treesitter folding
 
+### Debug a C/C++ file
+1. Open the source file in Neovim
+2. `:GccDebug` — compiles with `-g -O0`; binary lands next to the source file
+3. Set breakpoint: `<leader>db`
+4. Start: `<leader>dc` → select **Launch executable** → Tab-complete to the binary
+5. Step: `<leader>do` (over) / `<leader>di` (into)
+6. Inspect variables in the DAP UI Scopes panel
+7. End: `<leader>dx`
+
 ### Debug a Python script
 ```bash
-pip install debugpy   # once per virtualenv
+sudo apt install python3-debugpy   # system-wide (Ubuntu)
+# or: pip install debugpy          # per virtualenv
 ```
 1. Set breakpoint: `<leader>db`
-2. Start: `<leader>dc` → select Python file when prompted
+2. Start: `<leader>dc` → select **file** when prompted
 3. Step: `<leader>do` (over) / `<leader>di` (into)
 4. Inspect variables in the DAP UI scopes panel
 5. End: `<leader>dx`
