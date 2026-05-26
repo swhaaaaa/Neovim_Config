@@ -161,6 +161,7 @@ to install Treesitter parsers.
 | Plugin | Role |
 |--------|------|
 | `overseer.nvim` | Task runner with toggleable panel — run build/test/shell tasks (`<leader>o`) |
+| `toggleterm.nvim` | Persistent floating terminal toggled with `<leader>tt`; `<Esc><Esc>` to exit |
 
 ### Debug (DAP)
 | Plugin | Role |
@@ -351,6 +352,13 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `<prefix>d` | Find functions called by function |
 | `<prefix>a` | Find where symbol is assigned |
 | `<prefix>b` | Build cscope database |
+
+### Terminal (toggleterm.nvim)
+| Key | Action |
+|-----|--------|
+| `<leader>tt` | Toggle floating terminal |
+
+> Inside the terminal: `<Esc><Esc>` returns to normal mode.
 
 ### Task Runner (overseer.nvim)
 | Key | Action |

@@ -680,6 +680,21 @@ local plugin_specs = {
     end,
   },
 
+  -- ─── Terminal ─────────────────────────────────────────────────────────────────
+  -- toggleterm.nvim: persistent floating/split terminal, toggled by <leader>tt.
+  -- <Esc><Esc> exits terminal mode back to normal mode.
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    cmd  = { "ToggleTerm", "TermExec" },
+    keys = {
+      { "<leader>tt", "<cmd>ToggleTerm<CR>", desc = "toggle floating terminal" },
+    },
+    config = function()
+      require("config.toggleterm")
+    end,
+  },
+
   -- ─── Debug (DAP) ──────────────────────────────────────────────────────────────
   -- Install adapters as needed:
   --   pip install debugpy          → Python

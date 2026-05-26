@@ -385,6 +385,16 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 
 ---
 
+## Terminal (toggleterm.nvim)
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<leader>tt` | n | Toggle floating terminal |
+
+> Inside the terminal: press `<Esc><Esc>` to exit terminal mode and return to normal mode. Press `<leader>tt` again to hide the terminal (state is preserved).
+
+---
+
 ## Task Runner (overseer.nvim)
 
 | Key | Mode | Action |

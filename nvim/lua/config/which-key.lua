@@ -34,6 +34,7 @@ wk.add {
   { "<leader>or", desc = "overseer: run task template" },
   { "<leader>oR", desc = "overseer: run shell command" },
   { "<leader>t",  group = "toggle" },
+  { "<leader>tt", desc = "toggle floating terminal" },
   { "<leader>tf", desc = "toggle format on save" },
   { "<leader>fm", desc = "toggle fold method expr/manual" },
   { "<leader>u",  group = "UI toggles" },

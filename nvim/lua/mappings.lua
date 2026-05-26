@@ -130,11 +130,7 @@ keymap.set("n", "<leader>lc", "<cmd>lcd %:p:h<cr><cmd>pwd<cr>", { desc = "change
 -- Use Esc to quit builtin terminal
 keymap.set("t", "<Esc>", [[<c-\><c-n>]])
 
--- Open terminal in a bottom split (15 lines tall)
-keymap.set("n", "<leader>tt", function()
-  vim.cmd("botright 15split | terminal")
-  vim.cmd("startinsert")
-end, { silent = true, desc = "open terminal in split" })
+-- <leader>tt is handled by toggleterm.nvim (floating terminal)
 
 -- Toggle spell checking
 keymap.set("n", "<F12>", "<cmd>set spell!<cr>", { desc = "toggle spell" })
