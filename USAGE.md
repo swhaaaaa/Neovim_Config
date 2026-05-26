@@ -385,6 +385,20 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 
 ---
 
+## Session (persistence.nvim)
+
+Sessions are saved automatically per working directory when you quit Neovim. On next launch, restore with `,ss`.
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<leader>ss` | n | Restore session for current working directory |
+| `<leader>sl` | n | Restore last session (any directory) |
+| `<leader>sd` | n | Stop persistence — don't save session on exit |
+
+> Session files are stored in `~/.local/state/nvim/sessions/`.
+
+---
+
 ## Terminal (toggleterm.nvim)
 
 | Key | Mode | Action |

@@ -162,6 +162,7 @@ to install Treesitter parsers.
 |--------|------|
 | `overseer.nvim` | Task runner with toggleable panel — run build/test/shell tasks (`<leader>o`) |
 | `toggleterm.nvim` | Persistent floating terminal toggled with `<leader>tt`; `<Esc><Esc>` to exit |
+| `persistence.nvim` | Auto-saves and restores sessions per working directory (`<leader>s`) |
 
 ### Debug (DAP)
 | Plugin | Role |
@@ -352,6 +353,13 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `<prefix>d` | Find functions called by function |
 | `<prefix>a` | Find where symbol is assigned |
 | `<prefix>b` | Build cscope database |
+
+### Session (persistence.nvim)
+| Key | Action |
+|-----|--------|
+| `<leader>ss` | Restore session for current working directory |
+| `<leader>sl` | Restore last session (any directory) |
+| `<leader>sd` | Stop persistence — don't save session on exit |
 
 ### Terminal (toggleterm.nvim)
 | Key | Action |
