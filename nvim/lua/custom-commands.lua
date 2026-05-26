@@ -6,7 +6,12 @@ api.nvim_create_user_command("Format", function(args)
   if ok then
     conform.format { bufnr = args.buf, lsp_fallback = true }
   else
-    vim.lsp.buf.format { async = false }
+    local clients = vim.lsp.get_clients({ bufnr = 0 })
+    if #clients > 0 then
+      vim.lsp.buf.format { async = false }
+    else
+      vim.notify("No LSP client attached", vim.log.levels.WARN, { title = "Format" })
+    end
   end
 end, { desc = "Format current buffer" })
 
@@ -59,7 +64,7 @@ local function meson_setup_one(pkgdir, builddir, on_done)
   vim.notify(string.format("[%s] %s", vim.fn.fnamemodify(pkgdir, ":t"), cmd),
     vim.log.levels.INFO, { title = "Meson" })
 
-  vim.fn.jobstart(cmd, {
+  local job_id = vim.fn.jobstart(cmd, {
     cwd = pkgdir,
     on_exit = function(_, code)
       if code ~= 0 then
@@ -79,6 +84,12 @@ local function meson_setup_one(pkgdir, builddir, on_done)
       if on_done then on_done(true) end
     end,
   })
+  if job_id <= 0 then
+    vim.notify(
+      string.format("[%s] failed to start meson (is meson installed?)", vim.fn.fnamemodify(pkgdir, ":t")),
+      vim.log.levels.ERROR, { title = "Meson" })
+    if on_done then on_done(false) end
+  end
 end
 
 -- :MesonSetup [pkg1] [pkg2] ...

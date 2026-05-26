@@ -111,7 +111,7 @@ end
 -- DEFAULT to CWD list path
 local function resolve_list(arg, fallback_root)
   if not arg or arg == "" then
-    local root = fallback_root or vim.loop.cwd()
+    local root = fallback_root or uv.cwd()
     return (vim.fs.normalize(root .. "/cscope.files")), root
   end
   local p = vim.fn.fnamemodify(arg, ":p")
@@ -250,8 +250,8 @@ end
 -- ---------- Generate / Build ----------
 function M.generate_async(opts, cb)
   opts = opts or {}
-  local root = opts.root or vim.loop.cwd()
-  local outfile = opts.out or (vim.loop.cwd() .. "/cscope.files")
+  local root = opts.root or uv.cwd()
+  local outfile = opts.out or (uv.cwd() .. "/cscope.files")
   local exts = opts.extensions or M.extensions
   local ignores = opts.ignores or M.ignores
 
@@ -280,7 +280,7 @@ function M.build_async(opts, cb)
     return
   end
 
-  local list, list_dir = resolve_list(opts.list, vim.loop.cwd())
+  local list, list_dir = resolve_list(opts.list, uv.cwd())
   local out = opts.out or (list_dir .. "/cscope.out")
   local st = uv.fs_stat(list)
 
@@ -333,8 +333,8 @@ end
 
 function M.add_dirs_to_list_async(args, cb)
   args = args or {}
-  local list = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
-  local roots = args.roots or { vim.loop.cwd() }
+  local list = vim.fs.normalize((uv.cwd() or ".") .. "/cscope.files")
+  local roots = args.roots or { uv.cwd() }
 
   scan_many_async(roots, args, function(err, files)
     if err then notify("Scan warning: " .. err, vim.log.levels.WARN) end
@@ -357,7 +357,7 @@ end
 -- ---------- Import / Unique ----------
 function M.merge_lists_async(args, cb)
   args = args or {}
-  local target = args.target or vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+  local target = args.target or vim.fs.normalize((uv.cwd() or ".") .. "/cscope.files")
   target = vim.fn.fnamemodify(target, ":p")
 
   local sources = args.sources or {}
@@ -395,7 +395,7 @@ end
 
 function M.unique_list(list_path)
   list_path = list_path and vim.fn.fnamemodify(list_path, ":p")
-              or vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+              or vim.fs.normalize((uv.cwd() or ".") .. "/cscope.files")
   local paths, _ = read_list(list_path)
   if not write_list(list_path, paths) then
     notify("Cannot write " .. list_path, vim.log.levels.ERROR)
@@ -410,7 +410,7 @@ end
 -- :CscopeFiles! [dir1] [dir2] ... -> append (de-dup) into CWD ./cscope.files
 local function parse_roots_from_fargs(fargs)
   local set, roots = {}, {}
-  if not fargs or #fargs == 0 then return { vim.loop.cwd() } end
+  if not fargs or #fargs == 0 then return { uv.cwd() } end
   for _, a in ipairs(fargs) do
     local r, err = normalize_dir(a)
     if r then
@@ -420,13 +420,13 @@ local function parse_roots_from_fargs(fargs)
       notify("Skip: " .. a .. " (" .. (err or "invalid") .. ")", vim.log.levels.WARN)
     end
   end
-  if #roots == 0 then roots = { vim.loop.cwd() } end
+  if #roots == 0 then roots = { uv.cwd() } end
   return roots
 end
 
 vim.api.nvim_create_user_command("CscopeFiles", function(opts)
   local roots = parse_roots_from_fargs(opts.fargs)
-  local list  = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+  local list  = vim.fs.normalize((uv.cwd() or ".") .. "/cscope.files")
   if opts.bang then
     M.add_dirs_to_list_async({ roots = roots, list = list })
   else
@@ -442,7 +442,7 @@ end, {
 -- :CscopeFilesAdd [dir1] [dir2] ... -> append multiple folders (de-dup)
 vim.api.nvim_create_user_command("CscopeFilesAdd", function(opts)
   local roots = parse_roots_from_fargs(opts.fargs)
-  local list  = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+  local list  = vim.fs.normalize((uv.cwd() or ".") .. "/cscope.files")
   M.add_dirs_to_list_async({ roots = roots, list = list })
 end, { nargs = "*", complete = "dir", desc = "Append [dir1..] into CWD ./cscope.files (de-dup)" })
 
@@ -451,7 +451,7 @@ vim.api.nvim_create_user_command("CscopeImport", function(opts)
   local args = opts.fargs or {}
   if #args == 0 then return notify("Usage: :CscopeImport {filelist} [...]", vim.log.levels.WARN) end
   M.merge_lists_async({
-    target = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files"),
+    target = vim.fs.normalize((uv.cwd() or ".") .. "/cscope.files"),
     sources = args
   })
 end, { nargs = "+", complete = "file", desc = "Merge file lists into CWD ./cscope.files (de-dup)" })
@@ -468,7 +468,7 @@ vim.api.nvim_create_user_command("CscopeBuild", function(opts)
   if opts.args ~= "" then
     list = vim.fn.fnamemodify(opts.args, ":p")
   else
-    list = vim.fs.normalize((vim.loop.cwd() or ".") .. "/cscope.files")
+    list = vim.fs.normalize((uv.cwd() or ".") .. "/cscope.files")
   end
   M.build_async({ list = list })
 end, { nargs = "?", complete = "file", desc = "Build cscope.out from CWD ./cscope.files or given list" })
