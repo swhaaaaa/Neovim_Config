@@ -1,4 +1,6 @@
-require("yanky").setup {
+local ok, yanky = pcall(require, "yanky")
+if not ok then return end
+yanky.setup {
   preserve_cursor_position = {
     enabled = false,
   },

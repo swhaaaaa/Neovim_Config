@@ -1,7 +1,8 @@
 local api = vim.api
 local keymap = vim.keymap
 
-local hlslens = require("hlslens")
+local ok, hlslens = pcall(require, "hlslens")
+if not ok then return end
 
 hlslens.setup {
   calm_down = true,

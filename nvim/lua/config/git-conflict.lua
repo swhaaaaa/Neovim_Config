@@ -1,4 +1,6 @@
-require("git-conflict").setup {}
+local ok, git_conflict = pcall(require, "git-conflict")
+if not ok then return end
+git_conflict.setup {}
 
 vim.api.nvim_create_autocmd("User", {
   pattern = "GitConflictResolved",

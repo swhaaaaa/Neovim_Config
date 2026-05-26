@@ -1,5 +1,6 @@
 local keymap = vim.keymap
-local hop = require("hop")
+local ok, hop = pcall(require, "hop")
+if not ok then return end
 hop.setup {
   case_insensitive = true,
   char2_fallback_key = "<CR>",
