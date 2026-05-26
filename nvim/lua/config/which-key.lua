@@ -27,7 +27,7 @@ wk.add {
   { "<leader>s",  group = "session / vimrc" },
   { "<leader>ss", desc = "session: restore for cwd" },
   { "<leader>sl", desc = "session: restore last" },
-  { "<leader>sd", desc = "session: stop (don't save on exit)" },
+  { "<leader>sq", desc = "session: stop (don't save on exit)" },
   { "<leader>sv", desc = "reload vimrc / init.lua" },
   { "<leader>w",  group = "LSP workspace" },
   { "<leader>x",  group = "trouble / diagnostics" },

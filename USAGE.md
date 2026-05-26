@@ -393,7 +393,7 @@ Sessions are saved automatically per working directory when you quit Neovim. On 
 |-----|------|--------|
 | `<leader>ss` | n | Restore session for current working directory |
 | `<leader>sl` | n | Restore last session (any directory) |
-| `<leader>sd` | n | Stop persistence — don't save session on exit |
+| `<leader>sq` | n | Stop persistence — don't save session on exit |
 
 > Session files are stored in `~/.local/state/nvim/sessions/`.
 

@@ -705,7 +705,7 @@ local plugin_specs = {
     keys = {
       { "<leader>ss", function() require("persistence").load() end,               desc = "session: restore for cwd" },
       { "<leader>sl", function() require("persistence").load({ last = true }) end, desc = "session: restore last" },
-      { "<leader>sd", function() require("persistence").stop() end,               desc = "session: stop (don't save)" },
+      { "<leader>sq", function() require("persistence").stop() end,               desc = "session: stop (don't save)" },
     },
     config = function()
       require("config.persistence")

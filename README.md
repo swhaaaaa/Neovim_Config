@@ -359,7 +359,7 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 |-----|--------|
 | `<leader>ss` | Restore session for current working directory |
 | `<leader>sl` | Restore last session (any directory) |
-| `<leader>sd` | Stop persistence — don't save session on exit |
+| `<leader>sq` | Stop persistence — don't save session on exit |
 
 ### Terminal (toggleterm.nvim)
 | Key | Action |
