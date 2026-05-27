@@ -390,6 +390,12 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `:Format` | Format current buffer (conform.nvim / LSP fallback) |
 | `:LspInfo2` | Show active LSP clients for current buffer |
 | `:ReloadConfig` | Reload `init.lua` without restarting |
+| `:LspRestart` | Restart all LSP clients (Neovim 0.11 compatible) |
+| `:MesonSetup [pkg ...]` | `meson setup` + symlink `compile_commands.json`, restart LSP |
+| `:MesonBuild [pkgdir]` | `meson compile -C builddir` in a terminal split |
+| `:MesonLink [builddir]` | Re-create `compile_commands.json` symlink only |
+| `:GccDebug [output]` | Compile current C/C++ file with `-g -O0` for DAP |
+| `:KernelSetup [build_root]` | Generate `compile_commands.json` + `.clangd` for OpenBMC/Yocto kernel |
 | `:lua Snacks.notifier.show_history()` | Browse past notifications (snacks.nvim) |
 
 ---

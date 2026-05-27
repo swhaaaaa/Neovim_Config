@@ -615,7 +615,7 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 | Key / Command | Action |
 |---------------|--------|
 | `<leader>ks` | `:KernelSetup` — generate `compile_commands.json` + `.clangd`, restart LSP |
-| `:KernelSetup [build_root]` | Same — pass build root explicitly (default: cwd) |
+| `:KernelSetup [build_root]` | Same — auto-detects build root by walking up from current buffer/cwd |
 
 **What it does automatically:**
 1. Finds `tmp/work-shared/*/kernel-source/` → kernel source root (`KSRC`)
