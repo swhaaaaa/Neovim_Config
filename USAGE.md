@@ -646,9 +646,8 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 
 For any other OpenBMC/Yocto package (sdbusplus, bmcweb, phosphor-logging, etc.):
 
-- bitbake writes `build/compile_commands.json` — clangd finds it automatically by searching parent directories
-- The real problem is bitbake's GCC-only flags (`-fcanon-prefix-map`, `-flto=auto`, `-ffile-prefix-map=*`) that clangd/clang cannot parse, causing every file to fail to compile
-- `:OEPkgSetup` writes a `.clangd` file at the package source root that strips those flags — **no rebuild, completely non-invasive**
+- bitbake writes `build/compile_commands.json` — clangd finds it automatically, so `,ld`, `,lr`, and `K` work out of the box once the package has been built
+- `:OEPkgSetup` does two things: writes a `.clangd` to strip GCC-only flags (reduces diagnostic noise), and restarts LSP so clangd re-detects the correct database when switching between packages
 - Requires the package to have been built at least once by bitbake
 
 **Usage:**
@@ -661,11 +660,11 @@ For any other OpenBMC/Yocto package (sdbusplus, bmcweb, phosphor-logging, etc.):
 **Typical workflow:**
 ```
 → open any source file under .../tmp/work/<arch>/<pkg>/.../
-→ :OEPkgSetup   (package name is detected automatically)
-→ clangd attaches — gd, K, references, hover all work
+→ clangd attaches automatically — ,ld, ,lr, K all work without any setup
+→ optionally run :OEPkgSetup to reduce diagnostic noise and restart LSP
 ```
 
-> Re-run `:OEPkgSetup <pkg>` after `bitbake <pkg>` rebuilds — the build dir may be wiped and recreated.
+> `:OEPkgSetup` is optional for navigation. It is most useful when switching between packages (forces LSP to re-detect the correct compile_commands.json) or when spurious error diagnostics appear.
 
 ---
 
