@@ -541,7 +541,7 @@ Notifications are handled by **snacks.nvim** (replaces nvim-notify). All `vim.no
 
 | Command | Action |
 |---------|--------|
-| `:lua Snacks.notifier.show_history()` | Browse all past notifications in a popup |
+| `<leader>un` | Browse all past notifications in a scrollable popup |
 
 > Notifications stack from the **bottom-right** upward. Style: `fancy` (icon + title bar). Timeout: 1500 ms.
 >
@@ -646,7 +646,7 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 
 | Command | Action |
 |---------|--------|
-| `:lua Snacks.notifier.show_history()` | Browse past notifications |
+| `:lua Snacks.notifier.show_history()` | Browse past notifications (also `<leader>un`) |
 | `:Format` | Format current buffer (conform.nvim with LSP fallback) |
 | `:LspInfo2` | Show active LSP clients for current buffer |
 | `:ReloadConfig` | Reload `init.lua` without restarting Neovim |

@@ -353,6 +353,9 @@ keymap.set("n", "<leader>uc", function()
   })
 end, { desc = "pick colorscheme" })
 
+keymap.set("n", "<leader>un", function() Snacks.notifier.show_history() end,
+  { desc = "show notification history" })
+
 -- ─── Format on save toggle ───────────────────────────────────────────────────
 -- conform.nvim has format_on_save disabled by default.
 -- Use <leader>tf to toggle it on/off per session.

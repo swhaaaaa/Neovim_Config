@@ -50,6 +50,7 @@ wk.add {
   { "<leader>uc", desc = "pick colorscheme (fzf-lua)" },
   { "<leader>ud", desc = "toggle diagnostics" },
   { "<leader>uD", desc = "toggle diagnostic float" },
+  { "<leader>un", desc = "show notification history" },
   { "<leader>ux", desc = "toggle treesitter context bar" },
   -- DAP entries
   { "<leader>dc", desc = "DAP: continue" },
