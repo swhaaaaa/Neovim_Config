@@ -19,6 +19,7 @@ wk.add {
   { "<leader>h",  group = "git hunks" },
   { "<leader>k",  group = "kernel (OpenBMC/Yocto)" },
   { "<leader>ks", desc = "kernel: gen compile_commands + .clangd" },
+  { "<leader>kp", desc = "OE pkg: link bitbake compile_commands.json" },
   { "<leader>l",  group = "LSP peek (glance)" },
   { "<leader>m",  group = "meson" },
   { "<leader>mk", group = "mark (vim-mark)" },

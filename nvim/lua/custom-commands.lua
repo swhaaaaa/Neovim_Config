@@ -421,9 +421,114 @@ end, {
   desc = "Generate compile_commands.json + .clangd for OpenBMC/Yocto kernel, then restart LSP",
 })
 
+-- ─── OpenBMC / OE package LSP setup ─────────────────────────────────────────
+-- :OEPkgSetup [package-name]
+-- Link the compile_commands.json that bitbake already generated into the
+-- package source root so clangd can attach.  Completely non-invasive — no
+-- rebuild; just reads build/ and creates one symlink.
+--
+-- Usage:
+--   :OEPkgSetup sdbusplus        ← explicit package name
+--   :OEPkgSetup                  ← auto-detects package from current buffer path
+vim.api.nvim_create_user_command("OEPkgSetup", function(opts)
+  -- Find Yocto build root (walk up from buffer/cwd)
+  local bufpath   = vim.fn.expand("%:p")
+  local startpath = (bufpath ~= "" and vim.fn.fnamemodify(bufpath, ":h")) or vim.fn.getcwd()
+  local buildroot = find_kernel_build_root(startpath)
+  if not buildroot then
+    vim.notify(
+      "OEPkgSetup: cannot find Yocto build root (no tmp/work-shared/ found above current path).\n"
+      .. "Run from inside the build tree or supply an explicit :KernelSetup arg.",
+      vim.log.levels.ERROR)
+    return
+  end
+
+  -- Resolve package name (explicit arg or auto-detect from buffer path)
+  local pkg
+  if opts.args ~= "" then
+    pkg = vim.trim(opts.args)
+  else
+    pkg = bufpath:match("/tmp/work/[^/]+/([^/]+)/")
+    if not pkg then
+      vim.notify(
+        "OEPkgSetup: cannot detect package from buffer path.\n"
+        .. "Usage: :OEPkgSetup <package-name>",
+        vim.log.levels.ERROR)
+      return
+    end
+  end
+
+  -- Find the package work dir:  tmp/work/<arch>/<pkg>/<version>/
+  local raw = vim.fn.glob(buildroot .. "/tmp/work/*/" .. pkg .. "/*", false, true)
+  local workdirs = {}
+  for _, p in ipairs(raw) do
+    local clean = p:gsub("/$", "")
+    if vim.fn.isdirectory(clean) == 1 then
+      table.insert(workdirs, clean)
+    end
+  end
+  if #workdirs == 0 then
+    vim.notify(
+      string.format("OEPkgSetup: package '%s' not found under\n  %s/tmp/work/", pkg, buildroot),
+      vim.log.levels.ERROR, { title = "OEPkgSetup" })
+    return
+  end
+  local workdir = workdirs[1]
+
+  -- compile_commands.json is always in build/ (written by meson/cmake during bitbake do_compile)
+  local cc_json = workdir .. "/build/compile_commands.json"
+  if vim.fn.filereadable(cc_json) == 0 then
+    vim.notify(
+      string.format("OEPkgSetup [%s]: compile_commands.json not found at\n  %s\n"
+        .. "Build the package first:  bitbake %s", pkg, cc_json, pkg),
+      vim.log.levels.ERROR, { title = "OEPkgSetup" })
+    return
+  end
+
+  -- Find source root: first meson.build or CMakeLists.txt not inside a build dir
+  local srcroot
+  for _, marker in ipairs({ "meson.build", "CMakeLists.txt" }) do
+    local found = vim.fn.system(string.format(
+      "find %s -maxdepth 5 -name %s -not -path '*/build/*' -print -quit 2>/dev/null",
+      vim.fn.shellescape(workdir), vim.fn.shellescape(marker)
+    )):gsub("\n$", "")
+    if found ~= "" and vim.fn.filereadable(found) == 1 then
+      srcroot = vim.fn.fnamemodify(found, ":h")
+      break
+    end
+  end
+  if not srcroot then
+    vim.notify(
+      string.format("OEPkgSetup [%s]: source root not found in\n  %s", pkg, workdir),
+      vim.log.levels.ERROR, { title = "OEPkgSetup" })
+    return
+  end
+
+  -- Symlink compile_commands.json into the source root
+  local link    = srcroot .. "/compile_commands.json"
+  local ln_out  = vim.fn.system(string.format("ln -sf %s %s",
+    vim.fn.shellescape(cc_json), vim.fn.shellescape(link)))
+  if vim.v.shell_error ~= 0 then
+    vim.notify(
+      string.format("OEPkgSetup [%s]: symlink failed:\n  %s", pkg, ln_out),
+      vim.log.levels.ERROR, { title = "OEPkgSetup" })
+    return
+  end
+
+  vim.notify(
+    string.format("OEPkgSetup [%s] done\n  src:  %s\n  json: %s\nRestarting LSP...",
+      pkg, srcroot, cc_json),
+    vim.log.levels.INFO, { title = "OEPkgSetup" })
+  lsp_restart()
+end, {
+  nargs = "?",
+  desc = "Link bitbake compile_commands.json to source root for an OE/Yocto package",
+})
+
 -- Keymaps
 vim.keymap.set("n", "<leader>ms", "<cmd>MesonSetup<CR>", { desc = "meson: setup cwd + link" })
 vim.keymap.set("n", "<leader>mb", "<cmd>MesonBuild<CR>", { desc = "meson: build" })
 vim.keymap.set("n", "<leader>ml", "<cmd>MesonLink<CR>",  { desc = "meson: link compile_commands.json" })
 vim.keymap.set("n", "<leader>ks", "<cmd>KernelSetup<CR>", { desc = "kernel: gen compile_commands + .clangd (OpenBMC/Yocto)" })
+vim.keymap.set("n", "<leader>kp", "<cmd>OEPkgSetup<CR>",  { desc = "OE pkg: link bitbake compile_commands.json" })
 

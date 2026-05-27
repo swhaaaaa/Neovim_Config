@@ -616,6 +616,8 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 |---------------|--------|
 | `<leader>ks` | `:KernelSetup` — generate `compile_commands.json` + `.clangd`, restart LSP |
 | `:KernelSetup [build_root]` | Same — auto-detects build root by walking up from current buffer/cwd |
+| `<leader>kp` | `:OEPkgSetup` — link bitbake's `compile_commands.json` for an OE package |
+| `:OEPkgSetup [pkg]` | Same — auto-detects package from buffer path, or pass name explicitly |
 
 **What it does automatically:**
 1. Finds `tmp/work-shared/*/kernel-source/` → kernel source root (`KSRC`)
@@ -639,6 +641,30 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 ```
 
 > clangd needs `compile_commands.json` at the project root to understand cross-compilation flags. Re-run `:KernelSetup` if the kernel is rebuilt (Yocto may regenerate the build dir).
+
+### OE/Yocto Package LSP (`:OEPkgSetup`)
+
+For any other OpenBMC/Yocto package (sdbusplus, bmcweb, phosphor-logging, etc.):
+
+- bitbake already runs `meson setup` and writes `build/compile_commands.json` during its build
+- `:OEPkgSetup` simply finds that file and symlinks it into the package source root — **no rebuild, completely non-invasive**
+- Requires the package to have been built at least once by bitbake
+
+**Usage:**
+```
+:OEPkgSetup sdbusplus      ← explicit package name
+:OEPkgSetup                ← auto-detects from current buffer path
+,kp                        ← same, keymap
+```
+
+**Typical workflow:**
+```
+→ open any source file under .../tmp/work/<arch>/<pkg>/.../
+→ :OEPkgSetup   (package name is detected automatically)
+→ clangd attaches — gd, K, references, hover all work
+```
+
+> Re-run `:OEPkgSetup <pkg>` after `bitbake <pkg>` rebuilds — the build dir may be wiped and recreated.
 
 ---
 

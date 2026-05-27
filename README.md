@@ -396,6 +396,7 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `:MesonLink [builddir]` | Re-create `compile_commands.json` symlink only |
 | `:GccDebug [output]` | Compile current C/C++ file with `-g -O0` for DAP |
 | `:KernelSetup [build_root]` | Generate `compile_commands.json` + `.clangd` for OpenBMC/Yocto kernel |
+| `:OEPkgSetup [pkg]` | Link bitbake's `compile_commands.json` to source root for any OE/Yocto package |
 | `:lua Snacks.notifier.show_history()` | Browse past notifications (snacks.nvim) |
 
 ---
