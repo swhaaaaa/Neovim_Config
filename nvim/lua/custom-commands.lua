@@ -301,11 +301,24 @@ end, {
 --   5. Restarts LSP
 --
 -- Usage:
---   :KernelSetup /path/to/build_ventura2_quanta    (explicit build root)
---   :KernelSetup                                   (uses cwd)
+--   :KernelSetup                                   (auto-detects from current buffer path)
+--   :KernelSetup /path/to/build_ventura2_quanta    (explicit override)
 vim.api.nvim_create_user_command("KernelSetup", function(opts)
-  local buildroot = (opts.args ~= "" and vim.fn.fnamemodify(opts.args, ":p") or vim.fn.getcwd())
-  buildroot = buildroot:gsub("/$", "")
+  local buildroot
+
+  if opts.args ~= "" then
+    -- Explicit argument
+    buildroot = vim.fn.fnamemodify(opts.args, ":p"):gsub("/$", "")
+  else
+    -- Auto-detect from current buffer path: strip from /tmp/work-shared/ onward
+    local bufpath = vim.fn.expand("%:p")
+    local detected = bufpath:match("^(.+)/tmp/work%-shared/")
+    if detected and vim.fn.isdirectory(detected) == 1 then
+      buildroot = detected
+    else
+      buildroot = vim.fn.getcwd()
+    end
+  end
 
   if vim.fn.isdirectory(buildroot) == 0 then
     vim.notify("KernelSetup: not a directory: " .. buildroot, vim.log.levels.ERROR)

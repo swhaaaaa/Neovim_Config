@@ -626,16 +626,16 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 
 **Usage:**
 ```
-:KernelSetup /path/to/build_ventura2_quanta    ← explicit build root
-:KernelSetup                                   ← uses cwd if already cd'd there
+:KernelSetup                                   ← auto-detects build root from current buffer path
+:KernelSetup /path/to/build_ventura2_quanta    ← explicit override
 ```
 
 **Typical workflow:**
 ```
-:KernelSetup /media/swh/.../build_ventura2_quanta
+→ open any file under .../build_ventura2_quanta/tmp/work-shared/.../kernel-source/
+→ :KernelSetup  (no argument — build root is detected automatically)
 → wait for "KernelSetup done" notification
-→ open any file under tmp/work-shared/ventura2/kernel-source/
-→ clangd attaches automatically — gd, K, references all work
+→ clangd attaches — gd, K, references all work
 ```
 
 > clangd needs `compile_commands.json` at the project root to understand cross-compilation flags. Re-run `:KernelSetup` if the kernel is rebuilt (Yocto may regenerate the build dir).
