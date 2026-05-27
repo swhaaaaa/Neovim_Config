@@ -423,13 +423,22 @@ end, {
 
 -- ─── OpenBMC / OE package LSP setup ─────────────────────────────────────────
 -- :OEPkgSetup [package-name]
--- Link the compile_commands.json that bitbake already generated into the
--- package source root so clangd can attach.  Completely non-invasive — no
--- rebuild; just reads build/ and creates one symlink.
+--
+-- clangd already finds build/compile_commands.json automatically by searching
+-- parent dirs.  The real problem is that bitbake injects GCC-only flags and
+-- path-remapping flags that clangd/clang rejects, causing every file to fail
+-- to compile.  This command writes a .clangd at the package source root that
+-- strips those flags, then restarts LSP.  No rebuild, fully non-invasive.
+--
+-- Flags stripped:
+--   -fcanon-prefix-map       GCC-only; clang doesn't know it
+--   -flto=auto               clang accepts -flto but not the 'auto' value
+--   -ffile-prefix-map=*      remaps source paths to /usr/src/debug/... which
+--                            doesn't exist on the host, confusing clangd
 --
 -- Usage:
---   :OEPkgSetup sdbusplus        ← explicit package name
---   :OEPkgSetup                  ← auto-detects package from current buffer path
+--   :OEPkgSetup sdbusplus    ← explicit package name
+--   :OEPkgSetup              ← auto-detects package from current buffer path
 vim.api.nvim_create_user_command("OEPkgSetup", function(opts)
   -- Find Yocto build root (walk up from buffer/cwd)
   local bufpath   = vim.fn.expand("%:p")
@@ -437,8 +446,7 @@ vim.api.nvim_create_user_command("OEPkgSetup", function(opts)
   local buildroot = find_kernel_build_root(startpath)
   if not buildroot then
     vim.notify(
-      "OEPkgSetup: cannot find Yocto build root (no tmp/work-shared/ found above current path).\n"
-      .. "Run from inside the build tree or supply an explicit :KernelSetup arg.",
+      "OEPkgSetup: cannot find Yocto build root.\nRun from inside the build tree.",
       vim.log.levels.ERROR)
     return
   end
@@ -475,7 +483,7 @@ vim.api.nvim_create_user_command("OEPkgSetup", function(opts)
   end
   local workdir = workdirs[1]
 
-  -- compile_commands.json is always in build/ (written by meson/cmake during bitbake do_compile)
+  -- compile_commands.json is in build/ (written by meson/cmake during bitbake do_compile)
   local cc_json = workdir .. "/build/compile_commands.json"
   if vim.fn.filereadable(cc_json) == 0 then
     vim.notify(
@@ -485,39 +493,58 @@ vim.api.nvim_create_user_command("OEPkgSetup", function(opts)
     return
   end
 
-  -- Find source root: first meson.build or CMakeLists.txt not inside a build dir
+  -- Derive the real source root from the first "file" entry in compile_commands.json.
+  -- The "directory" field is the build dir; "file" is relative to it.
+  -- Walking up from the resolved source file to find meson.build/CMakeLists.txt
+  -- is far more reliable than find(1), which picks subproject build files.
+  local cc_head  = vim.fn.system("head -6 " .. vim.fn.shellescape(cc_json))
+  local build_dir = cc_head:match('"directory"%s*:%s*"([^"]+)"')
+  local rel_file  = cc_head:match('"file"%s*:%s*"([^"]+)"')
   local srcroot
-  for _, marker in ipairs({ "meson.build", "CMakeLists.txt" }) do
-    local found = vim.fn.system(string.format(
-      "find %s -maxdepth 5 -name %s -not -path '*/build/*' -print -quit 2>/dev/null",
-      vim.fn.shellescape(workdir), vim.fn.shellescape(marker)
-    )):gsub("\n$", "")
-    if found ~= "" and vim.fn.filereadable(found) == 1 then
-      srcroot = vim.fn.fnamemodify(found, ":h")
-      break
+  if build_dir and rel_file then
+    local abs_file = rel_file:sub(1, 1) == "/"
+      and rel_file
+      or vim.fn.system("realpath " .. vim.fn.shellescape(build_dir .. "/" .. rel_file)):gsub("\n$", "")
+    local dir = vim.fn.fnamemodify(abs_file, ":h")
+    for _ = 1, 10 do
+      if vim.fn.filereadable(dir .. "/meson.build") == 1
+        or vim.fn.filereadable(dir .. "/CMakeLists.txt") == 1 then
+        srcroot = dir
+        break
+      end
+      local parent = vim.fn.fnamemodify(dir, ":h")
+      if parent == dir then break end
+      dir = parent
     end
   end
   if not srcroot then
     vim.notify(
-      string.format("OEPkgSetup [%s]: source root not found in\n  %s", pkg, workdir),
+      string.format("OEPkgSetup [%s]: source root not found above\n  %s", pkg, workdir),
       vim.log.levels.ERROR, { title = "OEPkgSetup" })
     return
   end
 
-  -- Symlink compile_commands.json into the source root
-  local link    = srcroot .. "/compile_commands.json"
-  local ln_out  = vim.fn.system(string.format("ln -sf %s %s",
-    vim.fn.shellescape(cc_json), vim.fn.shellescape(link)))
-  if vim.v.shell_error ~= 0 then
-    vim.notify(
-      string.format("OEPkgSetup [%s]: symlink failed:\n  %s", pkg, ln_out),
+  -- Write .clangd at the source root to strip flags clangd/clang cannot parse
+  local clangd_path = srcroot .. "/.clangd"
+  local f = io.open(clangd_path, "w")
+  if not f then
+    vim.notify("OEPkgSetup [" .. pkg .. "]: failed to write " .. clangd_path,
       vim.log.levels.ERROR, { title = "OEPkgSetup" })
     return
   end
+  f:write(table.concat({
+    "CompileFlags:",
+    "  Remove:",
+    "    - -fcanon-prefix-map",
+    "    - -flto=auto",
+    "    - -ffile-prefix-map=*",
+    "",
+  }, "\n"))
+  f:close()
 
   vim.notify(
-    string.format("OEPkgSetup [%s] done\n  src:  %s\n  json: %s\nRestarting LSP...",
-      pkg, srcroot, cc_json),
+    string.format("OEPkgSetup [%s] done\n  src:    %s\n  .clangd written (strips GCC-only flags)\nRestarting LSP...",
+      pkg, srcroot),
     vim.log.levels.INFO, { title = "OEPkgSetup" })
   lsp_restart()
 end, {

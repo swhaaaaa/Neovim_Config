@@ -646,8 +646,9 @@ All setups run in parallel. Each package gets its own `builddir/` and `compile_c
 
 For any other OpenBMC/Yocto package (sdbusplus, bmcweb, phosphor-logging, etc.):
 
-- bitbake already runs `meson setup` and writes `build/compile_commands.json` during its build
-- `:OEPkgSetup` simply finds that file and symlinks it into the package source root — **no rebuild, completely non-invasive**
+- bitbake writes `build/compile_commands.json` — clangd finds it automatically by searching parent directories
+- The real problem is bitbake's GCC-only flags (`-fcanon-prefix-map`, `-flto=auto`, `-ffile-prefix-map=*`) that clangd/clang cannot parse, causing every file to fail to compile
+- `:OEPkgSetup` writes a `.clangd` file at the package source root that strips those flags — **no rebuild, completely non-invasive**
 - Requires the package to have been built at least once by bitbake
 
 **Usage:**
