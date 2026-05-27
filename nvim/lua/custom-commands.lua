@@ -303,6 +303,20 @@ end, {
 -- Usage:
 --   :KernelSetup                                   (auto-detects from current buffer path)
 --   :KernelSetup /path/to/build_ventura2_quanta    (explicit override)
+-- Walk up from `startpath` until a directory containing tmp/work-shared/ is found
+local function find_kernel_build_root(startpath)
+  local path = startpath:gsub("/$", "")
+  for _ = 1, 15 do
+    if vim.fn.isdirectory(path .. "/tmp/work-shared") == 1 then
+      return path
+    end
+    local parent = vim.fn.fnamemodify(path, ":h")
+    if parent == path then break end
+    path = parent
+  end
+  return nil
+end
+
 vim.api.nvim_create_user_command("KernelSetup", function(opts)
   local buildroot
 
@@ -310,13 +324,14 @@ vim.api.nvim_create_user_command("KernelSetup", function(opts)
     -- Explicit argument
     buildroot = vim.fn.fnamemodify(opts.args, ":p"):gsub("/$", "")
   else
-    -- Auto-detect from current buffer path: strip from /tmp/work-shared/ onward
+    -- Auto-detect: try buffer path first, then cwd — walk up the tree either way
     local bufpath = vim.fn.expand("%:p")
-    local detected = bufpath:match("^(.+)/tmp/work%-shared/")
-    if detected and vim.fn.isdirectory(detected) == 1 then
-      buildroot = detected
-    else
-      buildroot = vim.fn.getcwd()
+    local startpath = (bufpath ~= "" and vim.fn.fnamemodify(bufpath, ":h")) or vim.fn.getcwd()
+    buildroot = find_kernel_build_root(startpath)
+    if not buildroot then
+      vim.notify("KernelSetup: cannot find a build root (no tmp/work-shared/ found above cwd).\n"
+        .. "Run :KernelSetup /path/to/build_root explicitly.", vim.log.levels.ERROR)
+      return
     end
   end
 
