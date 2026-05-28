@@ -552,38 +552,10 @@ end, {
   desc = "Link bitbake compile_commands.json to source root for an OE/Yocto package",
 })
 
--- ─── vLLM server setup ───────────────────────────────────────────────────────
--- :VllmSetup
--- Prompt for the vLLM server URL and save it to stdpath("data")/vllm_endpoint
--- (outside the repo — never committed). avante.lua reads this file at startup.
--- Restart Neovim after changing to apply the new endpoint to avante.nvim.
-vim.api.nvim_create_user_command("VllmSetup", function()
-  local data_file = vim.fn.stdpath("data") .. "/vllm_endpoint"
-  local current   = ""
-  if vim.fn.filereadable(data_file) == 1 then
-    current = vim.fn.readfile(data_file)[1] or ""
-  end
-  if current == "" then
-    current = vim.env.VLLM_ENDPOINT or "http://localhost:8000/v1"
-  end
-
-  vim.ui.input({ prompt = "vLLM endpoint URL: ", default = current }, function(input)
-    if not input or input == "" then return end
-    input = vim.trim(input)
-    vim.fn.writefile({ input }, data_file)
-    vim.notify(
-      "vLLM endpoint saved: " .. input .. "\nRestart Neovim to apply.",
-      vim.log.levels.INFO,
-      { title = "VllmSetup" }
-    )
-  end)
-end, { desc = "Set vLLM server URL (saved to ~/.local/share/nvim/vllm_endpoint)" })
-
 -- Keymaps
 vim.keymap.set("n", "<leader>ms", "<cmd>MesonSetup<CR>", { desc = "meson: setup cwd + link" })
 vim.keymap.set("n", "<leader>mb", "<cmd>MesonBuild<CR>", { desc = "meson: build" })
 vim.keymap.set("n", "<leader>ml", "<cmd>MesonLink<CR>",  { desc = "meson: link compile_commands.json" })
 vim.keymap.set("n", "<leader>ks", "<cmd>KernelSetup<CR>", { desc = "kernel: gen compile_commands + .clangd (OpenBMC/Yocto)" })
 vim.keymap.set("n", "<leader>kp", "<cmd>OEPkgSetup<CR>",  { desc = "OE pkg: link bitbake compile_commands.json" })
-vim.keymap.set("n", "<leader>iS", "<cmd>VllmSetup<CR>",   { desc = "AI: set vLLM server URL" })
 

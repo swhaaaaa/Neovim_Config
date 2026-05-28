@@ -127,8 +127,9 @@ end, {
 -- Note: remapped from <leader>cd to <leader>lc to free <leader>c prefix for cscope
 keymap.set("n", "<leader>lc", "<cmd>lcd %:p:h<cr><cmd>pwd<cr>", { desc = "change cwd (lcd)" })
 
--- Use Esc to quit builtin terminal
+-- Use Esc or C-e to quit builtin terminal
 keymap.set("t", "<Esc>", [[<c-\><c-n>]])
+keymap.set("t", "<C-e>", [[<c-\><c-n>]])
 
 -- <leader>tt is handled by toggleterm.nvim (floating terminal)
 

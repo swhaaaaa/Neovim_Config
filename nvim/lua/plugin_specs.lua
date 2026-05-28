@@ -773,23 +773,48 @@ local plugin_specs = {
   },
 
   -- ─── AI Assistant ─────────────────────────────────────────────────────────────
-  -- avante.nvim: Cursor-like AI assistant with inline diff editing.
-  -- Backed by local vLLM (Devstral) via OpenAI-compatible API — no internet.
-  -- Keymaps: <leader>ia (ask), <leader>ie (edit/inline diff), <leader>it (toggle)
+  -- claudecode.nvim: connects Neovim to Claude Code CLI via WebSocket.
+  -- Same experience as the VS Code extension. Requires Claude Code CLI:
+  --   npm install -g @anthropic-ai/claude-code  then  claude  (to authenticate)
+  -- Keymaps: <leader>A prefix (uppercase, separate from clangd's <leader>a)
   {
-    "yetone/avante.nvim",
+    "coder/claudecode.nvim",
+    dependencies = { "folke/snacks.nvim" },
     event = "VeryLazy",
-    version = false,
-    build = "make BUILD_FROM_SOURCE=true",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-mini/mini.icons",
-      "MunifTanjim/nui.nvim",
+    keys = {
+      { "<leader>Ac", "<cmd>ClaudeCode<cr>",            desc = "Claude: toggle" },
+      { "<leader>Af", "<cmd>ClaudeCodeFocus<cr>",       desc = "Claude: focus" },
+      { "<leader>Ar", "<cmd>ClaudeCode --resume<cr>",   desc = "Claude: resume" },
+      { "<leader>AC", "<cmd>ClaudeCode --continue<cr>", desc = "Claude: continue" },
+      { "<leader>Am", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Claude: select model" },
+      { "<leader>Ab", "<cmd>ClaudeCodeAdd %<cr>",       desc = "Claude: add current buffer" },
+      { "<leader>As", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Claude: send selection" },
+      { "<leader>Aa", "<cmd>ClaudeCodeDiffAccept<cr>",  desc = "Claude: accept diff" },
+      { "<leader>Ad", "<cmd>ClaudeCodeDiffDeny<cr>",    desc = "Claude: deny diff" },
     },
-    config = function()
-      require("config.avante")
-    end,
+    opts = {
+      auto_start  = true,
+      track_selection = true,
+      terminal = {
+        split_side           = "right",
+        split_width_percentage = 0.35,
+        provider             = "snacks",
+        auto_close           = true,
+        -- <Esc> passes through to Claude (needed for /cost, menus, etc.).
+        -- <C-e> exits terminal mode without sending anything to Claude.
+        -- (<C-\><C-n> is also always available as the built-in Neovim terminal escape)
+        snacks_win_opts = {
+          keys = {
+            term_escape = {
+              "<C-e>",
+              function() vim.cmd("stopinsert") end,
+              mode = "t",
+              desc = "Exit terminal mode (back to Neovim)",
+            },
+          },
+        },
+      },
+    },
   },
 
   -- ─── Markdown ─────────────────────────────────────────────────────────────────

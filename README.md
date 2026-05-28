@@ -154,7 +154,7 @@ to install Treesitter parsers.
 ### AI Assistant
 | Plugin | Role |
 |--------|------|
-| `avante.nvim` | Cursor-like AI assistant — sidebar chat + inline diff editing backed by local vLLM (Devstral) |
+| `claudecode.nvim` | Claude Code CLI integration — same as VS Code extension, needs Claude Code subscription (`<leader>A`) |
 
 ### C/C++ Tools
 | Plugin | Role |
@@ -388,14 +388,6 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `<leader>ux` | Toggle treesitter context bar |
 | `<leader>tf` | Toggle format-on-save (conform.nvim) |
 | `<leader>fm` | Toggle fold method: treesitter expr ↔ manual |
-
-### AI Assistant (avante.nvim)
-| Key | Action |
-|-----|--------|
-| `<leader>ia` | Ask AI — open sidebar chat |
-| `<leader>ie` | Edit — inline diff (visual-select code first) |
-| `<leader>it` | Toggle sidebar |
-| `<leader>ir` | Refresh last request |
 
 ### User Commands
 | Command | Action |
