@@ -45,6 +45,12 @@ wk.add {
   { "<leader>tt", desc = "toggle floating terminal" },
   { "<leader>tf", desc = "toggle format on save" },
   { "<leader>fm", desc = "toggle fold method expr/manual" },
+  { "<leader>i",  group = "AI (avante)" },
+  { "<leader>ia", desc = "AI: ask in sidebar" },
+  { "<leader>ie", desc = "AI: edit with inline diff" },
+  { "<leader>ir", desc = "AI: refresh" },
+  { "<leader>it", desc = "AI: toggle sidebar" },
+  { "<leader>iS", desc = "AI: set vLLM server URL" },
   { "<leader>u",  group = "UI toggles" },
   -- UI toggle entries
   { "<leader>ub", desc = "blink cursor to locate it" },

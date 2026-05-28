@@ -25,8 +25,9 @@
 17. [Notifications](#notifications)
 18. [Meson Build](#meson-build)
 19. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
-20. [User Commands](#user-commands)
-21. [Tips & Workflows](#tips--workflows)
+20. [AI Assistant (codecompanion.nvim)](#ai-assistant-codecompanionnvim)
+21. [User Commands](#user-commands)
+22. [Tips & Workflows](#tips--workflows)
 
 ---
 
@@ -668,6 +669,43 @@ For any other OpenBMC/Yocto package (sdbusplus, bmcweb, phosphor-logging, etc.):
 
 ---
 
+## AI Assistant (avante.nvim)
+
+Cursor-like AI assistant backed by a local **vLLM** server running **Mistral Devstral** (`http://10.10.4.28:8000/v1`). No internet required.
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<leader>ia` | n/v | Ask AI — opens sidebar with context |
+| `<leader>ie` | n/v | Edit — inline diff (visual-select code first) |
+| `<leader>it` | n | Toggle sidebar open/closed |
+| `<leader>ir` | n | Refresh / retry last request |
+| `<leader>iS` | n | Set vLLM server URL (`:VllmSetup`) |
+
+**Inline edit workflow (direct buffer modification):**
+1. Visual-select the code to change in your source file (`ggVG` for whole file)
+2. `<leader>ie` — type your instruction (e.g. `add missing #include directives`)
+3. avante shows a **side-by-side diff** with proposed changes highlighted
+4. `<CR>` to accept, `q` to reject
+
+**Ask / chat workflow:**
+1. `<leader>ia` — sidebar opens
+2. Type your question (code context is included automatically from current buffer)
+3. `<CR>` to send
+
+**Diff navigation (while reviewing inline edit):**
+
+| Key | Action |
+|-----|--------|
+| `]x` / `[x` | Next / previous diff hunk |
+| `co` | Accept our version (original) |
+| `ct` | Accept their version (AI suggestion) |
+| `cb` | Accept both |
+
+> **Server URL**: set via `VLLM_ENDPOINT` environment variable (e.g. `export VLLM_ENDPOINT="http://10.10.4.28:8000/v1"` in `~/.bashrc`). Falls back to `http://localhost:8000/v1` if unset. The actual URL is never stored in the repo.
+> **Model name**: configured as `devstral` in `nvim/lua/config/avante.lua`. If the request fails, run `curl $VLLM_ENDPOINT/models` to verify the served model name.
+
+---
+
 ## User Commands
 
 | Command | Action |
@@ -702,6 +740,9 @@ For any other OpenBMC/Yocto package (sdbusplus, bmcweb, phosphor-logging, etc.):
 | `:MesonLink [dir]` | Only (re)create `compile_commands.json` symlink without re-running setup |
 | `:KernelSetup [build_root]` | Generate `compile_commands.json` + `.clangd` for OpenBMC/Yocto kernel, then restart LSP |
 | `:LspRestart` | Restart LSP clients for current buffer |
+| `:AvanteAsk` | Open avante sidebar (also `<leader>ia`) |
+| `:AvanteEdit` | Inline diff edit on selection (also `<leader>ie`) |
+| `:AvanteToggle` | Toggle sidebar (also `<leader>it`) |
 
 ---
 

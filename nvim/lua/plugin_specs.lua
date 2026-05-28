@@ -772,6 +772,26 @@ local plugin_specs = {
     end,
   },
 
+  -- ─── AI Assistant ─────────────────────────────────────────────────────────────
+  -- avante.nvim: Cursor-like AI assistant with inline diff editing.
+  -- Backed by local vLLM (Devstral) via OpenAI-compatible API — no internet.
+  -- Keymaps: <leader>ia (ask), <leader>ie (edit/inline diff), <leader>it (toggle)
+  {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    version = false,
+    build = "make BUILD_FROM_SOURCE=true",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-mini/mini.icons",
+      "MunifTanjim/nui.nvim",
+    },
+    config = function()
+      require("config.avante")
+    end,
+  },
+
   -- ─── Markdown ─────────────────────────────────────────────────────────────────
   -- Editing enhancements: folding, TOC, list continuation, table format
   {
