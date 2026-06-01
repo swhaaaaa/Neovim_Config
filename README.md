@@ -110,7 +110,7 @@ to install Treesitter parsers.
 | `nvim-statuscol` | Custom sign/number column |
 | `indent-blankline.nvim` | Indent & scope guides |
 | `nvim-colorizer` | Hex color preview |
-| `snacks.nvim` | Notification popups (replaces nvim-notify) + nicer `vim.ui.input` for LSP rename / input prompts |
+| `snacks.nvim` | Startup dashboard (recent files + quick actions), notification popups, nicer `vim.ui.input` |
 | `nvim-bqf` | Enhanced quickfix window |
 | `mini.icons` | File/LSP icons |
 
