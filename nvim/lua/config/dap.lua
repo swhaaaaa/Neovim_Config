@@ -23,6 +23,17 @@ vim.fn.sign_define("DapStopped", {
   linehl = "DapStoppedLine", numhl = "",
 })
 
+-- vim.fn.input() with "file" completion requires the native cmdline UI.
+-- snacks.input hooks vim.ui.input and loses tab completion, so temporarily
+-- restore the original before calling input() then put snacks back.
+local function input_file(prompt, default)
+  local orig = vim.ui.input
+  vim.ui.input = nil
+  local path = vim.fn.input(prompt, default or "", "file")
+  vim.ui.input = orig
+  return path ~= "" and path or nil
+end
+
 -- ── C/C++ configurations (shared by both adapters) ────────────────────────
 local c_cpp_cfg = {
   {
@@ -30,7 +41,7 @@ local c_cpp_cfg = {
     type    = "codelldb",   -- will fall back to lldb if codelldb not found
     request = "launch",
     program = function()
-      return vim.fn.input("Executable: ", vim.fn.getcwd() .. "/", "file")
+      return input_file("Executable: ", vim.fn.getcwd() .. "/")
     end,
     cwd         = "${workspaceFolder}",
     stopOnEntry = false,
@@ -41,7 +52,7 @@ local c_cpp_cfg = {
     type    = "codelldb",
     request = "launch",
     program = function()
-      return vim.fn.input("Executable: ", vim.fn.getcwd() .. "/", "file")
+      return input_file("Executable: ", vim.fn.getcwd() .. "/")
     end,
     args = function()
       local args = vim.fn.input("Args: ")

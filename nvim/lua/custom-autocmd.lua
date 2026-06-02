@@ -3,6 +3,7 @@ local api = vim.api
 
 local utils = require("utils")
 
+
 -- Display a message when the current file is not in utf-8 format.
 -- Note that we need to use `unsilent` command here because of this issue:
 -- https://github.com/vim/vim/issues/4379
@@ -45,11 +46,14 @@ api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
--- Auto-create dir when saving a file, in case some intermediate directory does not exist
+-- Auto-create dir when saving a file, in case some intermediate directory does not exist.
+-- Skip virtual buffer schemes (oil://, fugitive://, etc.) — fnamemodify on these
+-- paths resolves to a relative "oil:" directory and mkdir creates it on disk.
 api.nvim_create_autocmd({ "BufWritePre" }, {
   pattern = "*",
   group = api.nvim_create_augroup("auto_create_dir", { clear = true }),
   callback = function(ctx)
+    if ctx.file:match("^%a[%a%d+%-%.]*://") then return end
     local dir = fn.fnamemodify(ctx.file, ":p:h")
     utils.may_create_dir(dir)
   end,
@@ -284,6 +288,22 @@ api.nvim_create_autocmd("BufReadPost", {
       vim.cmd("silent! normal! zz")  -- center screen (optional)
     end
   end,
+})
+
+-- Disable undo/swap for oil:// virtual buffers as early as possible.
+-- undodir ends with '//' (full-path mirroring): for non-absolute paths like
+-- oil://, Neovim creates literal directories in CWD instead of %-encoding.
+-- BufAdd fires before FileType so we catch the buffer before any write occurs.
+api.nvim_create_autocmd("BufAdd", {
+  group = api.nvim_create_augroup("oil_no_backup", { clear = true }),
+  pattern = "*",
+  callback = function(ev)
+    if vim.api.nvim_buf_get_name(ev.buf):match("^oil://") then
+      vim.bo[ev.buf].undofile = false
+      vim.bo[ev.buf].swapfile = false
+    end
+  end,
+  desc = "disable undo/swap for oil:// buffers to prevent oil: folder creation",
 })
 
 -- ─── Auto-save session on exit (vim-obsession) ────────────────────────────────

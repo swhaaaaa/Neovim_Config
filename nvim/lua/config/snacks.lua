@@ -9,6 +9,8 @@ snacks.setup {
   },
   -- Nicer vim.ui.input (used by LSP rename, input prompts, etc.)
   input = { enabled = true },
+  -- Smooth scrolling for <C-d>/<C-u>/<C-f>/<C-b>/gg/G/zz etc.
+  scroll = { enabled = false },
   -- Startup dashboard: shown when nvim is opened with no file arguments.
   dashboard = {
     enabled = true,

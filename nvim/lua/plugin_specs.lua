@@ -142,6 +142,17 @@ local plugin_specs = {
     cmd = { "Mason", "MasonInstall", "MasonUpdate" },
     opts = {},
   },
+  -- nvim-lint: async linting complement to conform.nvim (formatting).
+  -- Covers filetypes where LSP diagnostics are absent or insufficient.
+  -- Add linters per ft as needed; install them via Mason or system package manager.
+  {
+    "mfussenegger/nvim-lint",
+    event = { "BufWritePost", "BufReadPost" },
+    config = function()
+      require("config.nvim-lint")
+    end,
+  },
+
   {
     "stevearc/conform.nvim",
     event = "BufWritePre",
@@ -369,7 +380,7 @@ local plugin_specs = {
     dependencies = { "nvim-mini/mini.icons" },
     lazy = false,   -- load immediately (recommended by author)
     opts = {
-      default_file_explorer = false,  -- keep netrw disabled, don't replace it
+      default_file_explorer = true,   -- disables netrw so it can't intercept oil:// paths
       columns = { "icon", "size" },
       view_options = {
         show_hidden = true,           -- show dotfiles
@@ -399,10 +410,8 @@ local plugin_specs = {
     },
     config = function(_, opts)
       require("oil").setup(opts)
-      -- - opens oil for current file's directory
       vim.keymap.set("n", "-", "<cmd>Oil<CR>",
         { desc = "oil: open parent directory" })
-      -- <leader>- opens oil as a floating window
       vim.keymap.set("n", "<leader>-", "<cmd>Oil --float<CR>",
         { desc = "oil: open parent directory (float)" })
     end,
@@ -601,6 +610,7 @@ local plugin_specs = {
   {
     "gbprod/yanky.nvim",
     cmd = "YankyRingHistory",
+    keys = { "p", "P", "[y", "]y" },
     config = function()
       require("config.yanky")
     end,
@@ -760,6 +770,14 @@ local plugin_specs = {
     config = function()
       require("dap-python").setup(vim.fn.exepath("python3"))
     end,
+  },
+  {
+    "theHamsta/nvim-dap-virtual-text",
+    dependencies = { "mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter" },
+    event = "VeryLazy",
+    opts = {
+      commented = true,   -- prefix virtual text with comment string
+    },
   },
 
   -- ─── Cscope ───────────────────────────────────────────────────────────────────

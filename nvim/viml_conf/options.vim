@@ -25,6 +25,12 @@ set clipboard+=unnamedplus
 " Disable creating swapfiles, see https://stackoverflow.com/q/821902/6064933
 set noswapfile
 
+" Exclude oil:// virtual paths from shada (oldfiles / recent-files history).
+" The 'r' flag marks a path prefix as removable — matching paths are never
+" written to shada, so they won't appear in :oldfiles, snacks dashboard, or
+" fzf recent-files after using oil.nvim.
+set shada+=roil://
+
 " Ignore certain files and folders when globing
 set wildignore+=*.o,*.obj,*.dylib,*.bin,*.dll,*.exe
 set wildignore+=*/.git/*,*/.svn/*,*/__pycache__/*,*/build/**
@@ -40,6 +46,8 @@ let &backupdir=g:backupdir
 
 " Skip backup for patterns in option wildignore
 let &backupskip=&wildignore
+" Also skip backup and undo for virtual/plugin buffers (oil://, fugitive://, etc.)
+set backupskip+=oil://**,fugitive://**
 set backup  " create backup for files
 set backupcopy=yes  " copy the original file to backupdir and overwrite it
 
@@ -58,7 +66,7 @@ set number relativenumber  " Show line number and relative line number
 set ignorecase smartcase
 
 " File and script encoding settings for vim
-set fileencoding=utf-8
+setglobal fileencoding=utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 
 " Break line at predefined characters

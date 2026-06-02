@@ -10,3 +10,6 @@ nvim/spell/*.add.spl
 # OS
 .DS_Store
 Thumbs.db
+
+# Claude Code session data (local only)
+.claude/

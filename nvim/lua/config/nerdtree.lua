@@ -25,6 +25,18 @@ vim.g.NERDTreeIgnore = {
 -- NOTE: keymaps are defined in plugin_specs.lua init() function
 -- because NERDTree is lazy-loaded — init runs at startup, config runs after load
 
+-- ── Wrap long filenames ───────────────────────────────────────────────────────
+-- NERDTree forces nowrap; override it so long paths fold to the next line.
+-- linebreak wraps at path separators rather than mid-filename.
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "nerdtree",
+    callback = function()
+        vim.wo.wrap      = true
+        vim.wo.linebreak = true
+    end,
+    desc = "Wrap long filenames in NERDTree",
+})
+
 -- ── Auto-close when NERDTree is last window ───────────────────────────────────
 vim.api.nvim_create_autocmd("BufEnter", {
     group = vim.api.nvim_create_augroup("NERDTreeAutoClose", { clear = true }),

@@ -46,5 +46,14 @@ if aerial_cfg_ok then
   end
 end
 
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "aerial",
+  callback = function()
+    vim.wo.wrap      = true
+    vim.wo.linebreak = true
+  end,
+  desc = "Wrap long symbol names in aerial",
+})
+
 vim.keymap.set("n", "<leader>ao", "<cmd>AerialToggle<CR>",
   { silent = true, desc = "aerial: toggle symbol outline" })

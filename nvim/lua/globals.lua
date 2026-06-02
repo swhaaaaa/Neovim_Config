@@ -44,8 +44,12 @@ vim.cmd([[language en_US.UTF-8]])
 
 -- Disable loading certain plugins
 
--- netrw is kept enabled (nvim-tree removed — netrw no longer conflicts)
--- oil.nvim handles directory navigation instead
+-- Disable netrw BEFORE plugins load. oil.nvim also sets these via
+-- default_file_explorer=true, but lazy.nvim loads after this file so we must
+-- set them here explicitly. Without this, netrw treats oil:// buffer names
+-- as remote URLs and creates an "oil:" directory in the working folder.
+vim.g.loaded_netrw       = 1
+vim.g.loaded_netrwPlugin = 1
 vim.g.netrw_liststyle = 3
 if vim.g.is_win then
   vim.g.netrw_http_cmd = "curl --ssl-no-revoke -Lo"
