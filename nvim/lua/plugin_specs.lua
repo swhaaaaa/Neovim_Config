@@ -86,6 +86,21 @@ local plugin_specs = {
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
+    dependencies = {
+      {
+        "mason-org/mason-lspconfig.nvim",
+        dependencies = { "mason-org/mason.nvim" },
+        -- Automatically installs missing LSP servers via Mason.
+        -- automatic_enable=false: our lsp.lua enable loop stays in charge;
+        -- Mason just ensures the server executables exist on disk.
+        opts = {
+          ensure_installed = {
+            "pyright", "ruff", "lua_ls", "clangd", "vimls", "bashls", "yamlls",
+          },
+          automatic_enable = false,
+        },
+      },
+    },
     config = function()
       require("config.lsp")
     end,
@@ -709,22 +724,6 @@ local plugin_specs = {
     end,
   },
 
-  -- ─── Session ──────────────────────────────────────────────────────────────────
-  -- persistence.nvim: auto-saves and restores sessions per working directory.
-  -- Keymaps: <leader>ss (restore cwd session), <leader>sl (last session),
-  --          <leader>sd (stop / don't save on exit)
-  {
-    "folke/persistence.nvim",
-    event = "BufReadPre",
-    keys = {
-      { "<leader>ss", function() require("persistence").load() end,               desc = "session: restore for cwd" },
-      { "<leader>sl", function() require("persistence").load({ last = true }) end, desc = "session: restore last" },
-      { "<leader>sq", function() require("persistence").stop() end,               desc = "session: stop (don't save)" },
-    },
-    config = function()
-      require("config.persistence")
-    end,
-  },
 
   -- ─── Debug (DAP) ──────────────────────────────────────────────────────────────
   -- Install adapters as needed:
