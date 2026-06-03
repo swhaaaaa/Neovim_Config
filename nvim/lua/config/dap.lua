@@ -140,24 +140,33 @@ local python_has_debugpy = debugpy_cmd == nil
   and vim.fn.executable("python3") == 1
   and vim.fn.system("python3 -c 'import debugpy' 2>/dev/null; echo $?"):match("^0") ~= nil
 
+-- Detect active virtualenv at launch time so the right interpreter is used.
+local function python_path()
+  local venv = os.getenv("VIRTUAL_ENV")
+  if venv then return venv .. "/bin/python" end
+  return "python3"
+end
+
 local python_cfg = {
   {
-    name    = "Launch file",
-    type    = "python",
-    request = "launch",
-    program = "${file}",
-    console = "integratedTerminal",
+    name       = "Launch file",
+    type       = "python",
+    request    = "launch",
+    program    = "${file}",
+    pythonPath = python_path,
+    console    = "integratedTerminal",
   },
   {
-    name    = "Launch with args",
-    type    = "python",
-    request = "launch",
-    program = "${file}",
-    args    = function()
+    name       = "Launch with args",
+    type       = "python",
+    request    = "launch",
+    program    = "${file}",
+    pythonPath = python_path,
+    args       = function()
       local args = vim.fn.input("Args: ")
       return vim.split(args, " ", { trimempty = true })
     end,
-    console = "integratedTerminal",
+    console    = "integratedTerminal",
   },
 }
 

@@ -144,6 +144,37 @@ install_if_missing "cscope" "cscope"            "cscope"        "cscope"        
 install_if_missing "node"   "nodejs"            "nodejs"        "nodejs"          "node"            "required by many LSP servers and Markdown preview"
 install_if_missing "npm"    "npm"               "npm"           "npm"             "node"            "required to install LSP servers and Markdown preview"
 
+# lazygit — floating git UI (snacks.lazygit). Not in default apt repos;
+# install from GitHub releases or use brew/pacman/dnf.
+if command -v lazygit &>/dev/null; then
+    success "lazygit already installed"
+else
+    warn "lazygit not found (floating git UI — <leader>gl)"
+    read -rp "  Install lazygit now? [Y/n] " answer
+    answer="${answer:-Y}"
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        case "$PKG_MGR" in
+            apt)
+                LAZYGIT_VERSION=$(curl -fsSL "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" \
+                    | grep -oP '"tag_name": "v\K[^"]*')
+                curl -fsSLo /tmp/lazygit.tar.gz \
+                    "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+                tar -C /tmp -xf /tmp/lazygit.tar.gz lazygit
+                sudo install /tmp/lazygit /usr/local/bin/lazygit
+                rm -f /tmp/lazygit /tmp/lazygit.tar.gz
+                ;;
+            dnf)    sudo dnf install -y lazygit ;;
+            pacman) sudo pacman -S --noconfirm lazygit ;;
+            brew)   brew install lazygit ;;
+            *)      warn "Cannot auto-install lazygit — visit https://github.com/jesseduffield/lazygit/releases" ;;
+        esac
+        command -v lazygit &>/dev/null && success "lazygit installed" \
+            || warn "lazygit installation may have failed — check manually"
+    else
+        info "Skipping lazygit. Install manually from: https://github.com/jesseduffield/lazygit/releases"
+    fi
+fi
+
 # ack — used by ack.vim as search backend (ripgrep is preferred if available,
 # but ack is kept as a fallback and is the plugin's namesake tool).
 # On Debian/Ubuntu the package is called ack or ack-grep depending on version.

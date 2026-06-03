@@ -19,6 +19,7 @@ wk.add {
   { "<leader>d",  group = "debug (DAP)" },
   { "<leader>f",  group = "find (fzf-lua)" },
   { "<leader>g",  group = "git" },
+  { "<leader>gl", desc = "lazygit" },
   { "<leader>gg", group = "neogit" },
   { "<leader>h",  group = "git hunks" },
   { "<leader>k",  group = "kernel (OpenBMC/Yocto)" },
