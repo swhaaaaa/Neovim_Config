@@ -1,6 +1,5 @@
 local ok, lint = pcall(require, "lint")
 if not ok then return end
-
 -- Enable a useful default check set when no .clang-tidy file exists in the project.
 -- Projects with their own .clang-tidy take precedence (clang-tidy merges args).
 lint.linters.clangtidy.args = {

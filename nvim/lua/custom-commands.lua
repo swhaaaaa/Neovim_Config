@@ -27,10 +27,43 @@ api.nvim_create_user_command("LspInfo2", function()
 end, { desc = "Show active LSP clients" })
 
 -- Reload nvim config
+-- Clears Lua's require() cache for all local config modules so that
+-- re-sourcing init.lua and re-requiring plugin configs picks up file changes.
 api.nvim_create_user_command("ReloadConfig", function()
+  -- Reset bytecode cache so edited files are re-compiled, not served stale.
+  if vim.loader and vim.loader.reset then
+    vim.loader.reset()
+  end
+
+  -- 1. Clear top-level modules re-required by init.lua
+  for _, name in ipairs({
+    "globals", "custom-autocmd", "custom-commands",
+    "mappings", "diagnostic-conf", "colorschemes",
+  }) do
+    package.loaded[name] = nil
+  end
+
+  -- 2. Clear and re-require all config.* plugin config modules.
+  -- Some plugins error if setup() is called twice; only clear their cache
+  -- (they take effect on next restart) rather than re-requiring them now.
+  local no_rerun = { ["config.snacks"] = true }
+  local plugin_configs = {}
+  for name in pairs(package.loaded) do
+    if name:match("^config%.") then
+      table.insert(plugin_configs, name)
+    end
+  end
+  for _, name in ipairs(plugin_configs) do
+    package.loaded[name] = nil
+    if not no_rerun[name] then
+      pcall(require, name)
+    end
+  end
+
+  -- 3. Re-source init.lua to reload top-level modules
   vim.cmd("source $MYVIMRC")
-  vim.notify("Config reloaded", vim.log.levels.INFO)
-end, { desc = "Reload init.lua" })
+  vim.notify("Config reloaded (" .. #plugin_configs .. " plugin configs)", vim.log.levels.INFO)
+end, { desc = "Reload init.lua and all config modules" })
 
 -- ─── LSP restart helper (Neovim 0.11 compatible) ─────────────────────────────
 -- :LspRestart was removed in Neovim 0.11. Use this instead.
