@@ -41,7 +41,7 @@ local c_cpp_cfg = {
     type    = "codelldb",   -- will fall back to lldb if codelldb not found
     request = "launch",
     program = function()
-      return input_file("Executable: ", vim.fn.getcwd() .. "/")
+      return input_file("Executable: ", "")
     end,
     cwd         = "${workspaceFolder}",
     stopOnEntry = false,
@@ -52,7 +52,7 @@ local c_cpp_cfg = {
     type    = "codelldb",
     request = "launch",
     program = function()
-      return input_file("Executable: ", vim.fn.getcwd() .. "/")
+      return input_file("Executable: ", "")
     end,
     args = function()
       local args = vim.fn.input("Args: ")
@@ -126,6 +126,61 @@ dap.listeners.after.event_stopped["dap_core"] = function()
       )
     end
   end)
+end
+
+-- ── Python (debugpy) ──────────────────────────────────────────────────────
+-- Install via Mason (:MasonInstall debugpy) OR pip install debugpy.
+-- Mason binary takes priority; falls back to the pip-installed module.
+local mason_debugpy = vim.fn.stdpath("data") .. "/mason/bin/debugpy-adapter"
+local debugpy_cmd = vim.fn.executable(mason_debugpy) == 1 and mason_debugpy
+                 or vim.fn.executable("debugpy-adapter") == 1 and "debugpy-adapter"
+                 or nil
+-- pip-installed fallback: use the module as an adapter directly
+local python_has_debugpy = debugpy_cmd == nil
+  and vim.fn.executable("python3") == 1
+  and vim.fn.system("python3 -c 'import debugpy' 2>/dev/null; echo $?"):match("^0") ~= nil
+
+local python_cfg = {
+  {
+    name    = "Launch file",
+    type    = "python",
+    request = "launch",
+    program = "${file}",
+    console = "integratedTerminal",
+  },
+  {
+    name    = "Launch with args",
+    type    = "python",
+    request = "launch",
+    program = "${file}",
+    args    = function()
+      local args = vim.fn.input("Args: ")
+      return vim.split(args, " ", { trimempty = true })
+    end,
+    console = "integratedTerminal",
+  },
+}
+
+if debugpy_cmd then
+  dap.adapters.python = {
+    type    = "executable",
+    command = debugpy_cmd,
+  }
+  dap.configurations.python = python_cfg
+elseif python_has_debugpy then
+  dap.adapters.python = {
+    type    = "executable",
+    command = "python3",
+    args    = { "-m", "debugpy.adapter" },
+  }
+  dap.configurations.python = python_cfg
+else
+  vim.notify(
+    "DAP: no Python adapter found.\n" ..
+    "Option 1 (Mason):  :MasonInstall debugpy\n" ..
+    "Option 2 (pip):    pip install debugpy  (install.sh handles this)",
+    vim.log.levels.WARN
+  )
 end
 
 -- ── Keymaps ────────────────────────────────────────────────────────────────
