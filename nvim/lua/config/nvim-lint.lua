@@ -5,13 +5,8 @@ if not ok then return end
 -- Projects with their own .clang-tidy take precedence (clang-tidy merges args).
 lint.linters.clangtidy.args = {
   "--quiet",
-  "--checks=bugprone-*,modernize-*,performance-*,readability-simplify-*",
+  "--checks=bugprone-*,modernize-*,performance-*,readability-simplify-*,-modernize-use-trailing-return-type,-modernize-return-braced-init-list",
 }
--- Run clang-tidy from the file's own directory so it searches upward for
--- compile_commands.json from the right starting point (e.g. files on /media/...).
-lint.linters.clangtidy.cwd = function()
-  return vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":h")
-end
 
 lint.linters_by_ft = {
   -- shellcheck catches issues bashls misses (SC codes, portability, etc.)
@@ -26,12 +21,26 @@ lint.linters_by_ft = {
 
 local slow_ft = { c = true, cpp = true }
 
+-- Named group prevents duplicate autocmds when config is reloaded.
+local group = vim.api.nvim_create_augroup("nvim_lint", { clear = true })
+
 -- clang-tidy is slow (full AST re-parse) — only run it on save to avoid lag
 -- when leaving insert mode. Fast linters (shellcheck) still run on InsertLeave.
+-- Pass cwd = file's directory so clang-tidy searches upward from there for
+-- compile_commands.json (handles files on /media/... or other non-cwd paths).
 vim.api.nvim_create_autocmd("BufWritePost", {
-  callback = function() lint.try_lint() end,
+  group = group,
+  callback = function()
+    local ft = vim.bo.filetype
+    if slow_ft[ft] then
+      lint.try_lint(nil, { cwd = vim.fn.expand("%:p:h") })
+    else
+      lint.try_lint()
+    end
+  end,
 })
 vim.api.nvim_create_autocmd("InsertLeave", {
+  group = group,
   callback = function()
     if not slow_ft[vim.bo.filetype] then
       lint.try_lint()
