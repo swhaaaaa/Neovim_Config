@@ -24,8 +24,17 @@ lint.linters_by_ft = {
   cpp = { "clangtidy" },
 }
 
-vim.api.nvim_create_autocmd({ "BufWritePost", "InsertLeave" }, {
+local slow_ft = { c = true, cpp = true }
+
+-- clang-tidy is slow (full AST re-parse) — only run it on save to avoid lag
+-- when leaving insert mode. Fast linters (shellcheck) still run on InsertLeave.
+vim.api.nvim_create_autocmd("BufWritePost", {
+  callback = function() lint.try_lint() end,
+})
+vim.api.nvim_create_autocmd("InsertLeave", {
   callback = function()
-    lint.try_lint()
+    if not slow_ft[vim.bo.filetype] then
+      lint.try_lint()
+    end
   end,
 })
