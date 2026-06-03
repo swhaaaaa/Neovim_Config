@@ -141,8 +141,9 @@ install_if_missing "rg"     "ripgrep"           "ripgrep"       "ripgrep"       
 install_if_missing "fzf"    "fzf"               "fzf"           "fzf"             "fzf"             "fuzzy finder — required by fzf-lua"
 install_if_missing "ctags"  "universal-ctags"   "ctags"         "ctags"           "universal-ctags" "buffer tag browser (<leader>fB in fzf-lua)"
 install_if_missing "cscope" "cscope"            "cscope"        "cscope"          "cscope"          "C/C++ symbol navigation (cscope_maps.nvim)"
-install_if_missing "node"   "nodejs"            "nodejs"        "nodejs"          "node"            "required by many LSP servers and Markdown preview"
-install_if_missing "npm"    "npm"               "npm"           "npm"             "node"            "required to install LSP servers and Markdown preview"
+install_if_missing "node"        "nodejs"         "nodejs"        "nodejs"          "node"            "required by many LSP servers and Markdown preview"
+install_if_missing "npm"         "npm"            "npm"           "npm"             "node"            "required to install LSP servers and Markdown preview"
+install_if_missing "shellcheck"  "shellcheck"     "ShellCheck"    "shellcheck"      "shellcheck"      "shell script linter (nvim-lint runs it on .sh/.bash files)"
 
 # lazygit — floating git UI (snacks.lazygit). Not in default apt repos;
 # install from GitHub releases or use brew/pacman/dnf.

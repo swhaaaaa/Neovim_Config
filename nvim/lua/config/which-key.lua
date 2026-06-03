@@ -10,6 +10,7 @@ wk.setup {
 -- after pressing the leader key or a prefix.
 wk.add {
   -- leader groups
+  { "<leader><cr>", desc = "clear search highlight" },
   { "<leader>a",  group = "C/C++ (clangd)" },
   { "<leader>as", desc = "clangd: switch source/header" },
   { "<leader>at", desc = "clangd: view AST" },
