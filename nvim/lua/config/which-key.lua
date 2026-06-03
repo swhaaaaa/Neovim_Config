@@ -81,6 +81,7 @@ wk.add {
   { "<leader>dl", desc = "DAP: run last" },
   { "<leader>dx", desc = "DAP: terminate" },
   { "<leader>du", desc = "toggle DAP UI" },
+  { "<leader>dv", desc = "DAP: toggle virtual text" },
   -- quickfix
   { "<leader>co", desc = "open quickfix list" },
   { "<leader>cc", desc = "close quickfix list" },

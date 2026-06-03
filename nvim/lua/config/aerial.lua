@@ -5,10 +5,11 @@ aerial.setup {
   backends = { "lsp", "treesitter", "markdown", "man" },
 
   layout = {
-    max_width         = { 40, 0.2 },
+    max_width         = { 60, 0.3 },
     min_width         = 20,
     default_direction = "prefer_right",
     placement         = "window",
+    resize_to_content = true,
   },
 
   -- false = show all symbol kinds; the default whitelist excludes Namespace
@@ -49,10 +50,9 @@ end
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "aerial",
   callback = function()
-    vim.wo.wrap      = true
-    vim.wo.linebreak = true
+    vim.wo.wrap = false
   end,
-  desc = "Wrap long symbol names in aerial",
+  desc = "No wrap in aerial — resize_to_content handles long names",
 })
 
 vim.keymap.set("n", "<leader>ao", "<cmd>AerialToggle<CR>",

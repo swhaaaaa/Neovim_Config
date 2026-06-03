@@ -268,7 +268,7 @@ end, { desc = "show cursor" })
 -----------------
 
 -- Disable highlight when <leader><cr> is pressed
--- keymap.set({ "n" }, "<leader><cr>", "<cmd>nohlsearch<cr>", { desc = "general clear highlights" })
+keymap.set({ "n" }, "<leader><cr>", "<cmd>nohlsearch<cr>", { desc = "clear search highlight" })
 
 -- tabufline
 keymap.set({ "n" }, "<leader>b", "<cmd>enew<CR>", { desc = "buffer new" })
