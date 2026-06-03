@@ -143,7 +143,8 @@ install_if_missing "ctags"  "universal-ctags"   "ctags"         "ctags"         
 install_if_missing "cscope" "cscope"            "cscope"        "cscope"          "cscope"          "C/C++ symbol navigation (cscope_maps.nvim)"
 install_if_missing "node"        "nodejs"         "nodejs"        "nodejs"          "node"            "required by many LSP servers and Markdown preview"
 install_if_missing "npm"         "npm"            "npm"           "npm"             "node"            "required to install LSP servers and Markdown preview"
-install_if_missing "shellcheck"  "shellcheck"     "ShellCheck"    "shellcheck"      "shellcheck"      "shell script linter (nvim-lint runs it on .sh/.bash files)"
+install_if_missing "shellcheck"   "shellcheck"      "ShellCheck"     "shellcheck"       "shellcheck"       "shell script linter (nvim-lint runs it on .sh/.bash files)"
+install_if_missing "clang-tidy"  "clang-tidy"      "clang-tools-extra" "clang"        "llvm"             "C/C++ static analyzer (nvim-lint runs it on .c/.cpp files)"
 
 # lazygit — floating git UI (snacks.lazygit). Not in default apt repos;
 # install from GitHub releases or use brew/pacman/dnf.
