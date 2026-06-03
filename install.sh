@@ -139,7 +139,7 @@ step "── Step 3: Recommended Tools ─────────────�
 
 install_if_missing "rg"     "ripgrep"           "ripgrep"       "ripgrep"         "ripgrep"         "live grep in fzf-lua and grug-far"
 install_if_missing "fzf"    "fzf"               "fzf"           "fzf"             "fzf"             "fuzzy finder — required by fzf-lua"
-install_if_missing "ctags"  "universal-ctags"   "ctags"         "ctags"           "universal-ctags" "symbol browser for Vista.vim"
+install_if_missing "ctags"  "universal-ctags"   "ctags"         "ctags"           "universal-ctags" "buffer tag browser (<leader>fB in fzf-lua)"
 install_if_missing "cscope" "cscope"            "cscope"        "cscope"          "cscope"          "C/C++ symbol navigation (cscope_maps.nvim)"
 install_if_missing "node"   "nodejs"            "nodejs"        "nodejs"          "node"            "required by many LSP servers and Markdown preview"
 install_if_missing "npm"    "npm"               "npm"           "npm"             "node"            "required to install LSP servers and Markdown preview"
