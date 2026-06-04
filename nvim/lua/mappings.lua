@@ -354,15 +354,9 @@ keymap.set("n", "<leader>un", function() Snacks.notifier.show_history() end,
   { desc = "show notification history" })
 
 -- ─── Format on save toggle ───────────────────────────────────────────────────
--- conform.nvim has format_on_save disabled by default.
--- Use <leader>tf to toggle it on/off per session.
+-- conform.nvim has format_on_save disabled by default (vim.g.format_on_save is nil).
+-- The format_on_save callback in plugin_specs.lua checks this flag on every save.
 keymap.set("n", "<leader>tf", function()
-  local conform = require("conform")
-  if conform.format_on_save then
-    conform.format_on_save = nil
-    vim.notify("Format on save: OFF", vim.log.levels.INFO)
-  else
-    conform.format_on_save = { lsp_fallback = true, timeout_ms = 500 }
-    vim.notify("Format on save: ON", vim.log.levels.INFO)
-  end
+  vim.g.format_on_save = not vim.g.format_on_save
+  vim.notify("Format on save: " .. (vim.g.format_on_save and "ON" or "OFF"), vim.log.levels.INFO)
 end, { desc = "toggle format on save" })

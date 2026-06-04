@@ -180,7 +180,11 @@ local plugin_specs = {
         javascript = { "prettier" },
         typescript = { "prettier" },
       },
-      format_on_save = false,
+      format_on_save = function(_bufnr)
+        if vim.g.format_on_save then
+          return { lsp_fallback = true, timeout_ms = 500 }
+        end
+      end,
       -- clang_format reads .clang-format in project root automatically.
       -- For kernel work, create a .clang-format with:
       --   BasedOnStyle: Linux
