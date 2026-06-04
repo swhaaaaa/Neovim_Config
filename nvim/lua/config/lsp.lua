@@ -91,25 +91,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- but disable this feature by default, so you may need to enable inlay hint in the LSP server config.
     -- vim.lsp.inlay_hint.enable(true, {buffer=bufnr})
 
-    -- The below command will highlight the current variable and its usages in the buffer.
-    if client.server_capabilities.documentHighlightProvider then
-      local gid = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = true })
-      vim.api.nvim_create_autocmd("CursorHold", {
-        group = gid,
-        buffer = bufnr,
-        callback = function()
-          vim.lsp.buf.document_highlight()
-        end,
-      })
-
-      vim.api.nvim_create_autocmd("CursorMoved", {
-        group = gid,
-        buffer = bufnr,
-        callback = function()
-          vim.lsp.buf.clear_references()
-        end,
-      })
-    end
+    -- vim-illuminate already highlights references via LSP/treesitter/regex
+    -- with a configurable delay and proper provider priority.  A second
+    -- document_highlight path here (one per LspAttach call, shared augroup
+    -- name) races when multiple clients attach and produces double-highlight
+    -- artifacts.  Removed in favour of vim-illuminate alone.
   end,
   nested = true,
   desc = "Configure buffer keymap and behavior based on LSP",
