@@ -19,9 +19,6 @@ lint.linters_by_ft = {
   -- yamllint: catches syntax errors and style issues in YAML (CI configs, Yocto layer configs).
   -- Install: pip install yamllint  or  apt install yamllint
   yaml = { "yamllint" },
-  -- hadolint: Dockerfile best-practice linter (warns on apt without --no-install-recommends, etc.).
-  -- Install: apt install hadolint  or  brew install hadolint
-  dockerfile = { "hadolint" },
 }
 
 local slow_ft = { c = true, cpp = true }
