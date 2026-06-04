@@ -185,7 +185,6 @@ local plugin_specs = {
         jsonc      = { "prettier" },
         yaml       = { "prettier" },
 
-        markdown   = { "prettier" },
       },
       format_on_save = function(_bufnr)
         if vim.g.format_on_save then

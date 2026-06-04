@@ -22,9 +22,6 @@ lint.linters_by_ft = {
   -- hadolint: Dockerfile best-practice linter (warns on apt without --no-install-recommends, etc.).
   -- Install: apt install hadolint  or  brew install hadolint
   dockerfile = { "hadolint" },
-  -- markdownlint: enforces consistent markdown style in docs/READMEs.
-  -- Install: npm install -g markdownlint-cli
-  markdown = { "markdownlint" },
 }
 
 local slow_ft = { c = true, cpp = true }
