@@ -184,7 +184,7 @@ local plugin_specs = {
         json       = { "prettier" },
         jsonc      = { "prettier" },
         yaml       = { "prettier" },
-        toml       = { "taplo" },
+
         markdown   = { "prettier" },
       },
       format_on_save = function(_bufnr)
