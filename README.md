@@ -88,7 +88,7 @@ to install Treesitter parsers.
 |--------|------|
 | `nvim-treesitter` | Syntax highlighting & folding |
 | `nvim-treesitter-context` | Shows current function/block at top while scrolling |
-| `mini.ai` | Textobjects (`af`, `if`, `ac`, `ic`, `aa`, `ia`) |
+| `mini.ai` | Textobjects (`af`/`if`, `ac`/`ic`, `al`/`il`, `ao`/`io`, `aa`/`ia`) |
 | `mini.surround` | Add/delete/replace surrounding pairs (`sa`, `sd`, `sr`) |
 
 ### Markdown
@@ -118,7 +118,7 @@ to install Treesitter parsers.
 | Plugin | Role |
 |--------|------|
 | `fzf-lua` | Fuzzy finder with preview (files, grep, buffers) |
-| `hop.nvim` | EasyMotion-style jump |
+| `hop.nvim` | EasyMotion-style 2-char jump: `f`/`F` (find fwd/bwd), `t`/`T` (till fwd/bwd) |
 | `nvim-hlslens` | Search result count & highlights |
 | `aerial.nvim` | Symbol outline via LSP/treesitter — no ctags needed (`<leader>ao`) |
 
@@ -214,10 +214,13 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 ### Navigation
 | Key | Action |
 |-----|--------|
-| `f` | Hop jump (EasyMotion-style) |
+| `f` | Hop: 2-char find forward |
+| `F` | Hop: 2-char find backward |
+| `t` | Hop: 2-char till forward (cursor lands before match) |
+| `T` | Hop: 2-char till backward (cursor lands after match) |
 | `*` / `#` / `n` / `N` | Search with hlslens highlights |
-| `]f` / `[f` | Jump to next/previous function (mini.ai) |
-| `]c` / `[c` | Jump to next/previous class (mini.ai) |
+| `g]f` / `g[f` | Jump to next/previous function (mini.ai) |
+| `g]c` / `g[c` | Jump to next/previous class (mini.ai) |
 | `<leader>ao` | Toggle aerial symbol outline (LSP/treesitter) |
 
 ### Folding

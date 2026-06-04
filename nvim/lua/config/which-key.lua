@@ -97,6 +97,12 @@ wk.add {
   { "if", desc = "inner function definition" },
   { "ac", desc = "around class/struct" },
   { "ic", desc = "inner class/struct" },
+  { "al", desc = "around loop" },
+  { "il", desc = "inner loop" },
+  { "aL", desc = "around last textobject (prev)" },
+  { "iL", desc = "inner last textobject (prev)" },
+  { "ao", desc = "around conditional" },
+  { "io", desc = "inner conditional" },
   { "aa", desc = "around argument" },
   { "ia", desc = "inner argument" },
 }

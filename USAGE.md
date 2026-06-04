@@ -19,15 +19,16 @@
 11. [Folding](#folding)
 12. [Snippets](#snippets)
 13. [Surround](#surround)
-14. [C/C++ Tools](#cc-tools)
-15. [Spelling](#spelling)
-16. [Terminal](#terminal)
-17. [Notifications](#notifications)
-18. [Meson Build](#meson-build)
-19. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
-20. [Claude Code CLI (claudecode.nvim)](#claude-code-cli-claudecodenvim)
-21. [User Commands](#user-commands)
-22. [Tips & Workflows](#tips--workflows)
+14. [Textobjects (mini.ai)](#textobjects-miniai)
+15. [C/C++ Tools](#cc-tools)
+16. [Spelling](#spelling)
+17. [Terminal](#terminal)
+18. [Notifications](#notifications)
+19. [Meson Build](#meson-build)
+20. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
+21. [Claude Code CLI (claudecode.nvim)](#claude-code-cli-claudecodenvim)
+22. [User Commands](#user-commands)
+23. [Tips & Workflows](#tips--workflows)
 
 ---
 
@@ -168,7 +169,12 @@
 
 | Key | Mode | Action |
 |-----|------|--------|
-| `f` | n/v/o | 2-character hop — jump anywhere on screen |
+| `f` | n/v/o | 2-char hop forward — cursor lands on 1st char of match |
+| `F` | n/v/o | 2-char hop backward — cursor lands on 1st char of match |
+| `t` | n/v/o | 2-char hop forward — cursor lands one char before match |
+| `T` | n/v/o | 2-char hop backward — cursor lands one char after match |
+
+> Works in operator-pending mode too: `dtXY` deletes up to (not including) the next "XY" occurrence.
 
 ### Ack (project-wide search)
 
@@ -485,6 +491,185 @@ Two snippet engines are available:
 | `sr{old}{new}` | Replace surround | `sr"'` → `'word'` |
 | `sf` / `sF` | Find next / previous surrounding | — |
 | `sh` | Highlight surrounding | — |
+
+---
+
+## Textobjects (mini.ai)
+
+> Use with any operator (`d`, `y`, `c`, `v`, `=`, ...) or in visual mode.  
+> `a` = around (includes surrounding syntax); `i` = inner (content only).
+
+**Quick reference:**
+
+| Key | Action |
+|-----|--------|
+| `af` / `if` | Around / inner **function** definition (linewise outer) |
+| `ac` / `ic` | Around / inner **class** or struct (linewise outer) |
+| `al` / `il` | Around / inner **loop** (`for`, `while`, etc.) (linewise outer) |
+| `ao` / `io` | Around / inner **conditional** (`if`/`else`, `switch`) (linewise outer) |
+| `aa` / `ia` | Around / inner **argument** (function call argument) |
+| `a(` / `i(` | Around / inner `()` block |
+| `a{` / `i{` | Around / inner `{}` block |
+| `a[` / `i[` | Around / inner `[]` block |
+| `a"` / `i"` | Around / inner double-quoted string |
+| `a'` / `i'` | Around / inner single-quoted string |
+
+**Jump motions (all modes):**
+
+| Key | Action |
+|-----|--------|
+| `g]f` / `g[f` | Next / previous function start |
+| `g]c` / `g[c` | Next / previous class start |
+| `g]l` / `g[l` | Next / previous loop |
+| `g]o` / `g[o` | Next / previous conditional |
+
+**Around-last / around-next (remapped to avoid conflict):**
+
+| Key | Action |
+|-----|--------|
+| `aL` / `iL` | Around / inner *last* occurrence of a textobject (search backward) |
+| `an` / `in` | Around / inner *next* occurrence of a textobject (search forward) |
+
+> `aL` / `iL` use uppercase L because `al` is reserved for the loop textobject.
+
+---
+
+### `f` — function
+
+`af` selects the **entire function** (signature + body) linewise — whole lines are highlighted, so `daf` deletes with no indentation residue.  
+`if` selects only the **function body** (inside the braces), charwise.
+
+```cpp
+std::string get_name() const {   // ← af: this line included (linewise)
+    return name_;                // ← af and if: both include this
+}                                // ← af: this line included (linewise)
+```
+
+Typical use:
+- `daf` — delete the entire function cleanly (all lines, no blank-line residue)
+- `yaf` — yank function including its signature
+- `vif` then `=` — re-indent the function body
+
+---
+
+### `c` — class / struct
+
+`ac` selects the **entire class or struct** linewise, from the `class` keyword through the closing `};`.  
+`ic` selects only the **class body** (between the braces), charwise.
+
+```cpp
+class Animal {                   // ← ac: this line included (linewise)
+public:
+    Animal(std::string name, int age) : name_(name), age_(age) {}
+
+    std::string get_name() const {
+        return name_;
+    }
+    // … more members …
+private:
+    std::string name_;
+    int age_;
+};                               // ← ac: this line included (linewise)
+```
+
+Typical use:
+- `dac` — delete the whole class block (linewise, no residue)
+- `yac` — yank the entire class to paste elsewhere
+- `vic` — visually select the class body (e.g. to re-indent with `=`)
+
+---
+
+### `l` — loop
+
+`al` selects the **entire loop block** (keyword + condition + body) linewise.  
+`il` selects only the **loop body** (inside the braces), charwise.
+
+Works for `while`, `for`, and `do`…`while`.
+
+```cpp
+while (true) {                   // ← al: this line included (linewise)
+    std::cout << "hello";        // ← al and il: both include this
+}                                // ← al: this line included (linewise)
+```
+
+```cpp
+for (int i = 0; i < n; i++) {   // ← al: this line included (linewise)
+    process(i);                  // ← al and il: both include this
+}                                // ← al: this line included (linewise)
+```
+
+Typical use:
+- `dal` — delete the whole loop cleanly (linewise, no blank-line residue)
+- `yil` — yank just the loop body (e.g. to paste inside a different loop)
+- `cal` — replace entire loop with new code
+
+---
+
+### `o` — conditional
+
+`ao` selects the **entire conditional block** linewise — covers `if`, `else if`, and `else` branches together.  
+`io` selects only the **body of the first branch** (inside the first `{}`), charwise.
+
+```cpp
+if (result > 0) {                // ← ao: this line included (linewise)
+    std::cout << "positive";     // ← ao and io: both include this
+}                                // ← ao: this line included (linewise)
+```
+
+For an `if`/`else` chain, `ao` captures all branches:
+
+```cpp
+if (x > 0) {                    // ← ao starts here (linewise)
+    handle_positive();
+} else if (x < 0) {
+    handle_negative();
+} else {
+    handle_zero();
+}                                // ← ao ends here (linewise)
+```
+
+Works for `switch` blocks as well.
+
+Typical use:
+- `dao` — delete the entire `if`/`else` block (linewise)
+- `cao` — replace the whole conditional with new code
+- `vio` — visually select the first branch body to yank or reformat
+
+---
+
+### `a` — argument
+
+`aa` selects one **function argument including its trailing (or leading) comma and whitespace** — so `daa` removes an argument without leaving a stray comma.  
+`ia` selects just the **argument value** itself, charwise.
+
+```cpp
+int result = add(1, 2);
+//                  ^  cursor on 2
+//   ia  →  selects: 2
+//   aa  →  selects: , 2      (leading comma + space removed too)
+
+Animal dog("Rex", 3);
+//          ^^^   cursor on "Rex"
+//   ia  →  selects: "Rex"
+//   aa  →  selects: "Rex",   (trailing comma + space removed too)
+```
+
+Typical use:
+- `daa` — delete an argument without leaving a stray comma
+- `cia` — change an argument in-place (type new value)
+- `via` — visually select an argument value to yank or surround
+
+---
+
+### Linewise vs charwise summary
+
+| Textobject | Visual mode activated | Practical effect |
+|------------|----------------------|-----------------|
+| `af`, `ac`, `al`, `ao` | V-LINE (linewise) | `daf`/`dal` etc. delete whole lines — no leftover indentation or blank line |
+| `if`, `ic`, `il`, `io` | VISUAL (charwise) | selects exactly the content between the delimiters |
+| `aa`, `ia` | VISUAL (charwise) | selects argument text (with/without comma for `aa`/`ia`) |
+
+> The linewise behaviour on `a`-variants comes from a custom `ts_linewise` wrapper in `plugin_specs.lua` that sets `vis_mode = "V"` on treesitter regions. Standard mini.ai without this config selects charwise for all treesitter textobjects.
 
 ---
 

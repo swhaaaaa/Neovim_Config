@@ -265,9 +265,18 @@ local plugin_specs = {
 
       ai.setup {
         n_lines = 500,
+        -- Remap 'around/inside last' from 'al'/'il' to 'aL'/'iL' so that the
+        -- two-char 'al' binding doesn't shadow our custom 'l' (loop) textobject.
+        -- mini.ai docs recommend this pattern to avoid conflicts with Neovim builtins.
+        mappings = {
+          around_last = "aL",
+          inside_last = "iL",
+        },
         custom_textobjects = {
-          f = ts_linewise("@function.outer", "@function.inner"),
-          c = ts_linewise("@class.outer",    "@class.inner"),
+          f = ts_linewise("@function.outer",    "@function.inner"),
+          c = ts_linewise("@class.outer",       "@class.inner"),
+          l = ts_linewise("@loop.outer",        "@loop.inner"),
+          o = ts_linewise("@conditional.outer", "@conditional.inner"),
         },
       }
     end,
