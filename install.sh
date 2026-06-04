@@ -215,6 +215,8 @@ fi
 # ─── Formatters ───────────────────────────────────────────────────────────────
 step "── Step 4: Formatters ──────────────────────────────────────"
 
+install_if_missing "clang-format" "clang-format" "clang-tools-extra" "clang"  "llvm" "C/C++ formatter (conform.nvim; reads .clang-format in project root)"
+
 # stylua (Lua formatter)
 if ! command -v stylua &>/dev/null; then
     warn "stylua not found (Lua formatter for conform.nvim)"
