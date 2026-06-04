@@ -96,6 +96,7 @@ local plugin_specs = {
         opts = {
           ensure_installed = {
             "pyright", "ruff", "lua_ls", "clangd", "vimls", "bashls", "yamlls",
+            "rust_analyzer",
           },
           automatic_enable = false,
         },
@@ -179,6 +180,13 @@ local plugin_specs = {
         python     = { "ruff_format" },
         javascript = { "prettier" },
         typescript = { "prettier" },
+        go         = { "gofmt" },
+        rust       = { "rustfmt" },
+        json       = { "prettier" },
+        jsonc      = { "prettier" },
+        yaml       = { "prettier" },
+        toml       = { "taplo" },
+        markdown   = { "prettier" },
       },
       format_on_save = function(_bufnr)
         if vim.g.format_on_save then
@@ -666,11 +674,15 @@ local plugin_specs = {
     },
   },
   { "andymass/vim-matchup",  event = "BufRead" },
-  { "simnalamburt/vim-mundo", cmd = { "MundoToggle", "MundoShow" } },
+  {
+    "simnalamburt/vim-mundo",
+    cmd  = { "MundoToggle", "MundoShow" },
+    keys = { { "<leader>um", "<cmd>MundoToggle<CR>", desc = "toggle undo tree" } },
+  },
   {
     "gbprod/yanky.nvim",
     cmd = "YankyRingHistory",
-    keys = { "p", "P", "[y", "]y" },
+    keys = { "p", "P", "[y", "]y", { "<leader>fy", "<cmd>YankyRingHistory<CR>", desc = "yank ring history" } },
     config = function()
       require("config.yanky")
     end,
