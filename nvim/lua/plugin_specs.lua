@@ -231,13 +231,45 @@ local plugin_specs = {
   -- Use mini.ai or native treesitter keymaps instead.
 
   -- mini.ai: better textobjects (replaces nvim-treesitter-textobjects)
-  -- Adds: a/i + f(unction), c(lass), a(rgument), b(racket), q(uote), etc.
+  -- Adds: a/i + f(unction definition), c(lass), a(rgument), b(racket), q(uote)
+  -- Usage: daf=delete function, yif=yank body, vac=select class, caa=change arg
   {
     "echasnovski/mini.ai",
     version = false,
     event = "VeryLazy",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      -- Provides @function.outer / @class.outer query files used by gen_spec.treesitter.
+      -- Not configured via nvim-treesitter.configs — loaded only for its runtimepath queries.
+      { "nvim-treesitter/nvim-treesitter-textobjects", lazy = true },
+    },
     config = function()
-      require("mini.ai").setup { n_lines = 500 }
+      local ai = require("mini.ai")
+
+      -- @function.outer / @class.outer captures start at the first token, not at
+      -- column 1, so plain daf leaves behind the leading indentation.  Wrapping
+      -- the spec and setting vis_mode="V" on 'a' regions makes daf/dac delete
+      -- whole lines, eliminating the leftover whitespace.
+      local function ts_linewise(outer_cap, inner_cap)
+        local spec = ai.gen_spec.treesitter({ a = outer_cap, i = inner_cap })
+        return function(ai_type, id, opts)
+          local regions = spec(ai_type, id, opts)
+          if ai_type == "a" and regions then
+            for _, r in ipairs(regions) do
+              r.vis_mode = "V"
+            end
+          end
+          return regions
+        end
+      end
+
+      ai.setup {
+        n_lines = 500,
+        custom_textobjects = {
+          f = ts_linewise("@function.outer", "@function.inner"),
+          c = ts_linewise("@class.outer",    "@class.inner"),
+        },
+      }
     end,
   },
 

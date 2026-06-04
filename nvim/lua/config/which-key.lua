@@ -92,4 +92,11 @@ wk.add {
   -- todo-comments jumps
   { "]t", desc = "next TODO comment" },
   { "[t", desc = "prev TODO comment" },
+  -- mini.ai textobjects (operator-pending hints)
+  { "af", desc = "around function definition" },
+  { "if", desc = "inner function definition" },
+  { "ac", desc = "around class/struct" },
+  { "ic", desc = "inner class/struct" },
+  { "aa", desc = "around argument" },
+  { "ia", desc = "inner argument" },
 }
