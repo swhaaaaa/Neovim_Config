@@ -336,3 +336,48 @@ api.nvim_create_autocmd("FileType", {
   end,
   desc = "enable spell check in C/C++ files (comments/strings only via syntax)",
 })
+
+-- Stay in normal mode and restore cursor position when entering the Claude Code
+-- terminal window.
+--
+-- snacks registers a buffer-local BufEnter autocmd (auto_insert) that calls
+-- startinsert every time the buffer is entered. WinEnter fires before BufEnter,
+-- so we delete that autocmd in WinEnter before it can fire. A simple vim.schedule
+-- then handles any explicit startinsert calls in claudecode's focus handler.
+local _claude_saved_pos = nil
+
+local function is_claude_terminal(buf)
+  if vim.bo[buf].buftype ~= "terminal" then return false end
+  local ok, term = pcall(require, "claudecode.terminal")
+  return ok and buf == term.get_active_terminal_bufnr()
+end
+
+api.nvim_create_autocmd("WinLeave", {
+  group = api.nvim_create_augroup("claude_normal_mode", { clear = true }),
+  desc = "save cursor position when leaving Claude Code terminal",
+  callback = function()
+    local buf = api.nvim_get_current_buf()
+    if is_claude_terminal(buf) then
+      _claude_saved_pos = api.nvim_win_get_cursor(0)
+    end
+  end,
+})
+
+api.nvim_create_autocmd("WinEnter", {
+  group = "claude_normal_mode",
+  desc = "keep normal mode and restore cursor on Claude Code terminal entry",
+  callback = function()
+    local buf = api.nvim_get_current_buf()
+    if not is_claude_terminal(buf) then return end
+    -- Delete snacks' auto_insert BufEnter autocmd before it fires.
+    -- WinEnter fires before BufEnter so this is guaranteed to run first.
+    for _, ac in ipairs(api.nvim_get_autocmds({ event = "BufEnter", buffer = buf })) do
+      pcall(api.nvim_del_autocmd, ac.id)
+    end
+    local pos = _claude_saved_pos
+    vim.schedule(function()
+      vim.cmd("stopinsert")
+      if pos then pcall(api.nvim_win_set_cursor, 0, pos) end
+    end)
+  end,
+})
