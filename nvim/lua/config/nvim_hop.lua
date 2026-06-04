@@ -8,14 +8,23 @@ hop.setup {
   match_mappings = { "zh_sc" },
 }
 
-keymap.set({ "n", "v", "o" }, "f", "", {
-  silent = true,
-  noremap = true,
-  callback = function()
-    hop.hint_char2()
-  end,
-  desc = "nvim-hop char2",
-})
+local dir = require("hop.hint").HintDirection
+
+keymap.set({ "n", "v", "o" }, "f", function()
+  hop.hint_char2({ direction = dir.AFTER_CURSOR })
+end, { silent = true, noremap = true, desc = "hop: find forward (2-char)" })
+
+keymap.set({ "n", "v", "o" }, "F", function()
+  hop.hint_char2({ direction = dir.BEFORE_CURSOR })
+end, { silent = true, noremap = true, desc = "hop: find backward (2-char)" })
+
+keymap.set({ "n", "v", "o" }, "t", function()
+  hop.hint_char2({ direction = dir.AFTER_CURSOR,  hint_offset = -1 })
+end, { silent = true, noremap = true, desc = "hop: till forward (2-char)" })
+
+keymap.set({ "n", "v", "o" }, "T", function()
+  hop.hint_char2({ direction = dir.BEFORE_CURSOR, hint_offset = 1 })
+end, { silent = true, noremap = true, desc = "hop: till backward (2-char)" })
 
 vim.api.nvim_create_autocmd("ColorScheme", {
   pattern = "*",

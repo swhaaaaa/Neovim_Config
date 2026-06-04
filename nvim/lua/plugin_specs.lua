@@ -398,7 +398,7 @@ local plugin_specs = {
   -- ─── Navigation ───────────────────────────────────────────────────────────────
   {
     "smoka7/hop.nvim",
-    keys = { "f" },
+    keys = { "f", "F", "t", "T" },
     config = function()
       require("config.nvim_hop")
     end,
