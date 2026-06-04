@@ -180,7 +180,6 @@ local plugin_specs = {
         python     = { "ruff_format" },
         javascript = { "prettier" },
         typescript = { "prettier" },
-        go         = { "gofmt" },
         rust       = { "rustfmt" },
         json       = { "prettier" },
         jsonc      = { "prettier" },
