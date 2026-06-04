@@ -100,11 +100,7 @@ keymap.set("n", "<leader>ev", "<cmd>tabnew $MYVIMRC <bar> tcd %:h<cr>", {
 })
 
 keymap.set("n", "<leader>sv", function()
-  vim.cmd([[
-      update $MYVIMRC
-      source $MYVIMRC
-    ]])
-  vim.notify("Nvim config successfully reloaded!", vim.log.levels.INFO, { title = "nvim-config" })
+  vim.cmd("ReloadConfig")
 end, {
   silent = true,
   desc = "reload init.lua",
