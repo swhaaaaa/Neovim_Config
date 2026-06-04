@@ -51,6 +51,7 @@ wk.add {
   { "<leader>tt", desc = "toggle floating terminal" },
   { "<leader>tf", desc = "toggle format on save" },
   { "<leader>fm", desc = "toggle fold method expr/manual" },
+  { "<leader>fy", desc = "yank ring history (yanky)" },
   { "<leader>A",  group = "Claude Code CLI" },
   { "<leader>Ac", desc = "Claude: toggle" },
   { "<leader>Af", desc = "Claude: focus" },
@@ -68,6 +69,7 @@ wk.add {
   { "<leader>ud", desc = "toggle diagnostics" },
   { "<leader>uD", desc = "toggle diagnostic float" },
   { "<leader>ih", desc = "toggle inlay hints (clangd)" },
+  { "<leader>um", desc = "toggle undo tree (mundo)" },
   { "<leader>un", desc = "show notification history" },
   { "<leader>ux", desc = "toggle treesitter context bar" },
   -- DAP entries

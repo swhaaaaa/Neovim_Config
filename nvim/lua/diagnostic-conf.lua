@@ -49,6 +49,10 @@ vim.keymap.set("n", "<leader>ud", function()
   vim.notify(enabled and "Diagnostics disabled" or "Diagnostics enabled", vim.log.levels.INFO, { title = "diagnostic" })
 end, { desc = "toggle diagnostics" })
 
+-- jump to next/prev error only (skip warnings/hints)
+vim.keymap.set("n", "]e", function() diagnostic.goto_next({ severity = diagnostic.severity.ERROR }) end, { desc = "next error" })
+vim.keymap.set("n", "[e", function() diagnostic.goto_prev({ severity = diagnostic.severity.ERROR }) end, { desc = "prev error" })
+
 -- this puts diagnostics from opened files to quickfix
 vim.keymap.set("n", "<space>qw", diagnostic.setqflist, { desc = "put window diagnostics to qf" })
 

@@ -226,7 +226,9 @@ set cursorline
 set hlsearch
 
 " Makes search act like search in modern browsers
-set incsearch 
+set incsearch
+" Live preview of :s/…/…/ substitutions in a split
+set inccommand=split
 
 
 
