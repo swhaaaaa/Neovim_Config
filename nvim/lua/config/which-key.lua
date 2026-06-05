@@ -62,6 +62,12 @@ wk.add {
   { "<leader>As", desc = "Claude: send selection" },
   { "<leader>Aa", desc = "Claude: accept diff" },
   { "<leader>Ad", desc = "Claude: deny diff" },
+  -- vim-visual-multi
+  { "\\",   group = "vim-visual-multi" },
+  { "\\A",  desc = "VM: select all occurrences" },
+  { "\\/",  desc = "VM: regex cursor search" },
+  { "\\\\", desc = "VM: add cursor here" },
+
   { "<leader>u",  group = "UI toggles" },
   -- UI toggle entries
   { "<leader>ub", desc = "blink cursor to locate it" },

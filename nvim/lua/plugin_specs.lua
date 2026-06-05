@@ -599,6 +599,20 @@ local plugin_specs = {
       require("config.comment")
     end,
   },
+  -- vim-visual-multi: multiple cursors
+  -- <C-n>  select word / add next match  |  \\A  select all occurrences
+  -- \\/    regex cursor search           |  q    skip match, Q  remove cursor
+  -- <Tab>  toggle cursor / extend mode   |  <Esc>  exit
+  -- <C-Up>/<C-Down> disabled — conflicts with window resize maps.
+  {
+    "mg979/vim-visual-multi",
+    branch = "master",
+    keys = { "<C-n>", { "<C-n>", mode = "v" }, "\\A" },
+    init = function()
+      require("config.vim-visual-multi")
+    end,
+  },
+
   { "machakann/vim-swap",    event = "VeryLazy" },
   { "tpope/vim-repeat",      event = "VeryLazy" },
   { "tpope/vim-eunuch", event = "VeryLazy" },
