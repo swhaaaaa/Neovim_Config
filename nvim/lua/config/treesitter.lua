@@ -9,7 +9,7 @@ vim.api.nvim_create_autocmd("User", {
   once = true,
   callback = function()
     local parsers = {
-      "bash", "c", "cpp", "lua", "python",
+      "bash", "c", "cpp", "lua", "python", "rust",
       "vim", "vimdoc", "json", "toml", "yaml",
       "markdown", "markdown_inline",
     }

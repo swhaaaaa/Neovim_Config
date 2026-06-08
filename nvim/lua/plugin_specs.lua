@@ -602,7 +602,14 @@ local plugin_specs = {
   { "machakann/vim-swap",    event = "VeryLazy" },
   { "tpope/vim-repeat",      event = "VeryLazy" },
   { "tpope/vim-eunuch", event = "VeryLazy" },
-  { "tpope/vim-obsession",   cmd = "Obsession" },
+  {
+    "tpope/vim-obsession",
+    cmd  = "Obsession",
+    keys = {
+      { "<leader>ss", "<cmd>Obsession<CR>",          desc = "session: toggle recording (obsession)" },
+      { "<leader>sr", "<cmd>source Session.vim<CR>", desc = "session: restore from Session.vim" },
+    },
+  },
 
   -- vim-illuminate: auto-highlight all occurrences of word under cursor.
   -- Useful for tracking variables/functions across long kernel functions.
