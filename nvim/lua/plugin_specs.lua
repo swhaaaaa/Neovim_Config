@@ -24,7 +24,7 @@ local plugin_specs = {
     name = "nvim-cmp",
     event = "InsertEnter",
     dependencies = {
-      -- LuaSnip as primary snippet engine (replaces UltiSnips for cmp)
+      -- LuaSnip as primary snippet engine
       {
         "L3MON4D3/LuaSnip",
         dependencies = "rafamadriz/friendly-snippets",
@@ -33,9 +33,10 @@ local plugin_specs = {
           require("luasnip").config.set_config(opts)
           -- Load friendly-snippets (VSCode format)
           require("luasnip.loaders.from_vscode").lazy_load()
-          -- NOTE: my_snippets/ uses UltiSnips-specific syntax (quoted triggers,
-          -- regex r-flag, !p Python interpolation) incompatible with LuaSnip's
-          -- snipmate loader — still loaded by UltiSnips directly.
+          -- Load custom snippets from lua/snippets/ (replaces my_snippets/ + UltiSnips)
+          require("luasnip.loaders.from_lua").lazy_load({
+            paths = vim.fn.stdpath("config") .. "/lua/snippets",
+          })
         end,
       },
       -- Autopairs integrated with cmp confirm
@@ -59,27 +60,10 @@ local plugin_specs = {
       "hrsh7th/cmp-omni",
       "https://codeberg.org/FelipeLema/cmp-async-path.git",
       "saadparwaiz1/cmp_luasnip",
-      "quangnguyen30192/cmp-nvim-ultisnips",  -- UltiSnips source for my_snippets/
     },
     config = function()
       require("config.nvim-cmp")
     end,
-  },
-
-  -- UltiSnips: kept only for markdown.snippets and snippets.snippets which use
-  -- !p Python interpolation that LuaSnip's snipmate loader cannot handle.
-  -- All other my_snippets/ files are loaded by LuaSnip above.
-  -- honza/vim-snippets removed — covered by friendly-snippets via LuaSnip.
-  {
-    "SirVer/ultisnips",
-    init = function()
-      vim.g.UltiSnipsExpandTrigger       = "<c-j>"
-      vim.g.UltiSnipsEnableSnipMate      = 0
-      vim.g.UltiSnipsJumpForwardTrigger  = "<c-j>"
-      vim.g.UltiSnipsJumpBackwardTrigger = "<c-k>"
-      vim.g.UltiSnipsSnippetDirectories  = { "my_snippets" }
-    end,
-    event = "InsertEnter",
   },
 
   -- ─── LSP ─────────────────────────────────────────────────────────────────────

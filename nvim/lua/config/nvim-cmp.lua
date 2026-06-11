@@ -59,8 +59,7 @@ cmp.setup {
   },
   sources = cmp.config.sources {
     { name = "nvim_lsp" },
-    { name = "luasnip" },    -- LuaSnip: friendly-snippets
-    { name = "ultisnips" },  -- UltiSnips: my_snippets/ (c, cpp, python, etc.)
+    { name = "luasnip" },
     { name = "async_path" },
     { name = "buffer", keyword_length = 2 },
   },
