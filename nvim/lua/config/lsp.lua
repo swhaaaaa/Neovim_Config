@@ -81,15 +81,26 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.print(vim.lsp.buf.list_workspace_folders())
     end, { desc = "LSP: list workspace folders" })
 
+    -- Toggle inlay hints for the current buffer (works for all LSP clients).
+    -- clangd_extensions.lua had a global <leader>ih that only registered on c/cpp;
+    -- this buffer-local version works for lua_ls, pyright, rust_analyzer, etc.
+    if client.supports_method("textDocument/inlayHint") then
+      vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+      map("n", "<leader>ih", function()
+        vim.lsp.inlay_hint.enable(
+          not vim.lsp.inlay_hint.is_enabled { bufnr = bufnr },
+          { bufnr = bufnr }
+        )
+        local state = vim.lsp.inlay_hint.is_enabled { bufnr = bufnr } and "enabled" or "disabled"
+        vim.notify("Inlay hints " .. state, vim.log.levels.INFO)
+      end, { desc = "LSP: toggle inlay hints" })
+    end
+
     -- Set some key bindings conditional on server capabilities
     -- Disable ruff hover feature in favor of Pyright
     if client.name == "ruff" then
       client.server_capabilities.hoverProvider = false
     end
-
-    -- Uncomment code below to enable inlay hint from language server, some LSP server supports inlay hint,
-    -- but disable this feature by default, so you may need to enable inlay hint in the LSP server config.
-    -- vim.lsp.inlay_hint.enable(true, {buffer=bufnr})
 
     -- vim-illuminate already highlights references via LSP/treesitter/regex
     -- with a configurable delay and proper provider priority.  A second

@@ -10,7 +10,7 @@ snacks.setup {
   -- Nicer vim.ui.input (used by LSP rename, input prompts, etc.)
   input = { enabled = true },
   -- Smooth scrolling for <C-d>/<C-u>/<C-f>/<C-b>/gg/G/zz etc.
-  scroll = { enabled = false },
+  scroll = { enabled = true },
   -- Floating lazygit window (requires lazygit on PATH).
   lazygit = { enabled = true },
   -- Startup dashboard: shown when nvim is opened with no file arguments.

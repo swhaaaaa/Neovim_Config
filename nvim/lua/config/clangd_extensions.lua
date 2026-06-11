@@ -34,15 +34,8 @@ ext.setup {
   },
 }
 
--- ── Inlay hints ──────────────────────────────────────────────────────────────
--- Toggle inlay hints for current buffer
-vim.keymap.set("n", "<leader>ih", function()
-  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = 0 }, { bufnr = 0 })
-  local state = vim.lsp.inlay_hint.is_enabled { bufnr = 0 } and "enabled" or "disabled"
-  vim.notify("Inlay hints " .. state, vim.log.levels.INFO)
-end, { desc = "toggle inlay hints" })
-
 -- ── Extra clangd keymaps ─────────────────────────────────────────────────────
+-- <leader>ih is now registered per-buffer in lsp.lua for all LSP clients.
 -- Switch between header and source (clangd native — faster than a.vim)
 vim.keymap.set("n", "<leader>as", "<cmd>ClangdSwitchSourceHeader<CR>",
   { desc = "clangd: switch source/header" })

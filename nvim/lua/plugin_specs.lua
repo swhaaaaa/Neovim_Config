@@ -184,6 +184,9 @@ local plugin_specs = {
         json       = { "prettier" },
         jsonc      = { "prettier" },
         yaml       = { "prettier" },
+        -- Install: :MasonInstall shfmt  or  apt install shfmt
+        sh         = { "shfmt" },
+        bash       = { "shfmt" },
       },
       format_on_save = function(_bufnr)
         if vim.g.format_on_save then
