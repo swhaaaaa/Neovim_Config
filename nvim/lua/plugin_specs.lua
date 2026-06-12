@@ -468,24 +468,21 @@ local plugin_specs = {
         { desc = "oil: open parent directory (float)" })
     end,
   },
-  -- NERDTree: classic VimScript file explorer
-  -- Key advantage over nvim-tree: :NERDTreeFind reveals file WITHOUT changing root
-  -- Use <leader>nf to reveal current file anywhere on disk
+  -- nvim-tree: tree-view file explorer (companion to oil.nvim)
+  -- oil handles file editing/renaming; nvim-tree handles tree browsing
+  -- Inside the tree: o/<CR> open, E expand-all, W collapse-all, a create,
+  --                  d delete, r rename, H toggle hidden, I toggle git-ignored, ? help
   {
-    "preservim/nerdtree",
-    cmd = { "NERDTree", "NERDTreeToggle", "NERDTreeFind", "NERDTreeFocus" },
-    init = function()
-      -- Keymaps must be in init (runs at startup) not config (runs after load)
-      -- because NERDTree is lazy-loaded via cmd
-      vim.keymap.set("n", "<leader>nn", "<cmd>NERDTreeToggle<CR>",
-        { silent = true, desc = "NERDTree: toggle" })
-      vim.keymap.set("n", "<leader>nf", "<cmd>NERDTreeFind<CR>",
-        { silent = true, desc = "NERDTree: reveal current file" })
-      vim.keymap.set("n", "<leader>nF", "<cmd>NERDTreeFocus<CR>",
-        { silent = true, desc = "NERDTree: focus" })
-    end,
+    "nvim-tree/nvim-tree.lua",
+    dependencies = { "nvim-mini/mini.icons" },
+    cmd  = { "NvimTreeToggle", "NvimTreeFindFile", "NvimTreeFocus" },
+    keys = {
+      { "<leader>nn", "<cmd>NvimTreeToggle<CR>",   desc = "nvim-tree: toggle" },
+      { "<leader>nf", "<cmd>NvimTreeFindFile<CR>", desc = "nvim-tree: reveal current file" },
+      { "<leader>nF", "<cmd>NvimTreeFocus<CR>",    desc = "nvim-tree: focus" },
+    },
     config = function()
-      require("config.nerdtree")
+      require("config.nvim-tree")
     end,
   },
   -- aerial.nvim: LSP/treesitter symbol outline (no ctags required)
@@ -615,7 +612,7 @@ local plugin_specs = {
         delay = 200,
         under_cursor = true,
         min_count_to_highlight = 2,  -- only highlight if 2+ occurrences
-        filetypes_denylist = { "nerdtree", "fugitive", "help", "qf", "aerial" },
+        filetypes_denylist = { "NvimTree", "fugitive", "help", "qf", "aerial" },
       }
     end,
   },

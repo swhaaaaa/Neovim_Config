@@ -9,8 +9,7 @@ snacks.setup {
   },
   -- Nicer vim.ui.input (used by LSP rename, input prompts, etc.)
   input = { enabled = true },
-  -- Smooth scrolling for <C-d>/<C-u>/<C-f>/<C-b>/gg/G/zz etc.
-  scroll = { enabled = true },
+  scroll = { enabled = false },
   -- Floating lazygit window (requires lazygit on PATH).
   lazygit = { enabled = true },
   -- Startup dashboard: shown when nvim is opened with no file arguments.
@@ -39,7 +38,7 @@ snacks.setup {
 vim.keymap.set("n", "<leader>gl", function() snacks.lazygit() end,
   { desc = "lazygit", silent = true })
 
--- Close the dashboard window when a real file is opened (e.g. via NerdTree).
+-- Close the dashboard window when a real file is opened (e.g. via oil.nvim).
 vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function()
     vim.schedule(function()
