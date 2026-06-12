@@ -1,7 +1,18 @@
 -- nvim-tree: tree-view companion to oil.nvim
 -- oil  → edit/rename files (press -)
 -- nvim-tree → browse subtrees; E expand-all, W collapse-all, g? for all keys
+local function on_attach(bufnr)
+  local api = require("nvim-tree.api")
+  local function opts(desc)
+    return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+  end
+  api.config.mappings.default_on_attach(bufnr)
+  -- explicit bind so H reliably toggles dotfiles in all nvim-tree versions
+  vim.keymap.set("n", "H", api.tree.toggle_hidden_filter, opts("toggle dotfiles"))
+end
+
 require("nvim-tree").setup {
+  on_attach = on_attach,
   -- oil already sets loaded_netrw globals; let it stay in charge
   disable_netrw = false,
   hijack_netrw  = false,
