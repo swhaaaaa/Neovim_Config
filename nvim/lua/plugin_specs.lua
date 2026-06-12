@@ -902,6 +902,9 @@ local plugin_specs = {
     cmd = { "MarkdownPreview", "MarkdownPreviewStop", "MarkdownPreviewToggle" },
     ft = { "markdown" },
     build = "cd app && npm install",
+    keys = {
+      { "<leader>mp", "<cmd>MarkdownPreviewToggle<CR>", ft = "markdown", desc = "markdown preview toggle" },
+    },
     config = function()
       vim.g.mkdp_auto_close = 1
       vim.g.mkdp_refresh_slow = 0
@@ -910,13 +913,6 @@ local plugin_specs = {
         disable_sync_scroll = 0,
         sync_scroll_type = "middle",
       }
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "markdown",
-        callback = function()
-          vim.keymap.set("n", "<leader>mp", "<cmd>MarkdownPreviewToggle<CR>",
-            { buffer = true, silent = true, desc = "markdown preview toggle" })
-        end,
-      })
     end,
   },
   -- Better markdown rendering inside nvim (conceals syntax, renders tables)
@@ -924,15 +920,11 @@ local plugin_specs = {
     "MeanderingProgrammer/render-markdown.nvim",
     ft = { "markdown" },
     dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-mini/mini.icons" },
+    keys = {
+      { "<leader>mr", "<cmd>RenderMarkdown toggle<CR>", ft = "markdown", desc = "toggle markdown rendering" },
+    },
     config = function()
       require("render-markdown").setup {}
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "markdown",
-        callback = function()
-          vim.keymap.set("n", "<leader>mr", "<cmd>RenderMarkdown toggle<CR>",
-            { buffer = true, silent = true, desc = "toggle markdown rendering" })
-        end,
-      })
     end,
   },
 
