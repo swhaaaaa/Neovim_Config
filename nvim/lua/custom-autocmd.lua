@@ -306,6 +306,29 @@ api.nvim_create_autocmd("BufAdd", {
   desc = "disable undo/swap for oil:// buffers to prevent oil: folder creation",
 })
 
+-- ─── Claude Code terminal: keyboard scroll via mouse wheel injection ──────────
+-- nvim_input_mouse injects a wheel event that Neovim processes through its
+-- normal terminal mouse-forwarding path — the same path as physical mouse wheel.
+api.nvim_create_autocmd("TermOpen", {
+  group = api.nvim_create_augroup("claude_kbd_scroll", { clear = true }),
+  callback = function(ev)
+    local buf = ev.buf
+    local function wheel(dir, n)
+      local win = vim.api.nvim_get_current_win()
+      local pos = vim.api.nvim_win_get_position(win)
+      local row = pos[1] + math.floor(vim.api.nvim_win_get_height(win) / 2)
+      local col = pos[2] + math.floor(vim.api.nvim_win_get_width(win) / 2)
+      for _ = 1, n do
+        vim.api.nvim_input_mouse("wheel", dir, "", 0, row, col)
+      end
+    end
+    vim.keymap.set("t", "<C-u>", function() wheel("up",   5) end,
+      { buffer = buf, nowait = true, desc = "scroll up" })
+    vim.keymap.set("t", "<C-d>", function() wheel("down", 5) end,
+      { buffer = buf, nowait = true, desc = "scroll down" })
+  end,
+})
+
 -- ─── Auto-save session on exit (vim-obsession) ────────────────────────────────
 -- Automatically saves the current session when Neovim exits, so your open
 -- buffers, window layout, and working directory are restored next time.

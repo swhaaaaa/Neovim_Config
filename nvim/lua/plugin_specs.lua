@@ -864,6 +864,7 @@ local plugin_specs = {
         auto_close           = true,
         -- <Esc> passes through to Claude (needed for /cost, menus, etc.).
         -- <C-e> exits terminal mode without sending anything to Claude.
+        -- <C-u>/<C-d> scroll are handled by the TermOpen autocmd in custom-autocmd.lua.
         -- (<C-\><C-n> is also always available as the built-in Neovim terminal escape)
         snacks_win_opts = {
           keys = {
