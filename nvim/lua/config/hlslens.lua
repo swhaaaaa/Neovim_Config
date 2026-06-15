@@ -25,12 +25,14 @@ local activate_hlslens = function(direction)
 end
 
 keymap.set("n", "n", "", {
+  desc = "search: next match",
   callback = function()
     activate_hlslens("n")
   end,
 })
 
 keymap.set("n", "N", "", {
+  desc = "search: prev match",
   callback = function()
     activate_hlslens("N")
   end,
@@ -48,6 +50,7 @@ local check_cursor_word = function()
 end
 
 keymap.set("n", "*", "", {
+  desc = "search: word forward",
   callback = function()
     local cursor_word_empty, cursor_word = check_cursor_word()
     if cursor_word_empty then
@@ -67,6 +70,7 @@ keymap.set("n", "*", "", {
   end,
 })
 keymap.set("n", "#", "", {
+  desc = "search: word backward",
   callback = function()
     local cursor_word_empty, cursor_word = check_cursor_word()
     if cursor_word_empty then

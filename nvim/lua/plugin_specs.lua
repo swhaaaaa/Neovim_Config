@@ -499,6 +499,25 @@ local plugin_specs = {
     end,
   },
 
+  -- harpoon2: mark up to 4 files per project and jump to them with one keypress.
+  -- Marks persist across sessions (stored in stdpath("data")/harpoon/).
+  -- <leader>Ha  add current file  |  <leader>Hh  open menu (editable)
+  -- <leader>1/2/3/4  jump directly to slot 1–4
+  {
+    "ThePrimeagen/harpoon",
+    branch = "harpoon2",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    keys = {
+      { "<leader>Ha", function() require("harpoon"):list():add() end,                                            desc = "harpoon: add file" },
+      { "<leader>Hh", function() local h = require("harpoon"); h.ui:toggle_quick_menu(h:list()) end,            desc = "harpoon: menu" },
+      { "<leader>1",  function() require("harpoon"):list():select(1) end,                                        desc = "harpoon: jump to 1" },
+      { "<leader>2",  function() require("harpoon"):list():select(2) end,                                        desc = "harpoon: jump to 2" },
+      { "<leader>3",  function() require("harpoon"):list():select(3) end,                                        desc = "harpoon: jump to 3" },
+      { "<leader>4",  function() require("harpoon"):list():select(4) end,                                        desc = "harpoon: jump to 4" },
+    },
+    opts = {},
+  },
+
   -- ─── Git ──────────────────────────────────────────────────────────────────────
   {
     "tpope/vim-fugitive",

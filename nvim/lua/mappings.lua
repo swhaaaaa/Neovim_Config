@@ -270,14 +270,14 @@ keymap.set({ "n" }, "<leader><cr>", "<cmd>nohlsearch<cr>", { desc = "clear searc
 keymap.set({ "n" }, "<leader>b", "<cmd>enew<CR>", { desc = "buffer new" })
 
 -- Useful mappings for managing tabs
-keymap.set({ "n" }, "<leader>tn", "<cmd>tabnew<CR>")
-keymap.set({ "n" }, "<leader>tc", "<cmd>tabclose<CR>")
+keymap.set({ "n" }, "<leader>tn", "<cmd>tabnew<CR>",   { desc = "tab: new" })
+keymap.set({ "n" }, "<leader>tc", "<cmd>tabclose<CR>", { desc = "tab: close" })
 -- keymap.set({ "n" }, "<leader>tm", "<cmd>tabmove<CR>")
 
 -- next and prev tab
-keymap.set({ "n" }, "<F7>", "<cmd>tabNext<CR>")
-keymap.set({ "n" }, "<F8>", "<cmd>tabnext<CR>")
-keymap.set({ "n" }, "<F6>", "<cmd>tabclose<CR>")
+keymap.set({ "n" }, "<F7>", "<cmd>tabNext<CR>",   { desc = "tab: prev" })
+keymap.set({ "n" }, "<F8>", "<cmd>tabnext<CR>",   { desc = "tab: next" })
+keymap.set({ "n" }, "<F6>", "<cmd>tabclose<CR>",  { desc = "tab: close" })
 
 -- Opens a new tab with the current buffer's path
 -- Super useful when editing files in the same directory
