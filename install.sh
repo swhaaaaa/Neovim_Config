@@ -476,7 +476,7 @@ fi
 # <C-s> (e.g. nvim-cmp, telescope-style pickers). Most plugins in this config
 # avoid <C-s> for this reason, but disabling ixon keeps Ctrl-S/Ctrl-Q free
 # for terminal apps in general.
-if [[ $- == *i* ]] && command -v stty &>/dev/null; then
+if command -v stty &>/dev/null; then
     echo ""
     info "Ctrl-S is XOFF flow control by default — terminals intercept it"
     info "before Neovim/tmux/etc. ever see it."
