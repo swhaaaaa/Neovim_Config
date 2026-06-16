@@ -19,6 +19,7 @@ wk.add {
   { "<leader>c",  group = "cscope" },
   { "<leader>d",  group = "debug (DAP)" },
   { "<leader>f",  group = "find (fzf-lua)" },
+  { "<leader>fk", desc = "search keymaps (fuzzy)" },
   { "<leader>g",  group = "git" },
   { "<leader>gl", desc = "lazygit" },
   { "<leader>gg", group = "neogit" },

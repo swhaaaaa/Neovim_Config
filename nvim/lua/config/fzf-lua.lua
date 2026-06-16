@@ -196,6 +196,9 @@ vim.keymap.set("n", "<leader>fh", "<cmd>FzfLua helptags<CR>",  { desc = "Help ta
 vim.keymap.set("n", "<leader>fB", "<cmd>FzfLua btags<CR>",     { desc = "Buffer tags (ctags)",   silent = true })
 vim.keymap.set("n", "<leader>fb", "<cmd>FzfLua buffers<CR>",   { desc = "Open buffers",          silent = true })
 vim.keymap.set("n", "<leader>fr", "<cmd>FzfLua oldfiles<CR>",  { desc = "Recent files",          silent = true })
+-- Fuzzy-search all keymaps by lhs or desc text (which-key has no text search,
+-- only hierarchical browsing — this fills that gap).
+vim.keymap.set("n", "<leader>fk", "<cmd>FzfLua keymaps<CR>",   { desc = "Search keymaps (fuzzy)", silent = true })
 
 -- Normal → choose a directory
 vim.keymap.set("n", "<leader>sd", function()
