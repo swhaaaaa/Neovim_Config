@@ -177,10 +177,26 @@ adds dedicated keys for ad-hoc and treesitter-based jumps.
 | `t` / `T` | n/v/o | Native till forward/backward, with flash labels when ambiguous |
 | `s` | n/x/o | Ad-hoc 2-char label jump anywhere on screen |
 | `S` | n/x/o | Treesitter node select |
-| `r` | o | Flash remote (operate on a remote match without moving the cursor) |
-| `R` | o/x | Treesitter search |
+| `r` | o | Flash remote: jump to a label, then supply a motion to apply the operator there |
+| `R` | o/x | Flash treesitter search: jump to a label, operator applies to that whole node |
 
 > Works in operator-pending mode too: `dtXY` deletes up to (not including) the next "XY" occurrence.
+
+#### `r` vs `R` in operator-pending mode
+
+Both let an operator (`y`, `d`, `c`, ...) act on a remote location without
+moving the cursor there permanently, but they finish differently:
+
+- **`r`** only *positions* the cursor at the chosen label. You still need to
+  give a motion to say what to act on, e.g. `yr` → type a search pattern →
+  pick a label → `iw` to yank the word under it. The cursor is restored to
+  where you started once the operator completes.
+- **`R`** labels the treesitter nodes surrounding each match. Picking a
+  label immediately completes the operator on that whole node — no
+  follow-up motion needed. E.g. `yR` → type a pattern → pick a label →
+  the entire enclosing node (a function body, a call, etc.) is yanked.
+
+Both restore the cursor to its original position afterward.
 
 ### Ack (project-wide search)
 
