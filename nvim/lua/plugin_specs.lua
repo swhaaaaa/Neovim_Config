@@ -142,6 +142,15 @@ local plugin_specs = {
     cmd = { "Mason", "MasonInstall", "MasonUpdate" },
     opts = {},
   },
+  -- inc-rename.nvim: live-preview LSP rename — shows all references updating
+  -- as you type the new name, before committing. Replaces vim.lsp.buf.rename.
+  -- Keymap: <leader>rn  (same key, upgraded behaviour)
+  {
+    "smjonas/inc-rename.nvim",
+    event = "LspAttach",
+    opts = {},
+  },
+
   -- nvim-lint: async linting complement to conform.nvim (formatting).
   -- Covers filetypes where LSP diagnostics are absent or insufficient.
   -- Add linters per ft as needed; install them via Mason or system package manager.
@@ -840,6 +849,22 @@ local plugin_specs = {
     event = "VeryLazy",
     opts = {
       commented = true,   -- prefix virtual text with comment string
+    },
+  },
+
+  -- mason-nvim-dap: auto-installs DAP adapters via Mason (same role as
+  -- mason-lspconfig for LSP servers). handlers = no-op so dap.lua keeps
+  -- full control of adapter configuration.
+  {
+    "jay-babu/mason-nvim-dap.nvim",
+    dependencies = { "mason-org/mason.nvim", "mfussenegger/nvim-dap" },
+    event = "VeryLazy",
+    opts = {
+      -- "python" is mason-nvim-dap's adapter name; it maps internally to
+      -- the "debugpy" Mason package. Using "debugpy" directly here is a
+      -- silent no-op since it's not a recognized adapter name.
+      ensure_installed = { "codelldb", "python" },
+      handlers = { function() end },  -- dap.lua handles all adapter config
     },
   },
 

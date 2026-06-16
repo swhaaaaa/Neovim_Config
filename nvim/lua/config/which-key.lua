@@ -34,6 +34,7 @@ wk.add {
   { "<leader>mk", desc = "mark: toggle mark on word/selection" },
   { "<leader>mK", desc = "mark: clear all marks" },
   { "<leader>r",  group = "replace / rename" },
+  { "<leader>rn", desc = "LSP: rename symbol (inc-rename)" },
   { "<leader>rp", desc = "project find & replace (grug-far)" },
   { "<leader>rw", desc = "project replace word under cursor" },
   { "<leader>s",  group = "session / vimrc" },
