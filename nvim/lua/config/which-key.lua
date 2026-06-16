@@ -11,6 +11,9 @@ wk.setup {
 wk.add {
   -- leader groups
   { "<leader><cr>", desc = "clear search highlight" },
+  -- flash.nvim (replaces hop.nvim) — f/F/t/T are enhanced in place, no remap needed
+  { "s", mode = { "n", "x" }, desc = "flash: jump" },
+  { "S", mode = { "n", "x" }, desc = "flash: treesitter select" },
   { "<leader>a",  group = "C/C++ (clangd)" },
   { "<leader>as", desc = "clangd: switch source/header" },
   { "<leader>at", desc = "clangd: view AST" },

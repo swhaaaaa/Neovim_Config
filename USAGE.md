@@ -165,14 +165,20 @@
 | `n` / `N` | n | Next / previous match with count overlay |
 | `*` / `#` | n | Search word under cursor forward / backward |
 
-### Hop (in-buffer jump)
+### Flash (in-buffer jump)
+
+flash.nvim replaces hop.nvim. It enhances the native `f`/`F`/`t`/`T` motions
+in place (no remapping — labels only appear when a match is ambiguous) and
+adds dedicated keys for ad-hoc and treesitter-based jumps.
 
 | Key | Mode | Action |
 |-----|------|--------|
-| `f` | n/v/o | 2-char hop forward — cursor lands on 1st char of match |
-| `F` | n/v/o | 2-char hop backward — cursor lands on 1st char of match |
-| `t` | n/v/o | 2-char hop forward — cursor lands one char before match |
-| `T` | n/v/o | 2-char hop backward — cursor lands one char after match |
+| `f` / `F` | n/v/o | Native find forward/backward, with flash labels when ambiguous |
+| `t` / `T` | n/v/o | Native till forward/backward, with flash labels when ambiguous |
+| `s` | n/x/o | Ad-hoc 2-char label jump anywhere on screen |
+| `S` | n/x/o | Treesitter node select |
+| `r` | o | Flash remote (operate on a remote match without moving the cursor) |
+| `R` | o/x | Treesitter search |
 
 > Works in operator-pending mode too: `dtXY` deletes up to (not including) the next "XY" occurrence.
 

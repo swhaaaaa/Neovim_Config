@@ -470,6 +470,30 @@ if [ "$CURRENT_ULIMIT" -lt 4096 ]; then
     fi
 fi
 
+# ─── Terminal flow control (Ctrl-S/Ctrl-Q) ───────────────────────────────────
+# XON/XOFF flow control makes terminals swallow Ctrl-S as a "pause output"
+# signal before it ever reaches Neovim, breaking any plugin keymap bound to
+# <C-s> (e.g. nvim-cmp, telescope-style pickers). Most plugins in this config
+# avoid <C-s> for this reason, but disabling ixon keeps Ctrl-S/Ctrl-Q free
+# for terminal apps in general.
+if [[ $- == *i* ]] && command -v stty &>/dev/null; then
+    echo ""
+    info "Ctrl-S is XOFF flow control by default — terminals intercept it"
+    info "before Neovim/tmux/etc. ever see it."
+    read -rp "  Add 'stty -ixon' to ~/.bashrc to free up Ctrl-S/Ctrl-Q? [Y/n] " answer
+    answer="${answer:-Y}"
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        if grep -q "stty -ixon" "$HOME/.bashrc" 2>/dev/null; then
+            success "stty -ixon already exists in ~/.bashrc — skipping"
+        else
+            echo "" >> "$HOME/.bashrc"
+            echo "# Free up Ctrl-S/Ctrl-Q from terminal flow control for apps to use" >> "$HOME/.bashrc"
+            echo "stty -ixon" >> "$HOME/.bashrc"
+            success "Added 'stty -ixon' to ~/.bashrc (takes effect on next shell)"
+        fi
+    fi
+fi
+
 # ─── Done ─────────────────────────────────────────────────────────────────────
 echo ""
 echo -e "${GREEN}╔══════════════════════════════════════════╗${NC}"

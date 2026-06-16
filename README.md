@@ -118,7 +118,7 @@ to install Treesitter parsers.
 | Plugin | Role |
 |--------|------|
 | `fzf-lua` | Fuzzy finder with preview (files, grep, buffers) |
-| `hop.nvim` | EasyMotion-style 2-char jump: `f`/`F` (find fwd/bwd), `t`/`T` (till fwd/bwd) |
+| `flash.nvim` | Enhances native `f`/`F`/`t`/`T` with jump labels; `s`/`S` for ad-hoc/treesitter jumps |
 | `nvim-hlslens` | Search result count & highlights |
 | `aerial.nvim` | Symbol outline via LSP/treesitter — no ctags needed (`<leader>ao`) |
 
@@ -214,10 +214,10 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 ### Navigation
 | Key | Action |
 |-----|--------|
-| `f` | Hop: 2-char find forward |
-| `F` | Hop: 2-char find backward |
-| `t` | Hop: 2-char till forward (cursor lands before match) |
-| `T` | Hop: 2-char till backward (cursor lands after match) |
+| `f` / `F` / `t` / `T` | Native find/till motions, enhanced with flash.nvim jump labels when ambiguous |
+| `s` | Flash: ad-hoc 2-char label jump (n/x/o) |
+| `S` | Flash: treesitter node select (n/x/o) |
+| `R` | Flash: treesitter search (o/x) |
 | `*` / `#` / `n` / `N` | Search with hlslens highlights |
 | `g]f` / `g[f` | Jump to next/previous function (mini.ai) |
 | `g]c` / `g[c` | Jump to next/previous class (mini.ai) |

@@ -410,12 +410,27 @@ local plugin_specs = {
   { "EdenEast/nightfox.nvim",   lazy = true },
 
   -- ─── Navigation ───────────────────────────────────────────────────────────────
+  -- flash.nvim: replaces hop.nvim. Enhances native f/F/t/T in place (no
+  -- remapping needed — it hooks the built-in motions directly) and adds
+  -- s/S for ad-hoc 2-char label jumps and treesitter-node selection.
   {
-    "smoka7/hop.nvim",
-    keys = { "f", "F", "t", "T" },
-    config = function()
-      require("config.nvim_hop")
-    end,
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    opts = {
+      modes = {
+        char = {
+          jump_labels = true,  -- show hint labels on f/F/t/T when ambiguous
+        },
+      },
+    },
+    keys = {
+      { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,            desc = "flash: jump" },
+      { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,       desc = "flash: treesitter select" },
+      { "r",     mode = "o",               function() require("flash").remote() end,           desc = "flash: remote" },
+      { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "flash: treesitter search" },
+      -- search-mode toggle (<C-s>/<C-x>) intentionally not bound — confusing
+      -- as a manual toggle; plain incsearch is used for "/" instead.
+    },
   },
   {
     "kevinhwang91/nvim-hlslens",
