@@ -217,7 +217,8 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `f` / `F` / `t` / `T` | Native find/till motions, enhanced with flash.nvim jump labels when ambiguous |
 | `s` | Flash: ad-hoc 2-char label jump (n/x/o) |
 | `S` | Flash: treesitter node select (n/x/o) |
-| `R` | Flash: treesitter search (o/x) |
+| `r` | Flash remote (o): jump to a label, then a motion (e.g. `iw`) completes the operator there |
+| `R` | Flash treesitter search (o/x): jump to a label, operator completes on that whole node |
 | `*` / `#` / `n` / `N` | Search with hlslens highlights |
 | `g]f` / `g[f` | Jump to next/previous function (mini.ai) |
 | `g]c` / `g[c` | Jump to next/previous class (mini.ai) |
