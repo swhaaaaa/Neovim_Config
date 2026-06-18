@@ -86,7 +86,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- Toggle inlay hints for the current buffer (works for all LSP clients).
     -- clangd_extensions.lua had a global <leader>ih that only registered on c/cpp;
     -- this buffer-local version works for lua_ls, pyright, rust_analyzer, etc.
-    if client.supports_method("textDocument/inlayHint") then
+    if client:supports_method("textDocument/inlayHint") then
       vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
       map("n", "<leader>ih", function()
         vim.lsp.inlay_hint.enable(
