@@ -15,6 +15,7 @@ local activate_hlslens = function(direction)
 
   -- Deal with the case that there is no such pattern in current buffer.
   if not status then
+    ---@cast msg string
     local start_idx = string.find(msg, "E486", 1, true)
     local msg_part = start_idx and string.sub(msg, start_idx) or msg
     api.nvim_echo({ { msg_part } }, true, { err = true })

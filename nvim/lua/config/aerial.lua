@@ -41,6 +41,7 @@ aerial.setup {
 local aerial_cfg_ok, aerial_cfg = pcall(require, "aerial.config")
 if aerial_cfg_ok then
   local orig_get_icon = aerial_cfg.get_icon
+  ---@diagnostic disable-next-line: duplicate-set-field
   aerial_cfg.get_icon = function(bufnr, kind, collapsed)
     local clean = (kind or ""):match("[A-Za-z]+$") or kind
     return orig_get_icon(bufnr, clean, collapsed)
