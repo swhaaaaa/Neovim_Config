@@ -6,9 +6,9 @@ local function on_attach(bufnr)
   local function opts(desc)
     return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
   end
-  api.config.mappings.default_on_attach(bufnr)
+  api.map.on_attach.default(bufnr)
   -- explicit bind so H reliably toggles dotfiles in all nvim-tree versions
-  vim.keymap.set("n", "H", api.tree.toggle_hidden_filter, opts("toggle dotfiles"))
+  vim.keymap.set("n", "H", api.filter.dotfiles.toggle, opts("toggle dotfiles"))
 end
 
 require("nvim-tree").setup {
