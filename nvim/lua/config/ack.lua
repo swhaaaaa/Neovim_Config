@@ -25,6 +25,21 @@ end
 -- ripgrep/fzf-lua handles highlighting better; keep ack results undecorated.
 vim.g.ackhighlight = 0
 
+-- ack.vim runs the actual search via `silent execute 'grep!' ...`, which
+-- swallows :grep's own post-search message, so the earlier "Searching ..."
+-- echo is left stuck in the message area even though the search finished.
+-- Replace it once the quickfix/location list is actually populated.
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+  pattern = { "grep", "lgrep", "grepadd", "lgrepadd" },
+  group = vim.api.nvim_create_augroup("ack_search_status", { clear = true }),
+  callback = function(ev)
+    local is_loc = ev.match:sub(1, 1) == "l"
+    local n = is_loc and #vim.fn.getloclist(0) or #vim.fn.getqflist()
+    vim.api.nvim_echo({ { "" } }, false, {})
+    vim.notify(string.format("Search: %d match%s", n, n == 1 and "" or "es"), vim.log.levels.INFO)
+  end,
+})
+
 -- ── Keymaps ────────────────────────────────────────────────────────────────
 local map = vim.keymap.set
 
