@@ -209,7 +209,7 @@ Both restore the cursor to its original position afterward.
 | `<leader>akc` | n | Clear Ack match highlights |
 | `:AckRegex {pat}` | — | Search with regex (use for `*`, `\d`, `(` etc.) |
 
-> Default backend is ripgrep with `--fixed-strings` so C/C++ expressions like `func(a, b)` work without escaping. Use `<leader>akr` / `:AckRegex` when you need real regex.
+> Default backend is ripgrep with `--fixed-strings` so C/C++ expressions like `func(a, b)` work without escaping. Use `<leader>akr` / `:AckRegex` when you need real regex. Symlinks are not followed — dangling ones (e.g. autotools-generated `compile` scripts) won't spam the quickfix list with `No such file or directory` errors.
 
 ### Grug-Far (project-wide find & replace)
 

@@ -8,13 +8,16 @@ if vim.fn.executable("rg") == 1 then
   -- --fixed-strings (-F): treat the pattern as a literal string, not regex.
   -- This matches ack's default behaviour and prevents errors when searching
   -- for C/C++ expressions like "cpha0(spi, n)" that contain regex metacharacters.
-  vim.g.ackprg = "rg --vimgrep --no-heading --smart-case --follow --fixed-strings"
+  -- (no --follow: dangling symlinks, e.g. autotools-generated "compile"
+  -- scripts, make rg emit "No such file or directory" noise into the
+  -- quickfix list)
+  vim.g.ackprg = "rg --vimgrep --no-heading --smart-case --fixed-strings"
 elseif vim.fn.executable("ack") == 1 then
-  -- ack: case-insensitive, follow symlinks, show column numbers (from vimrcs)
-  vim.g.ackprg = "ack -H --nocolor --nogroup --column -i --follow"
+  -- ack: case-insensitive, show column numbers (from vimrcs)
+  vim.g.ackprg = "ack -H --nocolor --nogroup --column -i"
 elseif vim.fn.executable("ack-grep") == 1 then
   -- Debian/Ubuntu older package name
-  vim.g.ackprg = "ack-grep -H --nocolor --nogroup --column -i --follow"
+  vim.g.ackprg = "ack-grep -H --nocolor --nogroup --column -i"
 end
 
 -- Do NOT use ackhighlight — it applies the Search highlight group directly

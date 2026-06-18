@@ -315,7 +315,7 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `,akc` | Clear Ack match highlights |
 | `:AckRegex {pat}` | Search with regex — use when you need `(`, `*`, `\d` etc. |
 
-> Default backend is ripgrep with `--fixed-strings` so C/C++ expressions like `func(a, b)` work without escaping. Use `,akr` / `:AckRegex` when you need real regex.
+> Default backend is ripgrep with `--fixed-strings` so C/C++ expressions like `func(a, b)` work without escaping. Use `,akr` / `:AckRegex` when you need real regex. Symlinks are not followed — dangling ones (e.g. autotools-generated `compile` scripts) won't spam the quickfix list with `No such file or directory` errors.
 
 ### Project Find & Replace (grug-far)
 | Key / Command | Action |
