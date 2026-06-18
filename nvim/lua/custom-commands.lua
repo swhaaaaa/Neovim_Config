@@ -69,16 +69,15 @@ end, { desc = "Reload init.lua and all config modules" })
 -- :LspRestart was removed in Neovim 0.11. Use this instead.
 local function lsp_restart()
   vim.schedule(function()
-    local clients = vim.lsp.get_clients()
-    for _, client in ipairs(clients) do
-      local bufs = vim.lsp.get_buffers_by_client_id(client.id)
-      vim.lsp.stop_client(client.id, true)
-      -- Re-enable for each buffer the client was attached to
-      for _, buf in ipairs(bufs) do
-        if vim.api.nvim_buf_is_valid(buf) then
-          vim.lsp.enable(client.name, { bufnr = buf })
-        end
-      end
+    -- vim.lsp.enable(name) re-attaches to every buffer of matching filetype
+    -- on its own (via doautoall), so no per-buffer bookkeeping is needed here.
+    local names = {}
+    for _, client in ipairs(vim.lsp.get_clients()) do
+      names[client.name] = true
+      client:stop(true)
+    end
+    for name in pairs(names) do
+      vim.lsp.enable(name)
     end
   end)
 end
