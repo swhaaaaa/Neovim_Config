@@ -30,15 +30,15 @@ function M.may_create_dir(dir)
   end
 end
 
+-- Seed once at module load time; utils.lua is loaded early so all callers
+-- (including colorschemes.lua) share the same seeded RNG.
+math.randomseed(os.time())
+
 --- Generate random integers in the range [Low, High], inclusive,
 --- adapted from https://stackoverflow.com/a/12739441/6064933
 --- @param low integer the lower value for this range
 --- @param high integer the upper value for this range
 --- @return integer
--- Seed once at module load time; utils.lua is loaded early so all callers
--- (including colorschemes.lua) share the same seeded RNG.
-math.randomseed(os.time())
-
 function M.rand_int(low, high)
   -- Use lua to generate random int, see also: https://stackoverflow.com/a/20157671/6064933
   return math.random(low, high)
