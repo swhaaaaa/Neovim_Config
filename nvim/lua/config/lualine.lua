@@ -202,6 +202,7 @@ local get_active_lsp = function()
   return msg
 end
 
+---@diagnostic disable-next-line: undefined-field
 require("lualine").setup {
   options = {
     icons_enabled = true,
