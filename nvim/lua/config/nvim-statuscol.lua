@@ -26,6 +26,7 @@ end
 -- so lnumfunc can force the absolute line number for them instead.
 local in_lno_probe = 0
 local orig_eval_statusline = vim.api.nvim_eval_statusline
+---@diagnostic disable-next-line: duplicate-set-field
 vim.api.nvim_eval_statusline = function(str, opts)
   if not (opts and opts.use_statuscol_lnum) then
     return orig_eval_statusline(str, opts)
@@ -38,9 +39,14 @@ vim.api.nvim_eval_statusline = function(str, opts)
 end
 
 local function lnumfunc(args, segment)
-  if in_lno_probe > 0 and args.rnu then
+  if in_lno_probe > 0 then
+    -- Force the absolute-number branch of builtin.lnumfunc regardless of
+    -- the real rnu/nu state -- relying on args.rnu being accurate here is
+    -- what let stale/cached values leak relative (cursor-distance) numbers
+    -- into pinned context/gutter lines instead of their true line number.
     local fake = vim.tbl_extend("force", {}, args)
     fake.relnum = 0
+    fake.nu = true
     return builtin.lnumfunc(fake, segment)
   end
   return builtin.lnumfunc(args, segment)
