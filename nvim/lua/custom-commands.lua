@@ -1,10 +1,10 @@
 local api = vim.api
 
 -- Format current buffer via conform.nvim (if available)
-api.nvim_create_user_command("Format", function(args)
+api.nvim_create_user_command("Format", function()
   local ok, conform = pcall(require, "conform")
   if ok then
-    conform.format { bufnr = args.buf, lsp_fallback = true }
+    conform.format { bufnr = vim.api.nvim_get_current_buf(), lsp_fallback = true }
   else
     local clients = vim.lsp.get_clients({ bufnr = 0 })
     if #clients > 0 then
