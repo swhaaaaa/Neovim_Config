@@ -30,7 +30,6 @@ if utils.executable("python3") then
 else
   local msg = "Python3 executable not found! You must install Python3 and set its PATH correctly!"
   api.nvim_echo({ { msg } }, true, { err = true })
-  return
 end
 
 -- Custom mapping <leader> (see `:h mapleader` for more info)
