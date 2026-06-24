@@ -327,8 +327,13 @@ end, { desc = "toggle fold method expr/manual" })
 --   v<leader>ak  search visual selection
 
 -- ─── Quickfix ────────────────────────────────────────────────────────────────
-keymap.set("n", "<leader>co", "<cmd>copen<CR>",  { desc = "open quickfix list" })
-keymap.set("n", "<leader>cc", "<cmd>cclose<CR>", { desc = "close quickfix list" })
+-- Note: remapped from <leader>cc to <leader>uq — cscope_maps.nvim's own
+-- <leader>cc ("find all calls") loads later (VeryLazy) and was silently
+-- overwriting that binding. <leader>co moved to <leader>uo too, to keep
+-- open/close paired under the same prefix (cscope has no "o" map, so it
+-- was never actually conflicting).
+keymap.set("n", "<leader>uo", "<cmd>copen<CR>",  { desc = "open quickfix list" })
+keymap.set("n", "<leader>uq", "<cmd>cclose<CR>", { desc = "close quickfix list" })
 keymap.set("n", "]q",         "<cmd>cnext<CR>",  { desc = "next quickfix item" })
 keymap.set("n", "[q",         "<cmd>cprev<CR>",  { desc = "prev quickfix item" })
 keymap.set("n", "]Q",         "<cmd>clast<CR>",  { desc = "last quickfix item" })

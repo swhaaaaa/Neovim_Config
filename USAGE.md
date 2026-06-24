@@ -776,8 +776,8 @@ Notifications are handled by **snacks.nvim** (replaces nvim-notify). All `vim.no
 
 | Key | Mode | Action |
 |-----|------|--------|
-| `<leader>co` | n | Open quickfix list |
-| `<leader>cc` | n | Close quickfix list |
+| `<leader>uo` | n | Open quickfix list |
+| `<leader>uq` | n | Close quickfix list |
 | `]q` | n | Next quickfix item |
 | `[q` | n | Previous quickfix item |
 | `]Q` | n | Last quickfix item |

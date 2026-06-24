@@ -96,6 +96,8 @@ wk.add {
   { "<leader>ih", desc = "toggle inlay hints (clangd)" },
   { "<leader>um", desc = "toggle undo tree (mundo)" },
   { "<leader>un", desc = "show notification history" },
+  { "<leader>uo", desc = "open quickfix list" },
+  { "<leader>uq", desc = "close quickfix list" },
   { "<leader>ux", desc = "toggle treesitter context bar" },
   -- DAP entries
   { "<leader>dc", desc = "DAP: continue" },
@@ -110,9 +112,6 @@ wk.add {
   { "<leader>dx", desc = "DAP: terminate" },
   { "<leader>du", desc = "toggle DAP UI" },
   { "<leader>dv", desc = "DAP: toggle virtual text" },
-  -- quickfix
-  { "<leader>co", desc = "open quickfix list" },
-  { "<leader>cc", desc = "close quickfix list" },
   -- diagnostic → quickfix
   { "<space>qw",  desc = "window diagnostics → quickfix" },
   { "<space>qb",  desc = "buffer diagnostics → quickfix" },
