@@ -9,7 +9,7 @@ bash build_nvim.sh   # optional: build latest Neovim from source (>= 0.11 requir
 bash install.sh      # installs tools and symlinks nvim/ → ~/.config/nvim
 ```
 
-After first launch, run `:TSInstall!` inside Neovim to install Treesitter parsers. Plugins are auto-installed by Lazy.nvim on first start.
+Plugins are auto-installed by Lazy.nvim on first start. The curated Treesitter parser set (bash, c, cpp, lua, python, rust, vim, vimdoc, json, toml, yaml, markdown, markdown_inline) is then installed automatically too, via the `LazyDone` autocmd in `lua/config/treesitter.lua` — no manual step needed. To add a parser for another language, run `:TSInstall <language>` (e.g. `:TSInstall go`); the bare `:TSInstall!` with no arguments errors with `E471: Argument required`, since this plugin's command requires explicit parser names.
 
 ## Architecture
 

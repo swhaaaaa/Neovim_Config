@@ -53,11 +53,7 @@ The installer will automatically:
 
 Supported package managers: `apt` · `dnf` · `pacman` · `brew`
 
-On first launch, **Lazy.nvim** auto-installs all plugins. Then run:
-```
-:TSInstall!
-```
-to install Treesitter parsers.
+On first launch, **Lazy.nvim** auto-installs all plugins, then the curated Treesitter parser set installs automatically via the `LazyDone` autocmd — no manual step needed (see Troubleshooting below if it doesn't).
 
 ---
 
