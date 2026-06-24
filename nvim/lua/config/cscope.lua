@@ -14,6 +14,8 @@
 --   <leader>cc  → <leader>uq  (close quickfix list)
 --   <leader>co  → <leader>uo  (open quickfix list; not an actual conflict,
 --                              moved only to keep open/close paired)
+--   <leader>cl  → <leader>ul  (toggle cursor column; not an actual conflict,
+--                              moved to keep <leader>c fully clear)
 
 -- Keymaps 	Description
 -- <prefix>s 	find all references to the token under cursor

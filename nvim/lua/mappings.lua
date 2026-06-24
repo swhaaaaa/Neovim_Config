@@ -150,7 +150,10 @@ end, { desc = "remove trailing space" })
 keymap.set("n", "<leader>y", "<cmd>%yank<cr>", { desc = "yank entire buffer" })
 
 -- Toggle cursor column
-keymap.set("n", "<leader>cl", "<cmd>call utils#ToggleCursorCol()<cr>", { desc = "toggle cursor column" })
+-- Note: remapped from <leader>cl to <leader>ul — <leader>c is reserved for
+-- cscope (see cscope.lua); not an active conflict today since cscope_maps.nvim
+-- has no "l" map, but keeps the prefix fully clear per CLAUDE.md.
+keymap.set("n", "<leader>ul", "<cmd>call utils#ToggleCursorCol()<cr>", { desc = "toggle cursor column" })
 
 -- Move current line up and down
 keymap.set("n", "<A-k>", '<cmd>call utils#SwitchLine(line("."), "up")<cr>', { desc = "move line up" })

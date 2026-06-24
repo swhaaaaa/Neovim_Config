@@ -44,7 +44,7 @@
 | `<leader>uc` | n | Pick colorscheme interactively (fzf-lua) |
 | `<leader>ud` | n | Toggle diagnostics on/off (global) |
 | `<leader>uD` | n | Toggle diagnostic float balloon on/off |
-| `<leader>cl` | n | Toggle cursor column highlight |
+| `<leader>ul` | n | Toggle cursor column highlight |
 | `<leader>fm` | n | Toggle fold method: treesitter ↔ manual (freeze folds) |
 | `<F12>` | n/i | Toggle spell check |
 | `<leader>tf` | n | Toggle format on save (conform.nvim) |

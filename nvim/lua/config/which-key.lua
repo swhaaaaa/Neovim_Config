@@ -94,6 +94,7 @@ wk.add {
   { "<leader>ud", desc = "toggle diagnostics" },
   { "<leader>uD", desc = "toggle diagnostic float" },
   { "<leader>ih", desc = "toggle inlay hints (clangd)" },
+  { "<leader>ul", desc = "toggle cursor column" },
   { "<leader>um", desc = "toggle undo tree (mundo)" },
   { "<leader>un", desc = "show notification history" },
   { "<leader>uo", desc = "open quickfix list" },
