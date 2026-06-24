@@ -22,8 +22,9 @@ keymap.set("n", "<leader>gbn", function()
       return
     end
 
-    local cmd_str = string.format("G checkout -b %s", user_input)
-    vim.cmd(cmd_str)
+    -- dict-form vim.cmd passes user_input as one literal arg — no Ex-command
+    -- injection or word-splitting on spaces/pipes/etc, unlike string interp.
+    vim.cmd({ cmd = "G", args = { "checkout", "-b", user_input } })
   end)
 end, {
   desc = "Git: create new branch",
