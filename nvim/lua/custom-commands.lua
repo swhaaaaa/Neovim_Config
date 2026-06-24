@@ -109,7 +109,8 @@ local function meson_setup_one(pkgdir, builddir, on_done)
       -- Symlink compile_commands.json at the package root
       local link   = pkgdir .. "/compile_commands.json"
       local target = builddir .. "/compile_commands.json"
-      local ln_out = vim.fn.system(string.format("ln -sf %s %s", target, link))
+      local ln_out = vim.fn.system(
+        string.format("ln -sf %s %s", vim.fn.shellescape(target), vim.fn.shellescape(link)))
       if vim.v.shell_error ~= 0 then
         vim.notify(string.format("[%s] symlink failed: %s", vim.fn.fnamemodify(pkgdir, ":t"), ln_out),
           vim.log.levels.ERROR, { title = "Meson" })
@@ -266,7 +267,8 @@ vim.api.nvim_create_user_command("MesonLink", function(opts)
     return
   end
 
-  local ln_out = vim.fn.system(string.format("ln -sf %s %s", src, link))
+  local ln_out = vim.fn.system(
+    string.format("ln -sf %s %s", vim.fn.shellescape(src), vim.fn.shellescape(link)))
   if vim.v.shell_error ~= 0 then
     vim.notify("symlink failed: " .. ln_out, vim.log.levels.ERROR, { title = "Meson" })
     return
