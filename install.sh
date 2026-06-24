@@ -122,8 +122,9 @@ if ! command -v nvim &>/dev/null; then
 fi
 
 NVIM_VERSION=$(nvim --version | head -1 | grep -oP '\d+\.\d+\.\d+')
+NVIM_MAJOR=$(echo "$NVIM_VERSION" | cut -d. -f1)
 NVIM_MINOR=$(echo "$NVIM_VERSION" | cut -d. -f2)
-if [ "$NVIM_MINOR" -lt 11 ]; then
+if [ "$NVIM_MAJOR" -eq 0 ] && [ "$NVIM_MINOR" -lt 11 ]; then
     error "Neovim >= 0.11 required. Found: $NVIM_VERSION — please upgrade."
 fi
 success "Neovim $NVIM_VERSION"
