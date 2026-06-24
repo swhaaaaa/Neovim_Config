@@ -72,7 +72,10 @@ vim.keymap.set("n", "<leader>uD", function()
   )
 end, { desc = "toggle diagnostic float" })
 
+-- group + clear=true: :ReloadConfig re-requires this module, and without a
+-- clearable group each reload would stack another duplicate callback here.
 api.nvim_create_autocmd("CursorHold", {
+  group = api.nvim_create_augroup("diagnostic_float_on_hold", { clear = true }),
   pattern = "*",
   callback = function()
     if not vim.g.diagnostic_float_enabled then return end
