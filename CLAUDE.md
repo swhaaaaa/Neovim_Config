@@ -26,7 +26,7 @@ The config lives entirely in `nvim/` (installed as `~/.config/nvim`). Load order
 
 **Plugin configs** live one-file-per-plugin in `nvim/lua/config/`. Each is loaded from the plugin's `config = function() require("config.<name>") end` in `plugin_specs.lua`.
 
-**Snippets** in `nvim/my_snippets/` use UltiSnips `.snippets` syntax (loaded by UltiSnips). LuaSnip handles VSCode-format snippets from `friendly-snippets`.
+**Snippets** are handled entirely by LuaSnip: custom snippets live in `nvim/lua/snippets/*.lua` (loaded via LuaSnip's `from_lua` loader), and VSCode-format snippets come from `friendly-snippets`.
 
 **VimScript utilities** in `nvim/autoload/` (`utils.vim`, `buf_utils.vim`, `text_obj.vim`) are called from Lua via `vim.fn["utils#..."]()`.
 
@@ -35,7 +35,7 @@ The config lives entirely in `nvim/` (installed as `~/.config/nvim`). Load order
 - **Leader key**: `,`
 - **`c` / `C` / `cc`** in normal mode are remapped to `"_c` (black-hole register) — changes do not overwrite the yank register.
 - **`<C-h>` in insert mode** is `<BS>` (not window navigation — that's normal mode only).
-- **`<C-j>` / `<C-k>` in insert mode** are reserved for UltiSnips expand/jump; do not bind them to anything else.
+- **`<C-j>` / `<C-k>` in insert mode** are reserved for LuaSnip expand/jump; do not bind them to anything else.
 - **`<leader>c` prefix** is reserved for cscope maps — do not add other mappings under `<leader>c`.
 - **oil.nvim** has `<C-h>` keymap intentionally omitted to avoid conflicting with `<C-w>h` window navigation.
 

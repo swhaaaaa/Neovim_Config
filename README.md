@@ -68,7 +68,6 @@ to install Treesitter parsers.
 |--------|------|
 | `nvim-cmp` | Completion engine |
 | `LuaSnip` | Snippet engine (VSCode + custom snippets) |
-| `UltiSnips` | UltiSnips `.snippets` file support |
 | `friendly-snippets` | Pre-built snippet collection |
 | `nvim-autopairs` | Auto-close brackets/quotes |
 
@@ -435,9 +434,7 @@ repo/                         # Top-level repository
     ├── viml_conf/
     │   ├── options.vim           # Vim options (folds, tabs, UI)
     │   └── plugins.vim           # VimScript plugin settings
-    ├── my_snippets/              # Custom UltiSnips snippets
     ├── after/                    # Filetype-specific overrides
-    ├── ftdetect/                 # Custom filetype detection
     └── spell/                    # Spell check word lists
 ```
 

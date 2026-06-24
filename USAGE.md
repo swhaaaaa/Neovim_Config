@@ -141,8 +141,8 @@
 | `<c-u>` | i | Uppercase word under cursor (custom) |
 | `<c-t>` | i | Title-case word under cursor (custom) |
 | `<A-;>` | i | Insert semicolon at end of line |
-| `<C-j>` | i | UltiSnips expand / jump to next `$` stop |
-| `<C-k>` | i | UltiSnips jump to previous `$` stop |
+| `<C-j>` | i | LuaSnip expand / jump to next `$` stop |
+| `<C-k>` | i | LuaSnip jump to previous `$` stop |
 | `<C-A>` | c | Jump to beginning of command line |
 
 ### Yank Ring (yanky.nvim)
@@ -491,14 +491,14 @@ Sessions are saved automatically per working directory when you quit Neovim. On 
 
 ## Snippets
 
-Two snippet engines are available:
+LuaSnip is the only snippet engine, loading from two sources:
 
-| Engine | Trigger | Files |
+| Source | Trigger | Files |
 |--------|---------|-------|
-| **LuaSnip** | Tab (via nvim-cmp) | VSCode-style JSON (`friendly-snippets`) |
-| **UltiSnips** | `<C-j>` expand · `<C-j>/<C-k>` jump | `my_snippets/*.snippets` |
+| `friendly-snippets` | Tab (via nvim-cmp) | VSCode-style JSON |
+| Custom | Tab / `<C-j>` expand · `<C-j>/<C-k>` jump | `nvim/lua/snippets/*.lua` |
 
-> Add custom snippets in `nvim/my_snippets/` using UltiSnips `.snippets` format.
+> Add custom snippets by editing/adding a file under `nvim/lua/snippets/` (Lua snippet format, loaded via LuaSnip's `from_lua` loader).
 
 ---
 

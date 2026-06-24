@@ -35,8 +35,8 @@ cmp.setup {
         fallback()
       end
     end, { "i", "s" }),
-    -- <C-j>/<C-k>: jump LuaSnip stops — mirrors UltiSnips C-j/C-k so both
-    -- snippet engines use the same keys for navigating $1 $2 $0 stops.
+    -- <C-j>/<C-k>: jump LuaSnip stops — kept on the same keys UltiSnips
+    -- used historically, for muscle-memory continuity.
     ["<C-j>"] = cmp.mapping(function(fallback)
       if luasnip.expand_or_jumpable() then
         luasnip.expand_or_jump()

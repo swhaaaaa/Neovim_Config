@@ -300,10 +300,10 @@ keymap.set("i", "<C-l>", "<Del>", { desc = "delete char right" })
 
 -- Swallow <C-j> and <C-k> in plain insert mode so they don't insert garbage
 -- (^@ null byte for C-j, digraph prompt for C-k). <Nop> is the correct
--- fallback even if UltiSnips/nvim-cmp fail to load — silent is better than
+-- fallback even if LuaSnip/nvim-cmp fail to load — silent is better than
 -- garbage. The plugins override these at higher priority when active.
-keymap.set("i", "<C-j>", "<Nop>", { desc = "reserved for UltiSnips expand/jump" })
-keymap.set("i", "<C-k>", "<Nop>", { desc = "reserved for UltiSnips jump back" })
+keymap.set("i", "<C-j>", "<Nop>", { desc = "reserved for LuaSnip expand/jump" })
+keymap.set("i", "<C-k>", "<Nop>", { desc = "reserved for LuaSnip jump back" })
 
 -- Toggle fold method between expr (treesitter) and manual
 -- Use <leader>fm to freeze folds after opening them so edits don't re-fold
