@@ -53,6 +53,20 @@ detect_pkg_manager() {
 detect_pkg_manager
 info "Detected package manager: ${BOLD}${PKG_MGR}${NC}"
 
+# ─── Refresh package index ────────────────────────────────────────────────────
+# Installs below assume an up-to-date index; on a fresh system apt's cache is
+# often empty/stale, which makes the very first `apt-get install` 404.
+if [ "$PKG_MGR" != "unknown" ]; then
+    read -rp "  Refresh package index now? [Y/n] " answer
+    answer="${answer:-Y}"
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        eval "$PKG_UPDATE"
+        success "Package index refreshed"
+    else
+        warn "Skipping package index refresh — installs below may fail if the cache is stale"
+    fi
+fi
+
 # ─── Install helper ───────────────────────────────────────────────────────────
 # Usage: install_pkg <cmd_to_check> <pkg_name_apt> <pkg_name_dnf> <pkg_name_pacman> <pkg_name_brew> <description>
 install_if_missing() {
