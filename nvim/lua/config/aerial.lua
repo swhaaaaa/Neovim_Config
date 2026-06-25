@@ -55,6 +55,3 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
   desc = "No wrap in aerial — resize_to_content handles long names",
 })
-
-vim.keymap.set("n", "<leader>ao", "<cmd>AerialToggle<CR>",
-  { silent = true, desc = "aerial: toggle symbol outline" })
