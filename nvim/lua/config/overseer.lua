@@ -14,8 +14,3 @@ overseer.setup {
     },
   },
 }
-
-local map = vim.keymap.set
-map("n", "<leader>ot", "<cmd>OverseerToggle<CR>", { desc = "overseer: toggle task list" })
-map("n", "<leader>or", "<cmd>OverseerRun<CR>",    { desc = "overseer: run task template" })
-map("n", "<leader>oR", "<cmd>OverseerShell<CR>",  { desc = "overseer: run shell command" })
