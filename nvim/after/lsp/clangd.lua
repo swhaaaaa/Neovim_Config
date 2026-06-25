@@ -1,5 +1,5 @@
 return {
-  filetypes = { "c", "cpp", "cc" },
+  filetypes = { "c", "cpp" },
   root_markers = {
     "compile_commands.json",  -- meson/cmake build
     "compile_flags.txt",
