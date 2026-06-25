@@ -71,7 +71,9 @@ map("n", "<leader>gga", "<cmd>Neogit commit --amend --no-edit<CR>", desc("Neogit
 map("n", "<leader>ggR", function()
   local n = vim.fn.input("Interactive rebase HEAD~")
   if n ~= "" then
-    vim.cmd("Neogit rebase --interactive HEAD~" .. n)
+    -- dict-form vim.cmd passes "HEAD~n" as one literal arg — no Ex-command
+    -- injection on spaces/pipes/etc, unlike string interpolation.
+    vim.cmd({ cmd = "Neogit", args = { "rebase", "--interactive", "HEAD~" .. n } })
   end
 end, desc("Neogit: rebase -i HEAD~N"))
 
