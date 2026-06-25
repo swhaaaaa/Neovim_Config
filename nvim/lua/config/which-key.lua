@@ -31,6 +31,7 @@ wk.add {
   { "<leader>ks", desc = "kernel: gen compile_commands + .clangd" },
   { "<leader>kp", desc = "OE pkg: link bitbake compile_commands.json" },
   { "<leader>l",  group = "LSP peek (glance)" },
+  { "<leader>la", desc = "LSP: code action" },
   { "<leader>m",  group = "meson / mark" },
   { "<leader>ms", desc = "meson setup" },
   { "<leader>mb", desc = "meson build" },

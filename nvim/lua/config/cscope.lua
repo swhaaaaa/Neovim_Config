@@ -16,6 +16,9 @@
 --                              moved only to keep open/close paired)
 --   <leader>cl  → <leader>ul  (toggle cursor column; not an actual conflict,
 --                              moved to keep <leader>c fully clear)
+--   <leader>ca  → <leader>la  (LSP code action; cscope's own <leader>ca
+--                              "find symbol assignments" was being shadowed
+--                              by this buffer-local LSP map in attached bufs)
 
 -- Keymaps 	Description
 -- <prefix>s 	find all references to the token under cursor

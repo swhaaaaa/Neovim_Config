@@ -315,7 +315,7 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `<leader>lr` | n | Peek references (Glance popup) |
 | `<leader>li` | n | Peek implementations (Glance popup) |
 | `<leader>rn` | n | Rename symbol |
-| `<leader>ca` | n | Code action |
+| `<leader>la` | n | Code action |
 | `<leader>wa` | n | Add workspace folder |
 | `<leader>wr` | n | Remove workspace folder |
 | `<leader>wl` | n | List workspace folders |

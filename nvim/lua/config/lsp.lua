@@ -76,7 +76,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
     map("n", "<leader>rn", function()
       return ":IncRename " .. vim.fn.expand("<cword>")
     end, { expr = true, desc = "LSP: rename symbol (inc-rename)" })
-    map("n", "<leader>ca", vim.lsp.buf.code_action,  { desc = "LSP: code action" })
+    -- Note: <leader>ca → <leader>la — cscope_maps.nvim's own <leader>ca
+    -- ("find symbol assignments") lives under the cscope-reserved <leader>c
+    -- prefix (see cscope.lua); this buffer-local map was silently shadowing
+    -- it in LSP-attached buffers. Moved into the LSP peek (glance) group.
+    map("n", "<leader>la", vim.lsp.buf.code_action,  { desc = "LSP: code action" })
     map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder,    { desc = "LSP: add workspace folder" })
     map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, { desc = "LSP: remove workspace folder" })
     map("n", "<leader>wl", function()
