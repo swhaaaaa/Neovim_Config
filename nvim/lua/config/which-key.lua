@@ -49,6 +49,7 @@ wk.add {
   { "<leader>sv", desc = "reload vimrc / init.lua" },
   { "<leader>sh", desc = "LSP: signature help" },
   { "<leader>sd", mode = { "n", "x" }, desc = "grep in chosen dir (fzf-lua)" },
+  { "<leader>sD", mode = { "n", "x" }, desc = "grep in multiple dirs (fzf-lua)" },
   { "<leader>W",  group = "LSP workspace" },
   { "<leader>x",  group = "trouble / diagnostics" },
   { "<leader>ak",  group = "ack search" },
