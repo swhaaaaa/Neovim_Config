@@ -23,8 +23,7 @@ bufferline.setup {
     tab_size = 10,
     diagnostics = false,
     custom_filter = function(bufnr)
-      -- if the result is false, this buffer will be shown, otherwise, this
-      -- buffer will be hidden.
+      -- return true to show this buffer, false to hide it.
 
       -- filter out filetypes you don't want to see
       local exclude_ft = { "qf", "fugitive", "git", "oil" }

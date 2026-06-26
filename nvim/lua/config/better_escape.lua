@@ -14,6 +14,7 @@ end
 function M.setup()
   -- Disable better-escape in special prompts where <Esc>-like combos are unwanted
   vim.api.nvim_create_autocmd("FileType", {
+    group = vim.api.nvim_create_augroup("better_escape_ft", { clear = true }),
     pattern = { "TelescopePrompt", "fzf", "noice", "minifiles" },
     callback = function() vim.b.better_escape_disabled = 1 end,
     desc = "Disable better-escape in prompt-like buffers",

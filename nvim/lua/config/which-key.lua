@@ -25,6 +25,7 @@ wk.add {
   { "<leader>fk", desc = "search keymaps (fuzzy)" },
   { "<leader>g",  group = "git" },
   { "<leader>gl", desc = "lazygit" },
+  { "<leader>gL", mode = { "n", "v" }, desc = "Git: get permlink (gitlinker)" },
   { "<leader>gg", group = "neogit" },
   { "<leader>h",  group = "git hunks" },
   { "<leader>k",  group = "kernel (OpenBMC/Yocto)" },

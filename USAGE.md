@@ -391,6 +391,14 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `:DiffviewClose` | Close |
 | `:DiffviewFileHistory %` | History for current file |
 
+### Lazygit / Git Permalink
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `<leader>gl` | n | Open lazygit floating window |
+| `<leader>gL` | n/v | Copy permlink for current file / selection to clipboard |
+| `<leader>gbr` | n | Open repo root in browser |
+
 ---
 
 ## Debug (DAP)
