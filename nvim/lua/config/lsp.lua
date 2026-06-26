@@ -65,7 +65,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         border = "single",
         max_height = 20,
         max_width = 130,
-        close_events = { "CursorMoved", "BufLeave", "WinLeave", "LSPDetach" },
+        close_events = { "CursorMoved", "BufLeave", "WinLeave", "LspDetach" },
       }
     end)
     -- <C-k> reserved for window navigation (mappings.lua)
@@ -81,9 +81,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- prefix (see cscope.lua); this buffer-local map was silently shadowing
     -- it in LSP-attached buffers. Moved into the LSP peek (glance) group.
     map("n", "<leader>la", vim.lsp.buf.code_action,  { desc = "LSP: code action" })
-    map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder,    { desc = "LSP: add workspace folder" })
-    map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, { desc = "LSP: remove workspace folder" })
-    map("n", "<leader>wl", function()
+    -- Note: <leader>wa/wr/wl → <leader>Wa/Wr/Wl — <leader>w is also bound
+    -- directly to "save buffer" (mappings.lua). Sharing that as a prefix made
+    -- every <leader>w in an LSP-attached buffer wait out 'timeoutlen' (500ms)
+    -- before saving, since Neovim couldn't tell it apart from <leader>wa/wr/wl
+    -- without waiting. Capital W shares no prefix with lowercase w, so both
+    -- fire instantly.
+    map("n", "<leader>Wa", vim.lsp.buf.add_workspace_folder,    { desc = "LSP: add workspace folder" })
+    map("n", "<leader>Wr", vim.lsp.buf.remove_workspace_folder, { desc = "LSP: remove workspace folder" })
+    map("n", "<leader>Wl", function()
       vim.print(vim.lsp.buf.list_workspace_folders())
     end, { desc = "LSP: list workspace folders" })
 

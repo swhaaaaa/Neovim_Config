@@ -15,20 +15,21 @@
 7. [LSP](#lsp)
 8. [Git](#git)
 9. [Debug (DAP)](#debug-dap)
-10. [File Explorer](#file-explorer)
-11. [Folding](#folding)
-12. [Snippets](#snippets)
-13. [Surround](#surround)
-14. [Textobjects (mini.ai)](#textobjects-miniai)
-15. [C/C++ Tools](#cc-tools)
-16. [Spelling](#spelling)
-17. [Terminal](#terminal)
-18. [Notifications](#notifications)
-19. [Meson Build](#meson-build)
-20. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
-21. [Claude Code CLI (claudecode.nvim)](#claude-code-cli-claudecodenvim)
-22. [User Commands](#user-commands)
-23. [Tips & Workflows](#tips--workflows)
+10. [Session](#session)
+11. [File Explorer](#file-explorer)
+12. [Folding](#folding)
+13. [Snippets](#snippets)
+14. [Surround](#surround)
+15. [Textobjects (mini.ai)](#textobjects-miniai)
+16. [C/C++ Tools](#cc-tools)
+17. [Spelling](#spelling)
+18. [Terminal](#terminal)
+19. [Notifications](#notifications)
+20. [Meson Build](#meson-build)
+21. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
+22. [Claude Code CLI (claudecode.nvim)](#claude-code-cli-claudecodenvim)
+23. [User Commands](#user-commands)
+24. [Tips & Workflows](#tips--workflows)
 
 ---
 
@@ -137,8 +138,7 @@
 | `<C-h>` | i | Delete char left (`<BS>`) |
 | `<C-l>` | i | Delete char right (`<Del>`) |
 | `<C-w>` | i | Delete word left — Vim built-in |
-| `<C-u>` | i | Delete to line start — Vim built-in |
-| `<c-u>` | i | Uppercase word under cursor (custom) |
+| `<C-u>` | i | Uppercase word under cursor (overrides delete-to-line-start built-in) |
 | `<c-t>` | i | Title-case word under cursor (custom) |
 | `<A-;>` | i | Insert semicolon at end of line |
 | `<C-j>` | i | LuaSnip expand / jump to next `$` stop |
@@ -288,7 +288,7 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 
 | Key | Action |
 |-----|--------|
-| `<space>u` | Toggle Mundo undo tree |
+| `<leader>um` | Toggle Mundo undo tree |
 
 ### Treesitter Context
 
@@ -316,9 +316,9 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `<leader>li` | n | Peek implementations (Glance popup) |
 | `<leader>rn` | n | Rename symbol |
 | `<leader>la` | n | Code action |
-| `<leader>wa` | n | Add workspace folder |
-| `<leader>wr` | n | Remove workspace folder |
-| `<leader>wl` | n | List workspace folders |
+| `<leader>Wa` | n | Add workspace folder |
+| `<leader>Wr` | n | Remove workspace folder |
+| `<leader>Wl` | n | List workspace folders |
 | `gd` | n | Go to definition (location list if multiple) |
 | `K` | n | Hover documentation |
 | `<leader>sh` | n | Signature help (moved from `<C-k>` — reserved for window navigation) |
@@ -329,6 +329,7 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | Key | Action |
 |-----|--------|
 | `[d` / `]d` | Previous / next diagnostic |
+| `[e` / `]e` | Previous / next **error** only (skips warnings/hints) |
 | `<space>e` | Show diagnostic float |
 | `<space>q` | Add diagnostics to location list |
 | `<space>qb` | Add current buffer diagnostics to quickfix |
@@ -416,17 +417,18 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 
 ---
 
-## Session (persistence.nvim)
+## Session
 
-Sessions are saved automatically per working directory when you quit Neovim. On next launch, restore with `,ss`.
+Sessions use **vim-obsession**. Tracking is not automatic — start it manually with `<leader>ss`. Once active, the session auto-saves when Neovim exits (buffers, window layout, CWD preserved).
 
 | Key | Mode | Action |
 |-----|------|--------|
-| `<leader>ss` | n | Restore session for current working directory |
-| `<leader>sl` | n | Restore last session (any directory) |
-| `<leader>sq` | n | Stop persistence — don't save session on exit |
+| `<leader>ss` | n | Toggle session tracking (starts recording to `Session.vim` in cwd, or stops if active) |
+| `<leader>sr` | n | Restore session from `Session.vim` in cwd |
 
-> Session files are stored in `~/.local/state/nvim/sessions/`.
+> **Typical workflow:** open Neovim in your project dir → `<leader>ss` to start tracking → work → quit. Next time, `<leader>sr` to restore. To track to a different file: `:Obsession {path}`.
+>
+> Session file is `Session.vim` in cwd by default.
 
 ---
 
@@ -436,7 +438,7 @@ Sessions are saved automatically per working directory when you quit Neovim. On 
 |-----|------|--------|
 | `<leader>tt` | n | Toggle floating terminal |
 
-> Inside the terminal: press `<Esc><Esc>` to exit terminal mode and return to normal mode. Press `<leader>tt` again to hide the terminal (state is preserved).
+> Inside the terminal: press `<Esc>` (or `<C-e>`) to exit terminal mode and return to normal mode. Press `<leader>tt` again to hide the terminal (state is preserved).
 
 ---
 
@@ -454,15 +456,15 @@ Sessions are saved automatically per working directory when you quit Neovim. On 
 
 ## File Explorer
 
-### NERDTree (sidebar tree)
+### nvim-tree (sidebar tree)
 
 | Key | Action |
 |-----|--------|
-| `<leader>nn` | Toggle NERDTree sidebar |
-| `<leader>nf` | Reveal current file (works outside current root) |
-| `<leader>nF` | Focus NERDTree window |
+| `<leader>nn` | Toggle nvim-tree sidebar |
+| `<leader>nf` | Reveal current file in tree |
+| `<leader>nF` | Focus nvim-tree window |
 
-> Inside NERDTree: `o` open · `i` open split · `s` open vsplit · `t` open tab · `m` file menu (rename/delete/create) · `I` toggle hidden · `R` refresh · `?` help
+> Inside nvim-tree: `o`/`<CR>` open · `E` expand all · `W` collapse all · `a` create · `d` delete · `r` rename · `H` toggle hidden · `I` toggle git-ignored · `?` help
 
 ### oil.nvim (buffer-style navigator)
 
@@ -922,7 +924,7 @@ claude   # authenticate on first run
 | `:Obsession` | Start/toggle session recording (auto-saves on exit) |
 | `:Obsession {file}` | Start recording to a specific session file |
 | `:AerialToggle` | Toggle symbol outline (also `<leader>ao`) |
-| `:MundoToggle` | Toggle visual undo tree (also `<space>u`) |
+| `:MundoToggle` | Toggle visual undo tree (also `<leader>um`) |
 | `:CscopeFiles [dir...]` | Generate `cscope.files` from dirs (default: cwd) |
 | `:CscopeFiles! [dir...]` | Append dirs to existing `cscope.files` (de-dup) |
 | `:CscopeBuild [filelist]` | Build `cscope.out` from `cscope.files` |

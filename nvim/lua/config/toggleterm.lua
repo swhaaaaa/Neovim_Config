@@ -7,5 +7,5 @@ toggleterm.setup {
   shade_terminals = false,
 }
 
--- Exit terminal mode with <Esc><Esc>
-vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "exit terminal mode" })
+-- <Esc> is already mapped globally (mappings.lua) to exit terminal mode for
+-- all terminals; no additional binding needed here.

@@ -15,6 +15,9 @@ keymap.set("n", "<leader>p", "m`o<ESC>p``", { desc = "paste below current line" 
 keymap.set("n", "<leader>P", "m`O<ESC>p``", { desc = "paste above current line" })
 
 -- Shortcut for faster save and quit
+-- Note: LSP's workspace-folder maps live under <leader>W (capital) rather
+-- than <leader>w (see lsp.lua) — sharing this prefix with a longer mapping
+-- would make every save wait out 'timeoutlen' before firing.
 keymap.set("n", "<leader>w", "<cmd>update<cr>", { silent = true, desc = "save buffer" })
 
 -- Saves the file if modified and quit
@@ -284,7 +287,9 @@ keymap.set({ "n" }, "<F6>", "<cmd>tabclose<CR>",  { desc = "tab: close" })
 
 -- Opens a new tab with the current buffer's path
 -- Super useful when editing files in the same directory
-keymap.set({ "n" }, "<leader>te", function () return ':tabedit ' ..  vim.fn.expand '%:p:h' .. '/' end, { expr = true })
+keymap.set({ "n" }, "<leader>te", function()
+  return ":tabedit " .. vim.fn.fnameescape(vim.fn.expand("%:p:h")) .. "/"
+end, { expr = true, desc = "open file browser in current file's dir" })
 
 keymap.set("n", "<A-l>", "xp")
 keymap.set("n", "<A-h>", "x2hp")

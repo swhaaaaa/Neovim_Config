@@ -80,18 +80,18 @@ function M.is_compatible_version(expected_version)
   return true
 end
 
---- check if we are inside a git repo
---- @return boolean
+--- Asynchronously check if we are inside a git repo; if so, fire the `User
+--- InGitRepo` autocmd used for git-plugin lazy-loading. Runs the git
+--- subprocess via libuv instead of :wait()'ing on it, since this is called
+--- on VimEnter/DirChanged and blocking there would slow down startup/cd.
 function M.inside_git_repo()
-  local result = vim.system({ "git", "rev-parse", "--is-inside-work-tree" }, { text = true }):wait()
-  if result.code ~= 0 then
-    return false
-  end
-
-  -- Manually trigger a special user autocmd InGitRepo (used lazyloading.
-  vim.cmd([[doautocmd User InGitRepo]])
-
-  return true
+  vim.system({ "git", "rev-parse", "--is-inside-work-tree" }, { text = true }, function(result)
+    if result.code == 0 then
+      vim.schedule(function()
+        vim.cmd([[doautocmd User InGitRepo]])
+      end)
+    end
+  end)
 end
 
 return M

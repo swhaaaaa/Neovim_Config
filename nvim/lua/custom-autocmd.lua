@@ -152,7 +152,7 @@ api.nvim_create_autocmd({ "BufLeave", "FocusLost", "InsertEnter", "WinLeave" }, 
 api.nvim_create_autocmd("ColorScheme", {
   group = api.nvim_create_augroup("custom_highlight", { clear = true }),
   pattern = "*",
-  desc = "Define or overrride some highlight groups",
+  desc = "Define or override some highlight groups",
   callback = function()
     -- For yank highlight
     vim.api.nvim_set_hl(0, "YankColor", { fg = "#34495E", bg = "#2ECC71", ctermfg = 59, ctermbg = 41 })
@@ -247,13 +247,13 @@ api.nvim_create_autocmd("BufReadPre", {
       vim.bo.bufhidden = "unload"
       vim.bo.undolevels = -1
 
-      -- Restore eventignore after the buffer is displayed so the rest of
-      -- the session is not affected (plugins, gitsigns, lualine, etc.)
-      api.nvim_create_autocmd("BufWinEnter", {
-        buffer = ev.buf,
-        once   = true,
-        callback = function() vim.o.eventignore = "" end,
-      })
+      -- Restore eventignore once the buffer-open sequence finishes, so the
+      -- rest of the session is not affected (plugins, gitsigns, lualine, etc.)
+      -- Must use vim.schedule, not a chained autocmd (e.g. BufWinEnter):
+      -- eventignore="all" suppresses ALL autocommand events, including the
+      -- one that would clear it, so a chained autocmd here would never fire
+      -- and eventignore would stay "all" for the rest of the session.
+      vim.schedule(function() vim.o.eventignore = "" end)
     end
   end,
 })
@@ -306,26 +306,40 @@ api.nvim_create_autocmd("BufAdd", {
   desc = "disable undo/swap for oil:// buffers to prevent oil: folder creation",
 })
 
+-- ─── Claude Code terminal helpers (shared by scroll + normal-mode autocmds) ───
+local _claude_saved_pos = nil
+
+local function is_claude_terminal(buf)
+  if vim.bo[buf].buftype ~= "terminal" then return false end
+  local ok, term = pcall(require, "claudecode.terminal")
+  return ok and buf == term.get_active_terminal_bufnr()
+end
+
 -- ─── Claude Code terminal: keyboard scroll via mouse wheel injection ──────────
 -- nvim_input_mouse injects a wheel event that Neovim processes through its
 -- normal terminal mouse-forwarding path — the same path as physical mouse wheel.
+-- vim.schedule defers the is_claude_terminal check so claudecode has time to
+-- register the buffer before we test it.
 api.nvim_create_autocmd("TermOpen", {
   group = api.nvim_create_augroup("claude_kbd_scroll", { clear = true }),
   callback = function(ev)
     local buf = ev.buf
-    local function wheel(dir, n)
-      local win = vim.api.nvim_get_current_win()
-      local pos = vim.api.nvim_win_get_position(win)
-      local row = pos[1] + math.floor(vim.api.nvim_win_get_height(win) / 2)
-      local col = pos[2] + math.floor(vim.api.nvim_win_get_width(win) / 2)
-      for _ = 1, n do
-        vim.api.nvim_input_mouse("wheel", dir, "", 0, row, col)
+    vim.schedule(function()
+      if not is_claude_terminal(buf) then return end
+      local function wheel(dir, n)
+        local win = vim.api.nvim_get_current_win()
+        local pos = vim.api.nvim_win_get_position(win)
+        local row = pos[1] + math.floor(vim.api.nvim_win_get_height(win) / 2)
+        local col = pos[2] + math.floor(vim.api.nvim_win_get_width(win) / 2)
+        for _ = 1, n do
+          vim.api.nvim_input_mouse("wheel", dir, "", 0, row, col)
+        end
       end
-    end
-    vim.keymap.set("t", "<C-u>", function() wheel("up",   5) end,
-      { buffer = buf, nowait = true, desc = "scroll up" })
-    vim.keymap.set("t", "<C-d>", function() wheel("down", 5) end,
-      { buffer = buf, nowait = true, desc = "scroll down" })
+      vim.keymap.set("t", "<C-u>", function() wheel("up",   5) end,
+        { buffer = buf, nowait = true, desc = "Claude: scroll up" })
+      vim.keymap.set("t", "<C-d>", function() wheel("down", 5) end,
+        { buffer = buf, nowait = true, desc = "Claude: scroll down" })
+    end)
   end,
 })
 
@@ -367,14 +381,6 @@ api.nvim_create_autocmd("FileType", {
 -- startinsert every time the buffer is entered. WinEnter fires before BufEnter,
 -- so we delete that autocmd in WinEnter before it can fire. A simple vim.schedule
 -- then handles any explicit startinsert calls in claudecode's focus handler.
-local _claude_saved_pos = nil
-
-local function is_claude_terminal(buf)
-  if vim.bo[buf].buftype ~= "terminal" then return false end
-  local ok, term = pcall(require, "claudecode.terminal")
-  return ok and buf == term.get_active_terminal_bufnr()
-end
-
 api.nvim_create_autocmd("WinLeave", {
   group = api.nvim_create_augroup("claude_normal_mode", { clear = true }),
   desc = "save cursor position when leaving Claude Code terminal",
