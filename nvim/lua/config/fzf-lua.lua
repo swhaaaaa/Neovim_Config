@@ -187,6 +187,30 @@ vim.api.nvim_create_user_command("FilesDirs", function(opts)
   fzf.files(cfg)
 end, { nargs = "+", complete = "dir", desc = "files in multiple directories" })
 
+vim.api.nvim_create_user_command("GrepDirs", function(opts)
+  local raw = opts.fargs or {}
+  if #raw == 0 then
+    vim.notify("Usage: :GrepDirs {dir1} {dir2} …", vim.log.levels.WARN)
+    return
+  end
+  local dirs = {}
+  for _, a in ipairs(raw) do
+    local d = norm_dir(a)
+    if d then table.insert(dirs, d) else vim.notify("Skip (not a dir): "..a, vim.log.levels.WARN) end
+  end
+  if #dirs == 0 then return end
+
+  local cfg = { search_paths = dirs, resume = false, silent = true }
+  if _queued_query and _queued_query ~= "" then
+    cfg.search = _queued_query
+    if LITERAL_BY_DEFAULT then
+      cfg.rg_opts = "--fixed-strings"
+    end
+  end
+  _queued_query = nil
+  fzf.live_grep(cfg)
+end, { nargs = "+", complete = "dir", desc = "live_grep in multiple directories" })
+
 ---------------------------------------------------------------------------
 -- Keymaps
 ---------------------------------------------------------------------------
@@ -217,6 +241,11 @@ vim.keymap.set("n", "<leader>fD", function()
   vim.api.nvim_feedkeys(keys, "n", false)
 end, { desc = "files in multiple dirs", silent = true })
 
+vim.keymap.set("n", "<leader>sD", function()
+  local keys = vim.api.nvim_replace_termcodes(":GrepDirs ", true, false, true)
+  vim.api.nvim_feedkeys(keys, "n", false)
+end, { desc = "live_grep in multiple dirs", silent = true })
+
 -- Visual → seed selection WITHOUT leaving Visual first
 vim.keymap.set("x", "<leader>sd", function()
   _queued_query = get_visual_selection()
@@ -229,6 +258,13 @@ vim.keymap.set("x", "<leader>fd", function()
   local keys = vim.api.nvim_replace_termcodes(":FilesHere ", true, false, true)
   vim.api.nvim_feedkeys(keys, "n", false)
 end, { desc = "files (seeded by selection) in chosen dir", silent = true })
+
+-- Visual → multi-dir grep, seeded by selection
+vim.keymap.set("x", "<leader>sD", function()
+  _queued_query = get_visual_selection()
+  local keys = vim.api.nvim_replace_termcodes(":GrepDirs ", true, false, true)
+  vim.api.nvim_feedkeys(keys, "n", false)
+end, { desc = "live_grep (seeded by selection) in multiple dirs", silent = true })
 
 -- Visual → plain live_grep (no dir prompt)
 vim.keymap.set("x", "<leader>fg", function()
