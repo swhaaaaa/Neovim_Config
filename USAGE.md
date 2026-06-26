@@ -486,6 +486,7 @@ Sessions use **vim-obsession**. Tracking is not automatic — start it manually 
 | `zr` | Open folds except kinds |
 | `za` / `zo` / `zc` | Toggle / open / close fold |
 | `<leader>fm` | Toggle fold method: treesitter expr ↔ manual |
+| `<leader>K` | Peek (preview) content of folded lines under cursor |
 
 > Use `<leader>fm` to switch to `manual` after opening folds you want to keep — prevents treesitter from re-closing them on edits. Press `<leader>fm` again to re-enable treesitter folding.
 

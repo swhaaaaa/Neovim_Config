@@ -135,10 +135,6 @@ local mason_debugpy = vim.fn.stdpath("data") .. "/mason/bin/debugpy-adapter"
 local debugpy_cmd = vim.fn.executable(mason_debugpy) == 1 and mason_debugpy
                  or vim.fn.executable("debugpy-adapter") == 1 and "debugpy-adapter"
                  or nil
--- pip-installed fallback: use the module as an adapter directly
-local python_has_debugpy = debugpy_cmd == nil
-  and vim.fn.executable("python3") == 1
-  and vim.fn.system("python3 -c 'import debugpy' 2>/dev/null; echo $?"):match("^0") ~= nil
 
 -- Detect active virtualenv at launch time so the right interpreter is used.
 local function python_path()
@@ -176,7 +172,9 @@ if debugpy_cmd then
     command = debugpy_cmd,
   }
   dap.configurations.python = python_cfg
-elseif python_has_debugpy then
+elseif vim.fn.executable("python3") == 1 then
+  -- Register optimistically — if debugpy isn't installed, DAP will report the
+  -- error at launch time (more actionable than a blocking import-check at startup).
   dap.adapters.python = {
     type    = "executable",
     command = "python3",
@@ -185,9 +183,8 @@ elseif python_has_debugpy then
   dap.configurations.python = python_cfg
 else
   vim.notify(
-    "DAP: no Python adapter found.\n" ..
-    "Option 1 (Mason):  :MasonInstall debugpy\n" ..
-    "Option 2 (pip):    pip install debugpy  (install.sh handles this)",
+    "DAP: no Python adapter found — python3 not on PATH.\n" ..
+    "Install Python3, then: pip install debugpy  or  :MasonInstall debugpy",
     vim.log.levels.WARN
   )
 end

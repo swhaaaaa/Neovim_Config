@@ -46,6 +46,7 @@ gs.setup {
 }
 
 vim.api.nvim_create_autocmd("ColorScheme", {
+  group = vim.api.nvim_create_augroup("gitsigns_colors", { clear = true }),
   pattern = "*",
   callback = function()
     vim.cmd([[

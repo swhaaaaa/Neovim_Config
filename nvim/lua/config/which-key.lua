@@ -71,6 +71,7 @@ wk.add {
   { "<F7>",       desc = "tab: prev" },
   { "<F8>",       desc = "tab: next" },
   { "<leader>fm", desc = "toggle fold method expr/manual" },
+  { "<leader>K",  desc = "preview folded lines (ufo)" },
   { "<leader>fy", desc = "yank ring history (yanky)" },
   { "<leader>H",  group = "harpoon" },
   { "<leader>Ha", desc = "harpoon: add file" },

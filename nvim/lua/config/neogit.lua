@@ -34,7 +34,6 @@ neogit.setup({
   remember_settings = true,
 
   -- Integrations
-  telescope = true,
   integrations = { diffview = true },
 
   -- Behaviour
@@ -79,6 +78,7 @@ end, desc("Neogit: rebase -i HEAD~N"))
 
 -- Optional: close Neogit buffers with 'q'
 vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("neogit_q_close", { clear = true }),
   pattern = { "NeogitStatus", "NeogitCommitMessage" },
   callback = function(ev)
     vim.keymap.set("n", "q", "<cmd>quit<CR>", { buffer = ev.buf, silent = true })

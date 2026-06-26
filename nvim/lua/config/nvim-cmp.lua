@@ -53,7 +53,7 @@ cmp.setup {
     end, { "i", "s" }),
     ["<CR>"]  = cmp.mapping.confirm { select = true },
     ["<C-e>"] = cmp.mapping.abort(),
-    ["<Esc>"] = cmp.mapping.close(),
+    ["<Esc>"] = cmp.mapping.abort(),
     ["<C-d>"] = cmp.mapping.scroll_docs(-4),
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
   },

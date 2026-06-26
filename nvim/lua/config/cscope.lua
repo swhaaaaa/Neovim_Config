@@ -195,10 +195,14 @@ local function scan_async(root, opts, cb)
       if i > 1 then table.insert(name_expr, "-o") end
       table.insert(name_expr, "-name"); table.insert(name_expr, "*." .. e)
     end
-    args = { ".", "-type", "f", "\\(", unpack(name_expr), "\\)", "-print" }
+    -- "(" / ")" are passed directly — jobstart/vim.system bypass the shell so
+    -- no backslash-escaping is needed (backslash is shell syntax, not find syntax).
+    -- "-print" is appended last so ignore filters are evaluated before printing.
+    args = { ".", "-type", "f", "(", unpack(name_expr), ")" }
     for _, ig in ipairs(ignores) do
       table.insert(args, "-not"); table.insert(args, "-path"); table.insert(args, "*/" .. ig .. "/*")
     end
+    table.insert(args, "-print")
   end
 
   run_cmd_async(cmd, args, root, function(code, files, err)

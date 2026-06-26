@@ -40,6 +40,7 @@ vim.keymap.set("n", "<leader>gl", function() snacks.lazygit() end,
 
 -- Close the dashboard window when a real file is opened (e.g. via oil.nvim).
 vim.api.nvim_create_autocmd("BufReadPost", {
+  group = vim.api.nvim_create_augroup("snacks_dashboard_close", { clear = true }),
   callback = function()
     vim.schedule(function()
       for _, win in ipairs(vim.api.nvim_list_wins()) do
