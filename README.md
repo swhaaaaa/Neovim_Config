@@ -200,11 +200,25 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `\d` | Delete current buffer (force — works on binary files too) |
 | `\D` | Delete all other buffers (force) |
 
-### Files & Search
-| Key | Action |
-|-----|--------|
-| `<Space>f` | Fuzzy find files with preview (fzf-lua) |
-| `,fg` | Live grep / ripgrep with preview |
+### Files & Search (fzf-lua)
+| Key | Mode | Action |
+|-----|------|--------|
+| `,ff` | n | Find files in cwd |
+| `,ff` | v | Find files with selection pre-filled |
+| `,fg` | n | Live grep in cwd |
+| `,fg` | v | Live grep with selection pre-filled |
+| `,fr` | n | Recent files |
+| `,fb` | n | Open buffers |
+| `,fh` | n | Help tags |
+| `,fk` | n | Search keymaps by key or description |
+| `,ft` | n | Find TODO/FIXME/HACK/NOTE comments |
+| `,fB` | n | Buffer tags (requires ctags) |
+| `,fd` | n/v | Find files in a chosen folder (v seeds query) |
+| `,fD` | n | Find files in multiple folders (space-separated) |
+| `,sd` | n/v | Live grep in a chosen folder (v seeds query) |
+| `,sD` | n/v | Live grep in multiple folders (v seeds query) |
+
+> In the fzf prompt: `Ctrl-v` pastes the system clipboard; `Ctrl-r{reg}` pastes any Neovim register.
 
 ### Navigation
 | Key | Action |
@@ -398,6 +412,10 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | `:MesonSetup [pkg ...]` | `meson setup` + symlink `compile_commands.json`, restart LSP |
 | `:MesonBuild [pkgdir]` | `meson compile -C builddir` in a terminal split |
 | `:MesonLink [builddir]` | Re-create `compile_commands.json` symlink only |
+| `:GrepHere [dir]` | Live grep in one directory (default: cwd) |
+| `:GrepDirs {dir1} {dir2} …` | Live grep across multiple directories |
+| `:FilesHere [dir]` | Find files in one directory (default: cwd) |
+| `:FilesDirs {dir1} {dir2} …` | Find files across multiple directories |
 | `:GccDebug [output]` | Compile current C/C++ file with `-g -O0` for DAP |
 | `:KernelSetup [build_root]` | Generate `compile_commands.json` + `.clangd` for OpenBMC/Yocto kernel |
 | `:OEPkgSetup [pkg]` | Link bitbake's `compile_commands.json` to source root for any OE/Yocto package |
