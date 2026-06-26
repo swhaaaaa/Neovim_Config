@@ -483,8 +483,28 @@ Sessions use **vim-obsession**. Tracking is not automatic — start it manually 
 |-----|--------|
 | `-` | Open current file's directory as a buffer |
 | `<leader>-` | Same, in a floating window |
+| `<CR>` | Open file / enter directory |
+| `-` | Go up to parent directory |
+| `g.` | Toggle hidden files |
+| `gr` | Refresh |
+| `<C-s>` | Open file in vertical split |
+| `<C-t>` | Open file in new tab |
+| `<C-p>` | Preview file |
+| `q` | Close oil |
 
-> Inside oil buffer: edit like a normal buffer — delete line = delete file, add line = create file, rename line = rename file. Press `<CR>` to open, `-` to go up, `g.` toggle hidden, `q` close.
+Inside an oil buffer, edit it like a normal buffer then save with `,w` to apply:
+- **Delete a line** → deletes that file
+- **Add a new line** → creates that file (or directory if name ends with `/`)
+- **Edit a line** → renames that file
+
+> **Moving files between directories** requires both the source and destination directories open as oil buffers simultaneously:
+> 1. Open the source directory in oil
+> 2. Open the destination directory in a split (`<C-s>` on the destination folder, or `-` then navigate)
+> 3. Delete the file lines from the source buffer
+> 4. Add the filenames as new lines in the destination buffer
+> 5. Save with `,w` — oil pairs the deletion with the creation and moves instead of delete+recreate
+>
+> **You cannot rename an entry to a path containing `/`** (e.g. `subdir/file.txt`) — oil rejects path separators in filenames.
 
 ---
 

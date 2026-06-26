@@ -220,6 +220,21 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 
 > In the fzf prompt: `Ctrl-v` pastes the system clipboard; `Ctrl-r{reg}` pastes any Neovim register.
 
+### File Explorer (oil.nvim)
+| Key | Action |
+|-----|--------|
+| `-` | Open current file's directory in oil |
+| `<CR>` | Open file / enter directory |
+| `-` (in oil) | Go up to parent directory |
+| `<C-s>` | Open file in vertical split |
+| `q` | Close oil |
+| `g.` | Toggle hidden files |
+| `gr` | Refresh |
+
+Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete file, add a line = create file, edit a line = rename file.
+
+**Moving files:** open both source and destination directories as oil buffers (use `<C-s>` to split), delete lines from source, add filenames to destination, then save — oil matches deletions to creations by name and moves instead of delete+recreate. Renaming an entry to a path with `/` (e.g. `subdir/file.txt`) is not supported.
+
 ### Navigation
 | Key | Action |
 |-----|--------|
