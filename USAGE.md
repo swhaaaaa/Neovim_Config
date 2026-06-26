@@ -60,16 +60,19 @@
 | Key | Mode | Action |
 |-----|------|--------|
 | `<leader>ff` | n | Find files in cwd |
+| `<leader>ff` | v | Find files with visual selection pre-filled |
 | `<leader>fg` | n | Live grep in cwd |
 | `<leader>fg` | v | Live grep with visual selection pre-filled |
 | `<leader>fr` | n | Recent files (oldfiles) |
 | `<leader>fb` | n | Open buffers |
 | `<leader>fh` | n | Help tags |
+| `<leader>fk` | n | Search all keymaps by key or description (fuzzy) |
 | `<leader>ft` | n | Find TODO/FIXME/HACK/NOTE comments (todo-comments) |
 | `<leader>fB` | n | Buffer tags — fuzzy jump to symbol in current buffer (requires ctags) |
-| `<leader>fd` | n | Live grep in a specific folder (prompted) |
-| `<leader>fD` | n | Find files in a specific folder (prompted) |
-| `<leader>sd` | n/v | Grep in a specific folder (prompted) |
+| `<leader>fd` | n/v | Find files in a specific folder (prompted; v seeds query) |
+| `<leader>fD` | n | Find files in multiple folders (prompted) |
+| `<leader>sd` | n/v | Grep in a specific folder (prompted; v seeds query) |
+| `<leader>sD` | n/v | Grep in multiple folders (prompted; v seeds query) |
 
 ### Buffer Management
 
