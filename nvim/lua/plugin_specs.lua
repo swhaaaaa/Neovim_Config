@@ -605,6 +605,8 @@ local plugin_specs = {
       { "<leader>ak",  mode = "n" },
       { "<leader>ak",  mode = "v" },
       { "<leader>akk", mode = "n" },
+      { "<leader>akr", mode = "n" },
+      { "<leader>akc", mode = "n" },
     },
     config = function()
       require("config.ack")
