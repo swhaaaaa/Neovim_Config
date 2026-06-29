@@ -18,18 +18,19 @@
 10. [Session](#session)
 11. [File Explorer](#file-explorer)
 12. [Folding](#folding)
-13. [Snippets](#snippets)
-14. [Surround](#surround)
-15. [Textobjects (mini.ai)](#textobjects-miniai)
-16. [C/C++ Tools](#cc-tools)
-17. [Spelling](#spelling)
-18. [Terminal](#terminal)
-19. [Notifications](#notifications)
-20. [Meson Build](#meson-build)
-21. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
-22. [Claude Code CLI (claudecode.nvim)](#claude-code-cli-claudecodenvim)
-23. [User Commands](#user-commands)
-24. [Tips & Workflows](#tips--workflows)
+13. [Markdown](#markdown)
+14. [Snippets](#snippets)
+15. [Surround](#surround)
+16. [Textobjects (mini.ai)](#textobjects-miniai)
+17. [C/C++ Tools](#cc-tools)
+18. [Spelling](#spelling)
+19. [Terminal](#terminal)
+20. [Notifications](#notifications)
+21. [Meson Build](#meson-build)
+22. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
+23. [Claude Code CLI (claudecode.nvim)](#claude-code-cli-claudecodenvim)
+24. [User Commands](#user-commands)
+25. [Tips & Workflows](#tips--workflows)
 
 ---
 
@@ -528,6 +529,24 @@ Inside an oil buffer, edit it like a normal buffer then save with `,w` to apply:
 | `<leader>K` | Peek (preview) content of folded lines under cursor |
 
 > Use `<leader>fm` to switch to `manual` after opening folds you want to keep — prevents treesitter from re-closing them on edits. Press `<leader>fm` again to re-enable treesitter folding.
+
+---
+
+## Markdown
+
+> Keys below are only active in markdown (`.md`) files.
+
+| Key / Command | Mode | Action |
+|---------------|------|--------|
+| `<leader>mp` | n | Toggle live browser preview (markdown-preview.nvim) |
+| `<leader>mr` | n | Toggle in-editor rendering: conceals syntax, draws tables (render-markdown.nvim) |
+| `:MarkdownPreview` | — | Open browser preview |
+| `:MarkdownPreviewStop` | — | Close browser preview |
+| `:Toc` | — | Open table of contents in quickfix |
+| `:Toch` | — | TOC in horizontal split |
+| `:TableFormat` | — | Auto-align table columns (requires `tabular`) |
+| `]]` / `[[` | n | Jump to next / previous heading |
+| `ge` | n | Follow link under cursor |
 
 ---
 

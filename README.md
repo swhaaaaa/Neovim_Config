@@ -310,6 +310,7 @@ Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete 
 | Key / Command | Action |
 |---------------|--------|
 | `,mp` | Toggle browser preview (markdown-preview.nvim) |
+| `,mr` | Toggle in-editor rendering: conceals syntax, draws tables (render-markdown.nvim) |
 | `:MarkdownPreview` | Open browser preview |
 | `:MarkdownPreviewStop` | Close browser preview |
 | `:Toc` | Open table of contents in quickfix |
