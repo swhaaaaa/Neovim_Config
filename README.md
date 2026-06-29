@@ -224,12 +224,19 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 | Key | Action |
 |-----|--------|
 | `-` | Open current file's directory in oil |
+| `<leader>-` | Same, in a floating window |
 | `<CR>` | Open file / enter directory |
 | `-` (in oil) | Go up to parent directory |
+| `_` | Jump to Neovim's current working directory |
 | `<C-s>` | Open file in vertical split |
-| `q` | Close oil |
+| `<C-t>` | Open file in new tab |
+| `<C-p>` | Preview file |
+| `gs` | Change sort order |
 | `g.` | Toggle hidden files |
+| `gf` | Open terminal in current directory |
 | `gr` | Refresh |
+| `q` | Close oil |
+| `?` | Show help |
 
 Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete file, add a line = create file, edit a line = rename file.
 

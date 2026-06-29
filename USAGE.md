@@ -485,12 +485,16 @@ Sessions use **vim-obsession**. Tracking is not automatic — start it manually 
 | `<leader>-` | Same, in a floating window |
 | `<CR>` | Open file / enter directory |
 | `-` | Go up to parent directory |
-| `g.` | Toggle hidden files |
-| `gr` | Refresh |
+| `_` | Jump to Neovim's current working directory |
 | `<C-s>` | Open file in vertical split |
 | `<C-t>` | Open file in new tab |
 | `<C-p>` | Preview file |
+| `gs` | Change sort order |
+| `g.` | Toggle hidden files |
+| `gf` | Open terminal in current directory |
+| `gr` | Refresh |
 | `q` | Close oil |
+| `?` | Show help |
 
 Inside an oil buffer, edit it like a normal buffer then save with `,w` to apply:
 - **Delete a line** → deletes that file
