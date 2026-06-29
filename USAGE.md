@@ -317,15 +317,19 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `<leader>ld` | n | Peek definitions (Glance popup) |
 | `<leader>lr` | n | Peek references (Glance popup) |
 | `<leader>li` | n | Peek implementations (Glance popup) |
-| `<leader>rn` | n | Rename symbol |
+| `<leader>rn` | n | Rename symbol (inc-rename with live preview) |
 | `<leader>la` | n | Code action |
 | `<leader>Wa` | n | Add workspace folder |
 | `<leader>Wr` | n | Remove workspace folder |
 | `<leader>Wl` | n | List workspace folders |
 | `gd` | n | Go to definition (location list if multiple) |
 | `K` | n | Hover documentation |
-| `<leader>sh` | n | Signature help (moved from `<C-k>` — reserved for window navigation) |
+| `<leader>sh` | n | Signature help |
 | `<C-]>` | n | Go to definition (direct) |
+| `grr` | n | References (Neovim default) |
+| `gri` | n | Implementation (Neovim default) |
+| `gra` | n/x | Code action (Neovim default) |
+| `grn` | n | Rename (Neovim default; prefer `<leader>rn` for live preview) |
 
 ### LSP Diagnostics
 
@@ -435,7 +439,7 @@ Sessions use **vim-obsession**. Tracking is not automatic — start it manually 
 | Key | Mode | Action |
 |-----|------|--------|
 | `<leader>ss` | n | Toggle session tracking (starts recording to `Session.vim` in cwd, or stops if active) |
-| `<leader>sr` | n | Restore session from `Session.vim` in cwd |
+| `<leader>sr` | n | Restore session from `Session.vim` in cwd (warns if file absent) |
 
 > **Typical workflow:** open Neovim in your project dir → `<leader>ss` to start tracking → work → quit. Next time, `<leader>sr` to restore. To track to a different file: `:Obsession {path}`.
 >
@@ -746,7 +750,7 @@ Typical use:
 | Key / Command | Action |
 |---------------|--------|
 | `<leader>ih` | Toggle inlay hints (parameter names/types shown inline) |
-| `<leader>si` | Show symbol info (type, canonical declaration) |
+| `<leader>ai` | Show symbol info (type, canonical declaration) |
 | `<leader>at` | View AST for node under cursor |
 | `<leader>mu` | Show clangd memory usage |
 
