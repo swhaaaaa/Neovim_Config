@@ -295,7 +295,7 @@ Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete 
 | `gri` | Implementation (Neovim default) |
 | `gra` | Code action (Neovim default, n/x) |
 
-> **Diagnostics**: virtual lines are shown inline beneath the cursor line only (`virtual_lines = { only_on_cursor = true }`). A float with full detail (source, prefix) opens automatically on `CursorHold`.
+> **Diagnostics**: virtual lines are shown inline beneath the cursor line only (`virtual_lines = { current_line = true }`). A float with full detail (source, prefix) opens automatically on `CursorHold`.
 
 ### Completion
 | Key | Action |
@@ -381,7 +381,7 @@ Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete 
 |-----|--------|
 | `,as` | Switch header/source (clangd) |
 | `,ih` | Toggle inlay hints |
-| `,si` | Symbol info |
+| `,ai` | Symbol info |
 | `,at` | View AST |
 | `,mu` | clangd memory usage |
 
