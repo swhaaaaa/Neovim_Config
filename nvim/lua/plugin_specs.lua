@@ -183,7 +183,7 @@ local plugin_specs = {
       },
       format_on_save = function(_bufnr)
         if vim.g.format_on_save then
-          return { lsp_fallback = true, timeout_ms = 500 }
+          return { lsp_format = "fallback", timeout_ms = 500 }
         end
       end,
       -- clang_format reads .clang-format in project root automatically.
@@ -634,7 +634,13 @@ local plugin_specs = {
     cmd  = "Obsession",
     keys = {
       { "<leader>ss", "<cmd>Obsession<CR>",          desc = "session: toggle recording (obsession)" },
-      { "<leader>sr", "<cmd>source Session.vim<CR>", desc = "session: restore from Session.vim" },
+      { "<leader>sr", function()
+          if vim.fn.filereadable("Session.vim") == 1 then
+            vim.cmd("source Session.vim")
+          else
+            vim.notify("No Session.vim in cwd", vim.log.levels.WARN)
+          end
+        end, desc = "session: restore from Session.vim" },
     },
   },
 

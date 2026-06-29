@@ -44,7 +44,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local opts = { buffer = ev.buf, silent = true }
     vim.keymap.set("n", "<leader>as", "<cmd>ClangdSwitchSourceHeader<CR>",
       vim.tbl_extend("force", opts, { desc = "clangd: switch source/header" }))
-    vim.keymap.set("n", "<leader>si", "<cmd>ClangdSymbolInfo<CR>",
+    vim.keymap.set("n", "<leader>ai", "<cmd>ClangdSymbolInfo<CR>",
       vim.tbl_extend("force", opts, { desc = "clangd: symbol info" }))
     vim.keymap.set("n", "<leader>mu", "<cmd>ClangdMemoryUsage<CR>",
       vim.tbl_extend("force", opts, { desc = "clangd: memory usage" }))
