@@ -5,7 +5,7 @@ local api = vim.api
 diagnostic.config {
   underline = false,
   virtual_text = false,
-  virtual_lines = { only_on_cursor = true },
+  virtual_lines = { current_line = true },
   signs = {
     text = {
       [diagnostic.severity.ERROR] = "🆇",
@@ -54,7 +54,7 @@ vim.keymap.set("n", "]e", function() diagnostic.jump({ count = 1, severity = dia
 vim.keymap.set("n", "[e", function() diagnostic.jump({ count = -1, severity = diagnostic.severity.ERROR }) end, { desc = "prev error" })
 
 -- this puts diagnostics from opened files to quickfix
-vim.keymap.set("n", "<space>qw", diagnostic.setqflist, { desc = "put window diagnostics to qf" })
+vim.keymap.set("n", "<space>qw", diagnostic.setqflist, { desc = "workspace diagnostics → quickfix" })
 
 -- this puts diagnostics from current buffer to quickfix
 vim.keymap.set("n", "<space>qb", function()

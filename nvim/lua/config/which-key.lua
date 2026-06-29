@@ -34,6 +34,7 @@ wk.add {
   { "<leader>kp", desc = "OE pkg: link bitbake compile_commands.json" },
   { "<leader>l",  group = "LSP peek (glance)" },
   { "<leader>la", desc = "LSP: code action" },
+  { "<leader>lc", desc = "change cwd to current file's dir (lcd)" },
   { "<leader>ld", desc = "LSP: peek definitions (glance)" },
   { "<leader>lr", desc = "LSP: peek references (glance)" },
   { "<leader>li", desc = "LSP: peek implementations (glance)" },
@@ -51,6 +52,7 @@ wk.add {
   { "<leader>ss", desc = "session: toggle recording (obsession)" },
   { "<leader>sr", desc = "session: restore from Session.vim" },
   { "<leader>sv", desc = "reload vimrc / init.lua" },
+  { "<leader>ev", desc = "open init.lua in new tab" },
   { "<leader>sh", desc = "LSP: signature help" },
   { "<leader>sd", mode = { "n", "x" }, desc = "grep in chosen dir (fzf-lua)" },
   { "<leader>sD", mode = { "n", "x" }, desc = "grep in multiple dirs (fzf-lua)" },
@@ -126,16 +128,31 @@ wk.add {
   { "<leader>du", desc = "toggle DAP UI" },
   { "<leader>dv", desc = "DAP: toggle virtual text" },
   -- diagnostic → quickfix
-  { "<space>qw",  desc = "window diagnostics → quickfix" },
+  { "<space>qw",  desc = "workspace diagnostics → quickfix" },
   { "<space>qb",  desc = "buffer diagnostics → quickfix" },
   -- Neovim 0.10+ default LSP keymaps (buffer-local when LSP attaches)
   { "grr", desc = "LSP: references" },
   { "gri", desc = "LSP: implementation" },
   { "gra", mode = { "n", "x" }, desc = "LSP: code action" },
   { "grn", desc = "LSP: rename (default; use <leader>rn for inc-rename)" },
+  -- buffer / window / file operations
+  { "<leader>w", desc = "save buffer" },
+  { "<leader>q", desc = "save and close window" },
+  { "<leader>Q", desc = "quit all (force)" },
+  { "<leader>p", desc = "paste below current line (preserves cursor)" },
+  { "<leader>P", desc = "paste above current line (preserves cursor)" },
+  { "<leader>y", desc = "yank entire buffer" },
+  { "<leader>b", desc = "new empty buffer" },
+  { "<leader>te", desc = "open file browser in current file's dir" },
   -- buffer delete (backslash prefix)
   { "\\d", desc = "delete current buffer (force)" },
   { "\\D", desc = "delete other buffers (force)" },
+  { "\\x", desc = "close quickfix and location list" },
+  -- quickfix navigation
+  { "]q", desc = "next quickfix item" },
+  { "[q", desc = "prev quickfix item" },
+  { "]Q", desc = "last quickfix item" },
+  { "[Q", desc = "first quickfix item" },
   -- todo-comments jumps
   { "]t", desc = "next TODO comment" },
   { "[t", desc = "prev TODO comment" },

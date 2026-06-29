@@ -289,15 +289,21 @@ vim.keymap.set("x", "<leader>ff", function()
   fzf.files(cfg)
 end, { desc = "Fuzzy find files (seeded by selection)", silent = true })
 
--- Paste from system clipboard in terminal/fzf prompts.
--- <C-v> mirrors the common terminal paste shortcut; <C-r>+ is the Neovim-register form.
--- Both work in ANY Neovim terminal buffer (fzf, toggleterm, etc.).
-vim.keymap.set('t', '<C-v>', function()
-  return vim.fn.getreg('+')
-end, { expr = true, desc = 'Paste + (clipboard) into terminal/fzf prompt' })
-vim.keymap.set('t', '<C-r>', function()
-  local char = vim.fn.getchar()
-  local reg = type(char) == 'number' and vim.fn.nr2char(char) or tostring(char)
-  return vim.fn.getreg(reg)
-end, { expr = true, desc = 'Paste named register into terminal/fzf prompt' })
+-- Paste into the fzf prompt via buffer-local terminal keymaps.
+-- Scoped to FileType=fzf only so <C-r> / <C-v> are not stolen from
+-- bash/zsh reverse-history in toggleterm or other terminal buffers.
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "fzf",
+  group = vim.api.nvim_create_augroup("fzf_paste_keymaps", { clear = true }),
+  callback = function(ev)
+    vim.keymap.set('t', '<C-v>', function()
+      return vim.fn.getreg('+')
+    end, { expr = true, buffer = ev.buf, desc = 'Paste + (clipboard) into fzf prompt' })
+    vim.keymap.set('t', '<C-r>', function()
+      local char = vim.fn.getchar()
+      local reg = type(char) == 'number' and vim.fn.nr2char(char) or tostring(char)
+      return vim.fn.getreg(reg)
+    end, { expr = true, buffer = ev.buf, desc = 'Paste named register into fzf prompt' })
+  end,
+})
 

@@ -7,6 +7,7 @@ ts.setup()
 vim.api.nvim_create_autocmd("User", {
   pattern = "LazyDone",
   once = true,
+  group = vim.api.nvim_create_augroup("treesitter_install_parsers", { clear = true }),
   callback = function()
     local parsers = {
       "bash", "c", "cpp", "lua", "python", "rust",

@@ -772,16 +772,16 @@ local plugin_specs = {
   {
     "MagicDuck/grug-far.nvim",
     cmd = "GrugFar",
+    keys = {
+      { "<leader>rp", "<cmd>GrugFar<CR>",                                        desc = "Project find & replace" },
+      { "<leader>rw", function()
+          require("grug-far").open { prefills = { search = vim.fn.expand("<cword>") } }
+        end,                                                                      desc = "Project replace (word under cursor)" },
+      { "<leader>rp", function() require("grug-far").with_visual_selection {} end,
+        mode = "v",                                                               desc = "Project replace (selection)" },
+    },
     config = function()
       require("grug-far").setup {}
-      vim.keymap.set("n", "<leader>rp", "<cmd>GrugFar<CR>",
-        { desc = "Project find & replace" })
-      vim.keymap.set("n", "<leader>rw", function()
-        require("grug-far").open { prefills = { search = vim.fn.expand("<cword>") } }
-      end, { desc = "Project replace (word under cursor)" })
-      vim.keymap.set("v", "<leader>rp", function()
-        require("grug-far").with_visual_selection {}
-      end, { desc = "Project replace (selection)" })
     end,
   },
 
