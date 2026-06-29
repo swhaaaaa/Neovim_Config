@@ -16,10 +16,9 @@ call utils#Cabbrev('ps',  'Lazy sync')
 """" vim-mundo
 let g:mundo_verbose_graph = 0
 let g:mundo_width = 80
-nnoremap <silent> <Space>u :MundoToggle<CR>
 
 """" better-escape.vim
-let g:better_escape_interval = 200
+" interval is set to 175ms in lua/config/better_escape.lua (init phase)
 
 """" vim-matchup
 let g:matchup_matchparen_deferred = 1

@@ -25,17 +25,21 @@ end
 -- as the cursor moves. Tag those probe calls by wrapping nvim_eval_statusline
 -- so lnumfunc can force the absolute line number for them instead.
 local in_lno_probe = 0
-local orig_eval_statusline = vim.api.nvim_eval_statusline
----@diagnostic disable-next-line: duplicate-set-field
-vim.api.nvim_eval_statusline = function(str, opts)
-  if not (opts and opts.use_statuscol_lnum) then
-    return orig_eval_statusline(str, opts)
+-- Guard against stacking on :ReloadConfig — only patch once per session.
+if not vim.api._statuscol_patched then
+  vim.api._statuscol_patched = true
+  local orig_eval_statusline = vim.api.nvim_eval_statusline
+  ---@diagnostic disable-next-line: duplicate-set-field
+  vim.api.nvim_eval_statusline = function(str, opts)
+    if not (opts and opts.use_statuscol_lnum) then
+      return orig_eval_statusline(str, opts)
+    end
+    in_lno_probe = in_lno_probe + 1
+    local ok, result = pcall(orig_eval_statusline, str, opts)
+    in_lno_probe = in_lno_probe - 1
+    if not ok then error(result, 0) end
+    return result
   end
-  in_lno_probe = in_lno_probe + 1
-  local ok, result = pcall(orig_eval_statusline, str, opts)
-  in_lno_probe = in_lno_probe - 1
-  if not ok then error(result, 0) end
-  return result
 end
 
 local function lnumfunc(args, segment)

@@ -37,7 +37,6 @@
 vim.fn["utils#Cabbrev"]("cs", "Cs")
 
 -- --- cscope_maps: sane defaults + project auto-detection ---------------------
-local has_telescope = pcall(require, "telescope")
 local ok_csm, csm = pcall(require, "cscope_maps")
 if ok_csm then
   csm.setup({
@@ -48,7 +47,7 @@ if ok_csm then
     cscope = {
       db_file = "./cscope.out",     -- per-project database file
       exec = "cscope",              -- or "gtags-cscope"
-      picker = has_telescope and "telescope" or "quickfix",
+      picker = "quickfix",
       picker_opts = { window_pos = "bottom", window_size = 8 },
       skip_picker_for_single_result = true,
       db_build_cmd = { script = "default", args = { "-bqkv" } },
