@@ -18,6 +18,6 @@ vim.api.nvim_create_autocmd("User", {
       pcall(vim.treesitter.language.add, lang)
     end
     -- Use the TSInstall command which is always available
-    vim.cmd("TSInstall! " .. table.concat(parsers, " "))
+    vim.cmd("TSInstall " .. table.concat(parsers, " "))
   end,
 })

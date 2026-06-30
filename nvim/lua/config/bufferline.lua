@@ -2,8 +2,8 @@ local ok, bufferline = pcall(require, "bufferline")
 if not ok then return end
 bufferline.setup {
   options = {
-	mode = "tabs",            -- << show real tabpages
-	show_duplicate_prefix = false, -- <- hides the "(duplicated)" prefix
+    mode = "tabs",                  -- show real tabpages
+    show_duplicate_prefix = false,  -- hides the "(duplicated)" prefix
     numbers = "none",
     close_command = "bdelete! %d",
     right_mouse_command = nil,

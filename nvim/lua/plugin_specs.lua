@@ -565,7 +565,7 @@ local plugin_specs = {
   {
     "akinsho/git-conflict.nvim",
     version = "*",
-    event = "VeryLazy",
+    event = "User InGitRepo",
     config = function()
       require("config.git-conflict")
     end,

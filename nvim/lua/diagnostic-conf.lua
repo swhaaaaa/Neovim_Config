@@ -31,14 +31,10 @@ diagnostic.config {
 diagnostic.enable(false)
 
 -- set quickfix list from diagnostics in a certain buffer, not the whole workspace
-local set_qflist = function(buf_num, severity)
-  local diagnostics = nil
-  diagnostics = diagnostic.get(buf_num, { severity = severity })
-
+local set_qflist = function(buf_num)
+  local diagnostics = diagnostic.get(buf_num)
   local qf_items = diagnostic.toqflist(diagnostics)
   vim.fn.setqflist({}, " ", { title = "Diagnostics", items = qf_items })
-
-  -- open quickfix by default
   vim.cmd([[copen]])
 end
 
