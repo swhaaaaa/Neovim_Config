@@ -18,6 +18,7 @@ function! s:compile_run_cpp() abort
     let prog = 'g++'
   else
     echoerr 'No C++ compiler found on the system!'
+    return
   endif
   call s:create_term_buf('h', 20)
   execute printf('term %s %s %s -o %s && %s', prog, _flag, src_path, src_noext, src_noext)

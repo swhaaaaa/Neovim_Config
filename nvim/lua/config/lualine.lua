@@ -46,10 +46,6 @@ local function get_git_ahead_behind_info()
   async_git_status_update()
 
   local status = git_status_cache
-  if not status then
-    return ""
-  end
-
   local msg = ""
 
   if type(status.ahead_count) == "number" and status.ahead_count > 0 then
