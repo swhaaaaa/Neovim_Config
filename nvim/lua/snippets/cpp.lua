@@ -2,6 +2,9 @@ local ls = require("luasnip")
 local s = ls.snippet
 local t = ls.text_node
 local i = ls.insert_node
+local f = ls.function_node
+
+local function has_fmt(args) return args[1][1]:find("%%[^%%]") ~= nil end
 
 return {
   s({ trig = "bare", dscr = "barebone code template" }, {
@@ -125,6 +128,14 @@ return {
   s({ trig = "uset",  dscr = "std::unordered_set" }, { t("unordered_set<"), i(1), t("> "), i(2, "myset") }),
   s({ trig = "queue", dscr = "std::queue"         }, { t("queue<"), i(1), t("> "), i(2, "q") }),
   s({ trig = "stack", dscr = "std::stack"         }, { t("stack<"), i(1), t("> "), i(2, "mystack") }),
+
+  s({ trig = "fprd", dscr = "std::printf with func/line prefix" }, {
+    t('std::printf("%s[%d] '), i(1, "msg"),
+    t('\\n", __FUNCTION__, __LINE__'),
+    f(function(args) return has_fmt(args) and ", " or ");" end, { 1 }),
+    i(2),
+    f(function(args) return has_fmt(args) and ");" or "" end, { 1 }),
+  }),
 
   s({ trig = "sol", dscr = "solution instance" }, {
     t("auto solution = Solution();"), t({ "", "" }), i(0),
