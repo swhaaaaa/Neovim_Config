@@ -1,5 +1,3 @@
-local utils = require("utils")
-
 local plugin_dir = vim.fn.stdpath("data") .. "/lazy"
 local lazypath = plugin_dir .. "/lazy.nvim"
 
@@ -181,7 +179,7 @@ local plugin_specs = {
         sh         = { "shfmt" },
         bash       = { "shfmt" },
       },
-      format_on_save = function(_bufnr)
+      format_on_save = function()
         if vim.g.format_on_save then
           return { lsp_format = "fallback", timeout_ms = 500 }
         end
