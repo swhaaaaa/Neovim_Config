@@ -35,8 +35,13 @@ vim.api.nvim_create_autocmd("QuickFixCmdPost", {
   callback = function(ev)
     local is_loc = ev.match:sub(1, 1) == "l"
     local n = is_loc and #vim.fn.getloclist(0) or #vim.fn.getqflist()
-    vim.api.nvim_echo({ { "" } }, false, {})
-    vim.notify(string.format("Search: %d match%s", n, n == 1 and "" or "es"), vim.log.levels.INFO)
+    -- vim.schedule defers until after ack.vim finishes all post-search work
+    -- (e.g. copen), so our clear runs last and isn't overwritten by redraws.
+    vim.schedule(function()
+      vim.api.nvim_echo({ { "" } }, false, {})
+      vim.cmd("redraw")
+      vim.notify(string.format("Search: %d match%s", n, n == 1 and "" or "es"), vim.log.levels.INFO)
+    end)
   end,
 })
 
