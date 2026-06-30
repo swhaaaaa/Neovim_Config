@@ -129,12 +129,12 @@ return {
   s({ trig = "queue", dscr = "std::queue"         }, { t("queue<"), i(1), t("> "), i(2, "q") }),
   s({ trig = "stack", dscr = "std::stack"         }, { t("stack<"), i(1), t("> "), i(2, "mystack") }),
 
-  s({ trig = "fprd", dscr = "std::printf with func/line prefix" }, {
-    t('std::printf("%s[%d] '), i(1, "msg"),
+  s({ trig = "fprd", dscr = "std::fprintf with func/line prefix" }, {
+    t("std::fprintf("), i(1, "stderr"), t(', "%s[%d] '), i(2, "msg"),
     t('\\n", __FUNCTION__, __LINE__'),
-    f(function(args) return has_fmt(args) and ", " or ");" end, { 1 }),
-    i(2),
-    f(function(args) return has_fmt(args) and ");" or "" end, { 1 }),
+    f(function(args) return has_fmt(args) and ", " or ");" end, { 2 }),
+    i(3),
+    f(function(args) return has_fmt(args) and ");" or "" end, { 2 }),
   }),
 
   s({ trig = "sol", dscr = "solution instance" }, {
