@@ -14,8 +14,9 @@ return {
     i(0),
   }),
 
-  s({ trig = "print", dscr = "print value of some variable" }, {
-    t('print("'), i(1), t('".format('), i(2), t("))"), t({ "", "" }), i(0),
+  s({ trig = "print", dscr = "print value with f-string" }, {
+    t('print(f"'), i(1, "label"), t(': {'), i(2, "var"), t('}")'),
+    t({ "", "" }), i(0),
   }),
 
   s({ trig = "impa", dscr = "import FOO as BAR" }, {
