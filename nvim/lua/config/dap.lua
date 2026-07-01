@@ -84,7 +84,7 @@ if vim.fn.executable(mason_bin) == 1 or vim.fn.executable("codelldb") == 1 then
     },
   }
   dap.configurations.c   = c_cpp_cfg
-  dap.configurations.cpp = c_cpp_cfg
+  dap.configurations.cpp = vim.deepcopy(c_cpp_cfg)
 
 -- ── LLDB adapter fallback (apt install lldb) ───────────────────────────────
 else
@@ -102,7 +102,7 @@ else
     local lldb_cfg = vim.deepcopy(c_cpp_cfg)
     for _, cfg in ipairs(lldb_cfg) do cfg.type = "codelldb" end
     dap.configurations.c   = lldb_cfg
-    dap.configurations.cpp = lldb_cfg
+    dap.configurations.cpp = vim.deepcopy(lldb_cfg)
   else
     vim.notify(
       "DAP: no C/C++ adapter found.\n" ..

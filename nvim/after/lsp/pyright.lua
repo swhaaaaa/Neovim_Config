@@ -33,7 +33,7 @@ return {
         diagnosticMode = "workspace",
         typeCheckingMode = "standard",
         useLibraryCodeForTypes = true,
-        -- we can this setting below to redefine some diagnostics
+        -- we can use this setting below to redefine some diagnostics
         diagnosticSeverityOverrides = {
           deprecateTypingAliases = false,
         },

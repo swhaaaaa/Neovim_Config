@@ -77,7 +77,7 @@ function M.is_compatible_version(expected_version)
     vim.api.nvim_echo({ { msg } }, true, { err = true })
   end
 
-  return true
+  return result == 0
 end
 
 --- Asynchronously check if we are inside a git repo; if so, fire the `User

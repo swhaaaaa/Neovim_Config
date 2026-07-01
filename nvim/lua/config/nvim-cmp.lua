@@ -84,7 +84,7 @@ cmp.setup.filetype("tex", {
     { name = "omni" },
     { name = "luasnip" },
     { name = "buffer", keyword_length = 2 },
-    { name = "path" },
+    { name = "async_path" },
   },
 })
 
