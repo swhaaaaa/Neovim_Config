@@ -144,7 +144,6 @@ keymap.set("n", "cc", '"_cc')
 keymap.set("x", "c", '"_c')
 
 -- Remove trailing whitespace characters
--- keymap.set("n", "<leader><space>", "<cmd>StripTrailingWhitespace<cr>", { desc = "remove trailing space" }) <-- This code need to be fixed as follow.
 keymap.set("n", "<leader><space>", function()
   vim.fn["utils#StripTrailingWhitespace"]()
 end, { desc = "remove trailing space" })
