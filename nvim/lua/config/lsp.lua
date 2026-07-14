@@ -142,7 +142,6 @@ local enabled_lsp_servers = {
   pyright = "pyright-langserver",
   ruff = "ruff",
   lua_ls = "lua-language-server",
-  -- ltex = "ltex-ls",
   clangd = "clangd",
   vimls = "vim-language-server",
   bashls = "bash-language-server",
