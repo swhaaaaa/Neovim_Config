@@ -189,11 +189,13 @@ color_scheme.select_colorscheme("everforest")  -- change to any key above
 ### Windows
 | Key | Action |
 |-----|--------|
-| `Ctrl-h/j/k/l` | Switch between split windows |
+| `Ctrl-h/j/k/l` | Switch between split windows (crosses into tmux panes at the edge, if configured — see below) |
 | `Ctrl-↑` | Increase window height (+2 lines) |
 | `Ctrl-↓` | Decrease window height (-2 lines) |
 | `Ctrl-→` | Increase window width (+2 columns) |
 | `Ctrl-←` | Decrease window width (-2 columns) |
+
+`Ctrl-hjkl` is handled by [smart-splits.nvim](https://github.com/mrjones2014/smart-splits.nvim). Crossing from a Neovim split straight into an adjacent tmux pane (no prefix key needed) additionally requires bindings in `~/.tmux.conf` — this repo doesn't manage `tmux.conf` since it's outside `~/.config/nvim`, so add them yourself; see the plugin's [tmux integration docs](https://github.com/mrjones2014/smart-splits.nvim#tmux) for the snippet.
 
 ### Buffers
 | Key | Action |
