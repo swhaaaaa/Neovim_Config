@@ -465,6 +465,32 @@ else
     success "Symlinked $NVIM_DIR → $NVIM_CONFIG_DIR"
 fi
 
+# ─── tmux integration (optional) ───────────────────────────────────────────────
+# smart-splits.nvim (nvim/lua/plugin_specs.lua) lets Ctrl-hjkl cross from a
+# Neovim split straight into an adjacent tmux pane. That side of the
+# integration lives in ~/.tmux.conf, which is outside ~/.config/nvim, so it's
+# appended (not symlinked) to avoid clobbering any unrelated tmux settings
+# you may already have.
+TMUX_CONF_SRC="$SCRIPT_DIR/tmux/tmux.conf"
+TMUX_CONF_DEST="$HOME/.tmux.conf"
+TMUX_MARKER="# --- smart-splits.nvim tmux integration (managed by Neovim_Config install.sh) ---"
+
+if [ -f "$TMUX_CONF_SRC" ]; then
+    echo ""
+    if [ -f "$TMUX_CONF_DEST" ] && grep -qF "$TMUX_MARKER" "$TMUX_CONF_DEST"; then
+        success "tmux keybindings already present in $TMUX_CONF_DEST — skipping"
+    else
+        info "smart-splits.nvim can let Ctrl-hjkl cross into tmux panes (requires ~/.tmux.conf bindings)"
+        read -rp "  Append smart-splits tmux keybindings to $TMUX_CONF_DEST? [y/N] " answer
+        answer="${answer:-N}"
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
+            { echo ""; echo "$TMUX_MARKER"; cat "$TMUX_CONF_SRC"; } >> "$TMUX_CONF_DEST"
+            success "Appended tmux keybindings to $TMUX_CONF_DEST"
+            info "Run 'tmux source ~/.tmux.conf' in any open session (or restart tmux) to apply"
+        fi
+    fi
+fi
+
 # ─── ulimit fix ───────────────────────────────────────────────────────────────
 CURRENT_ULIMIT=$(ulimit -n)
 if [ "$CURRENT_ULIMIT" -lt 4096 ]; then
