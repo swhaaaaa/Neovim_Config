@@ -179,11 +179,8 @@ keymap.set("n", "gB", '<cmd>call buf_utils#GoToBuffer(v:count, "backward")<cr>',
   desc = "go to buffer (backward)",
 })
 
--- Switch windows
-keymap.set("n", "<C-h>", "<c-w>h")
-keymap.set("n", "<C-l>", "<C-W>l")
-keymap.set("n", "<C-k>", "<C-W>k")
-keymap.set("n", "<C-j>", "<C-W>j")
+-- Switch windows (and tmux panes) — see smart-splits.nvim spec in plugin_specs.lua
+-- for the <C-hjkl> keymaps.
 
 -- Resize windows with arrow keys
 -- Up/Down adjust height; Left/Right adjust width

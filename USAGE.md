@@ -98,7 +98,7 @@
 
 | Key | Mode | Action |
 |-----|------|--------|
-| `<C-h/j/k/l>` | n | Switch to left/down/up/right window |
+| `<C-h/j/k/l>` | n | Switch to left/down/up/right window (crosses into tmux panes too, via smart-splits.nvim — requires companion tmux keybindings) |
 | `<C-↑>` | n | Increase window height (+2) |
 | `<C-↓>` | n | Decrease window height (-2) |
 | `<C-→>` | n | Increase window width (+2) |

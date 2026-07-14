@@ -113,6 +113,7 @@ On first launch, **Lazy.nvim** auto-installs all plugins, then the curated Trees
 | Plugin | Role |
 |--------|------|
 | `fzf-lua` | Fuzzy finder with preview (files, grep, buffers) |
+| `smart-splits.nvim` | `<C-hjkl>` moves between Neovim splits, crossing into tmux panes at the edge (needs companion tmux keybindings) |
 | `flash.nvim` | Enhances native `f`/`F`/`t`/`T` with jump labels; `s`/`S` for ad-hoc/treesitter jumps |
 | `nvim-hlslens` | Search result count & highlights |
 | `aerial.nvim` | Symbol outline via LSP/treesitter — no ctags needed (`<leader>ao`) |

@@ -408,6 +408,23 @@ local plugin_specs = {
   { "EdenEast/nightfox.nvim",   lazy = true },
 
   -- ─── Navigation ───────────────────────────────────────────────────────────────
+  -- smart-splits.nvim: <C-hjkl> move between splits like plain <C-w>hjkl, but
+  -- also cross seamlessly into tmux panes when the cursor is at the edge of
+  -- the Neovim window. Requires companion tmux keybindings (see plugin docs'
+  -- tmux integration section) — without them this just behaves like the old
+  -- <C-w>hjkl mappings it replaces.
+  {
+    "mrjones2014/smart-splits.nvim",
+    keys = {
+      { "<C-h>", function() require("smart-splits").move_cursor_left() end,  desc = "window/tmux: move left" },
+      { "<C-j>", function() require("smart-splits").move_cursor_down() end,  desc = "window/tmux: move down" },
+      { "<C-k>", function() require("smart-splits").move_cursor_up() end,    desc = "window/tmux: move up" },
+      { "<C-l>", function() require("smart-splits").move_cursor_right() end, desc = "window/tmux: move right" },
+    },
+    config = function()
+      require("config.smart-splits")
+    end,
+  },
   -- flash.nvim: replaces hop.nvim. Enhances native f/F/t/T in place (no
   -- remapping needed — it hooks the built-in motions directly) and adds
   -- s/S for ad-hoc 2-char label jumps and treesitter-node selection.
