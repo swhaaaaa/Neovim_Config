@@ -338,8 +338,6 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 |-----|--------|
 | `[d` / `]d` | Previous / next diagnostic |
 | `[e` / `]e` | Previous / next **error** only (skips warnings/hints) |
-| `<space>e` | Show diagnostic float |
-| `<space>q` | Add diagnostics to location list |
 | `<space>qb` | Add current buffer diagnostics to quickfix |
 | `<space>qw` | Add all open files' diagnostics to quickfix |
 

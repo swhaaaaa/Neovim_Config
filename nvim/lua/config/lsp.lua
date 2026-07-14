@@ -68,7 +68,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         close_events = { "CursorMoved", "BufLeave", "WinLeave", "LspDetach" },
       }
     end)
-    -- <C-k> reserved for window navigation (mappings.lua)
+    -- <C-k> reserved for window/tmux navigation (smart-splits.nvim, see plugin_specs.lua)
     -- signature help moved to <leader>sh
     map("n", "<leader>sh", function()
       vim.lsp.buf.signature_help { border = "single" }
