@@ -413,14 +413,14 @@ local plugin_specs = {
   -- the Neovim window. Requires companion tmux keybindings (see plugin docs'
   -- tmux integration section) — without them this just behaves like the old
   -- <C-w>hjkl mappings it replaces.
+  -- Loaded on VeryLazy rather than key-triggered lazy-loading: the tmux side
+  -- decides whether to forward <C-hjkl> into Neovim or switch panes directly
+  -- based on the `@pane-is-vim` tmux variable, which this plugin only sets
+  -- once it has actually loaded — key-triggered lazy-loading would leave that
+  -- variable unset until the first <C-h> press from inside Neovim.
   {
     "mrjones2014/smart-splits.nvim",
-    keys = {
-      { "<C-h>", function() require("smart-splits").move_cursor_left() end,  desc = "window/tmux: move left" },
-      { "<C-j>", function() require("smart-splits").move_cursor_down() end,  desc = "window/tmux: move down" },
-      { "<C-k>", function() require("smart-splits").move_cursor_up() end,    desc = "window/tmux: move up" },
-      { "<C-l>", function() require("smart-splits").move_cursor_right() end, desc = "window/tmux: move right" },
-    },
+    event = "VeryLazy",
     config = function()
       require("config.smart-splits")
     end,
