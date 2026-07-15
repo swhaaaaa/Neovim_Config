@@ -1,5 +1,16 @@
 local api = vim.api
 
+-- Open a split and run `cmd` (a shell command string) as a terminal job.
+-- Uses termopen() directly instead of `:terminal {cmd}` via vim.cmd() —
+-- the latter runs `cmd` through Ex command-line parsing first, which expands
+-- a literal `%`/`#` in the text (even inside shellescape()'d quotes) before
+-- the shell ever sees it.
+local function run_in_terminal(height, cmd)
+  vim.cmd("botright " .. height .. "new")
+  vim.fn.termopen(cmd)
+  vim.cmd.startinsert()
+end
+
 -- Format current buffer via conform.nvim (if available)
 api.nvim_create_user_command("Format", function()
   local ok, conform = pcall(require, "conform")
@@ -244,7 +255,7 @@ vim.api.nvim_create_user_command("MesonBuild", function(opts)
   local cmd = string.format("cd %s && meson compile -C builddir", vim.fn.shellescape(pkgdir))
   vim.notify(string.format("[%s] meson compile -C builddir",
     vim.fn.fnamemodify(pkgdir, ":t")), vim.log.levels.INFO, { title = "Meson" })
-  vim.cmd("botright 15split | terminal " .. cmd)
+  run_in_terminal(15, cmd)
 end, {
   nargs = "?",
   complete = "dir",
@@ -317,7 +328,7 @@ vim.api.nvim_create_user_command("GccDebug", function(opts)
     compiler, vim.fn.shellescape(output), vim.fn.shellescape(src))
 
   vim.notify(cmd, vim.log.levels.INFO, { title = "GccDebug" })
-  vim.cmd("botright 8split | terminal " .. cmd)
+  run_in_terminal(8, cmd)
 end, {
   nargs = "?",
   complete = "file",

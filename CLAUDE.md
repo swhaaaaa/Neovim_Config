@@ -18,7 +18,7 @@ The config lives entirely in `nvim/` (installed as `~/.config/nvim`). Load order
 1. `lua/globals.lua` — global vars, leader key (`,`), disabled built-in plugins
 2. `viml_conf/options.vim` — Vim options (tabs, folds, UI)
 3. `lua/custom-autocmd.lua` — autocommands (yank highlight, auto-reload, large-file handling, etc.)
-4. `lua/custom-commands.lua` — user commands: `:Format`, `:LspInfo2`, `:ReloadConfig`, `:LspRestart`, `:MesonSetup`, `:MesonBuild`, `:MesonLink`
+4. `lua/custom-commands.lua` — user commands: `:Format`, `:LspInfo2`, `:ReloadConfig`, `:LspRestart`, `:MesonSetup`, `:MesonBuild`, `:MesonLink`, `:GccDebug`, `:KernelSetup`, `:OEPkgSetup`
 5. `lua/mappings.lua` — all keymaps not owned by a plugin
 6. `viml_conf/plugins.vim` → `lua/plugin_specs.lua` — Lazy.nvim plugin list
 7. `lua/diagnostic-conf.lua` — LSP diagnostic display
