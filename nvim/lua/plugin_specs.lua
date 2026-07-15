@@ -859,6 +859,7 @@ local plugin_specs = {
       { "<leader>dr", desc = "DAP: open REPL" },
       { "<leader>dl", desc = "DAP: run last" },
       { "<leader>dx", desc = "DAP: terminate" },
+      { "<leader>dv", desc = "DAP: toggle virtual text" },
     },
     config = function()
       require("config.dap")

@@ -426,6 +426,7 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `<leader>dl` | n | Re-run last debug session |
 | `<leader>dx` | n | Terminate session |
 | `<leader>du` | n | Toggle DAP UI (auto-opens with session) |
+| `<leader>dv` | n | Toggle virtual text (inline variable values) |
 
 > The DAP UI opens automatically when a session starts, showing scopes, breakpoints, stacks, watches (left panel) and REPL/console (bottom panel).
 
