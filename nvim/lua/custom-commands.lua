@@ -1,15 +1,5 @@
 local api = vim.api
-
--- Open a split and run `cmd` (a shell command string) as a terminal job.
--- Uses termopen() directly instead of `:terminal {cmd}` via vim.cmd() —
--- the latter runs `cmd` through Ex command-line parsing first, which expands
--- a literal `%`/`#` in the text (even inside shellescape()'d quotes) before
--- the shell ever sees it.
-local function run_in_terminal(height, cmd)
-  vim.cmd("botright " .. height .. "new")
-  vim.fn.termopen(cmd)
-  vim.cmd.startinsert()
-end
+local run_in_terminal = require("utils").run_in_terminal
 
 -- Format current buffer via conform.nvim (if available)
 api.nvim_create_user_command("Format", function()

@@ -1,10 +1,13 @@
 local keymap = vim.keymap
+local run_in_terminal = require("utils").run_in_terminal
 
 keymap.set("n", "<leader>gs", "<cmd>Git<cr>", { desc = "Git: show status" })
 keymap.set("n", "<leader>gw", "<cmd>Gwrite<cr>", { desc = "Git: add file" })
 keymap.set("n", "<leader>gc", "<cmd>Git commit<cr>", { desc = "Git: commit changes" })
 keymap.set("n", "<leader>gpl", "<cmd>Git pull<cr>", { desc = "Git: pull changes" })
-keymap.set("n", "<leader>gpu", "<cmd>15 split|term git push<cr>", { desc = "Git: push changes" })
+keymap.set("n", "<leader>gpu", function()
+  run_in_terminal(15, "git push")
+end, { desc = "Git: push changes" })
 keymap.set("v", "<leader>gb", ":Git blame<cr>", { desc = "Git: blame selected line" })
 
 keymap.set("n", "<leader>gd", "<cmd>Gdiffsplit<CR>",       { desc = "Git: diff split" })

@@ -80,6 +80,19 @@ function M.is_compatible_version(expected_version)
   return result == 0
 end
 
+--- Open a split and run `cmd` (a shell command string) as a terminal job.
+--- Uses termopen() directly instead of `:terminal {cmd}` via vim.cmd() — the
+--- latter runs `cmd` through Ex command-line parsing first, which expands a
+--- literal `%`/`#` in the text (even inside shellescape()'d quotes) before
+--- the shell ever sees it.
+--- @param height integer split height
+--- @param cmd string shell command to run
+function M.run_in_terminal(height, cmd)
+  vim.cmd("botright " .. height .. "new")
+  vim.fn.termopen(cmd)
+  vim.cmd.startinsert()
+end
+
 --- Asynchronously check if we are inside a git repo; if so, fire the `User
 --- InGitRepo` autocmd used for git-plugin lazy-loading. Runs the git
 --- subprocess via libuv instead of :wait()'ing on it, since this is called

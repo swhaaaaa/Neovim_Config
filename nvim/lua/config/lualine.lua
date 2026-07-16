@@ -71,7 +71,7 @@ end
 
 --- show indicator for Chinese IME
 local function ime_state()
-  if vim.g.is_mac then
+  if vim.g.is_mac and vim.g.XkbSwitchLib then
     -- ref: https://github.com/vim-airline/vim-airline/blob/master/autoload/airline/extensions/xkblayout.vim#L11
     local layout = fn.libcall(vim.g.XkbSwitchLib, "Xkb_Switch_getXkbLayout", "")
 
