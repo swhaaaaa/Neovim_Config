@@ -233,16 +233,20 @@ api.nvim_create_user_command("HexInsert", function(opts)
     -- Default: insert one 0x00 byte
     bytes_to_insert = {"00"}
   elseif #args == 1 then
-    -- Single arg: could be count or single byte
-    if args[1]:match("^%d+$") and tonumber(args[1]) > 16 then
-      -- Large number: treat as count, use 00 as default
+    -- Single arg: exactly 2 hex digits is always a byte value (so "20"
+    -- inserts 0x20, not 20 zero-bytes); any other all-digit string is a
+    -- repeat count of 0x00 bytes.
+    if args[1]:match("^[0-9a-fA-F][0-9a-fA-F]$") then
+      table.insert(bytes_to_insert, args[1])
+    elseif args[1]:match("^%d+$") then
       local count = tonumber(args[1])
       for i = 1, count do
         table.insert(bytes_to_insert, "00")
       end
     else
-      -- Otherwise treat as hex byte
-      table.insert(bytes_to_insert, args[1])
+      vim.notify("Invalid argument '" .. args[1] .. "'. Use 2 hex digits for a byte, or a number for a repeat count",
+        vim.log.levels.ERROR)
+      return
     end
   elseif #args == 2 and args[1]:match("^%d+$") then
     -- Two args with first being a number: count + repeating byte
@@ -344,14 +348,20 @@ api.nvim_create_user_command("HexAppend", function(opts)
       table.insert(bytes_to_append, "00")
     end
   elseif #args == 1 then
-    -- Could be count or single byte
-    if args[1]:match("^%d+$") and tonumber(args[1]) > 16 then
+    -- Single arg: exactly 2 hex digits is always a byte value (so "20"
+    -- appends 0x20, not 20 zero-bytes); any other all-digit string is a
+    -- repeat count of 0x00 bytes.
+    if args[1]:match("^[0-9a-fA-F][0-9a-fA-F]$") then
+      table.insert(bytes_to_append, args[1])
+    elseif args[1]:match("^%d+$") then
       local count = tonumber(args[1])
       for i = 1, count do
         table.insert(bytes_to_append, "00")
       end
     else
-      table.insert(bytes_to_append, args[1])
+      vim.notify("Invalid argument '" .. args[1] .. "'. Use 2 hex digits for a byte, or a number for a repeat count",
+        vim.log.levels.ERROR)
+      return
     end
   elseif #args == 2 and args[1]:match("^%d+$") then
     -- count + repeating byte

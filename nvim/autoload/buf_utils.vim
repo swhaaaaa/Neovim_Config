@@ -19,11 +19,9 @@ function! buf_utils#GoToBuffer(count, direction) abort
     return
   endif
 
-  if a:direction ==# 'forward'
-    silent execute('buffer' . a:count)
-  elseif a:direction ==# 'backward'
-    bprevious
-  endif
+  " Direction only matters for the count==0 case above; with an explicit
+  " buffer number, jump straight to it regardless of gb/gB.
+  silent execute('buffer' . a:count)
 endfunction
 
 function! s:GetBufNums() abort
