@@ -1,5 +1,17 @@
 local api, cmd, fn = vim.api, vim.cmd, vim.fn
 
+-- Parse a 0x-prefixed hex byte argument (e.g. "0x20", "0xF") into a
+-- normalized 2-hex-digit string ("20", "0f"). Returns nil if `s` isn't a
+-- valid 0x-prefixed 1-2 digit hex value. The 0x prefix is required so a
+-- bare number (e.g. "20") is unambiguously a decimal repeat count, never a
+-- byte value.
+local function parse_hex_byte_arg(s)
+  local digits = s:match("^0[xX](%x%x?)$")
+  if not digits then return nil end
+  if #digits == 1 then digits = "0" .. digits end
+  return digits:lower()
+end
+
 -- Extract ONLY hex bytes from canonical xxd line:
 -- "00000010: ff ff ...  ASCII" -> "ffffffff..."
 local function parse_hex_bytes_from_xxd_line(line)
@@ -217,6 +229,75 @@ api.nvim_create_user_command("HexWrite", function()
   show_canonical_from_file()
 end, {})
 
+-- Absolute byte offset of the buffer position under the cursor in a HexOn
+-- buffer, plus the parsed line info needed to mutate it.
+local function cursor_offset_info()
+  local cursor_line = vim.fn.line(".")
+  local cursor_col = vim.fn.col(".")
+  local current_line = vim.fn.getline(cursor_line)
+
+  local offset = tonumber(current_line:match("^(%x+):"), 16)
+  if not offset then return nil end
+
+  local hex_start_col = 11
+  if cursor_col < hex_start_col then cursor_col = hex_start_col end
+  local rel_col = cursor_col - hex_start_col
+  local byte_pos = math.max(0, math.min(15, math.floor(rel_col / 3)))
+
+  return { line_num = cursor_line, line = current_line, offset = offset, byte_pos = byte_pos }
+end
+
+-- Insert `bytes_to_insert` (list of 2-hex-digit strings) before the byte
+-- under the cursor. Returns the absolute offset the first inserted byte
+-- lands at, or nil (after notifying) on failure.
+local function insert_bytes_at_cursor(bytes_to_insert)
+  local info = cursor_offset_info()
+  if not info then
+    vim.notify("Could not parse offset", vim.log.levels.ERROR)
+    return nil
+  end
+
+  local hex_section = parse_hex_bytes_from_xxd_line(info.line)
+  local bytes = {}
+  for i = 1, #hex_section, 2 do
+    table.insert(bytes, hex_section:sub(i, i + 1))
+  end
+
+  for i, byte_val in ipairs(bytes_to_insert) do
+    table.insert(bytes, info.byte_pos + i, byte_val)
+  end
+
+  local new_lines = {}
+  local curr_offset = info.offset
+  for i = 1, #bytes, 16 do
+    local line_bytes = {}
+    for j = i, math.min(i + 15, #bytes) do
+      table.insert(line_bytes, bytes[j])
+    end
+    local hex_str = table.concat(line_bytes, " ")
+    local ascii_str = string.rep(".", #line_bytes)
+    table.insert(new_lines, string.format("%08x: %-47s  %s", curr_offset, hex_str, ascii_str))
+    curr_offset = curr_offset + #line_bytes
+  end
+
+  vim.fn.setline(info.line_num, new_lines[1])
+  if #new_lines > 1 then
+    vim.fn.append(info.line_num, vim.list_slice(new_lines, 2))
+  end
+
+  -- Move the cursor onto the byte that was originally under it, now
+  -- shifted right past the inserted bytes. Without this, the cursor stays
+  -- on the same screen column, which after insertion means it's aimed at
+  -- newly-inserted filler rather than the byte the caller targeted.
+  local hex_start_col = 11
+  local target_index = info.byte_pos + #bytes_to_insert + 1 -- 1-indexed into `bytes`
+  local line_delta = math.floor((target_index - 1) / 16)
+  local col_in_line = (target_index - 1) % 16
+  vim.fn.cursor(info.line_num + line_delta, hex_start_col + col_in_line * 3)
+
+  return info.offset + info.byte_pos
+end
+
 -- Helper command: Insert bytes at current cursor position
 api.nvim_create_user_command("HexInsert", function(opts)
   if vim.bo.filetype ~= "xxd" or not vim.b._hex_mode then
@@ -233,27 +314,27 @@ api.nvim_create_user_command("HexInsert", function(opts)
     -- Default: insert one 0x00 byte
     bytes_to_insert = {"00"}
   elseif #args == 1 then
-    -- Single arg: exactly 2 hex digits is always a byte value (so "20"
-    -- inserts 0x20, not 20 zero-bytes); any other all-digit string is a
-    -- repeat count of 0x00 bytes.
-    if args[1]:match("^[0-9a-fA-F][0-9a-fA-F]$") then
-      table.insert(bytes_to_insert, args[1])
+    -- Single arg: a 0x-prefixed value is a byte ("0x20" inserts one 0x20
+    -- byte); a bare number is always a repeat count of 0x00 bytes.
+    local byte_value = parse_hex_byte_arg(args[1])
+    if byte_value then
+      table.insert(bytes_to_insert, byte_value)
     elseif args[1]:match("^%d+$") then
       local count = tonumber(args[1])
       for i = 1, count do
         table.insert(bytes_to_insert, "00")
       end
     else
-      vim.notify("Invalid argument '" .. args[1] .. "'. Use 2 hex digits for a byte, or a number for a repeat count",
+      vim.notify("Invalid argument '" .. args[1] .. "'. Use 0x-prefixed hex for a byte (e.g. 0x20), or a number for a repeat count",
         vim.log.levels.ERROR)
       return
     end
   elseif #args == 2 and args[1]:match("^%d+$") then
     -- Two args with first being a number: count + repeating byte
     local count = tonumber(args[1])
-    local byte_value = args[2]
-    if not byte_value:match("^[0-9a-fA-F][0-9a-fA-F]$") then
-      vim.notify("Invalid byte value. Use 2 hex digits", vim.log.levels.ERROR)
+    local byte_value = parse_hex_byte_arg(args[2])
+    if not byte_value then
+      vim.notify("Invalid byte value. Use 0x-prefixed hex, e.g. 0xff", vim.log.levels.ERROR)
       return
     end
     for i = 1, count do
@@ -262,75 +343,22 @@ api.nvim_create_user_command("HexInsert", function(opts)
   else
     -- Multiple args: treat as byte sequence
     for _, byte in ipairs(args) do
-      if not byte:match("^[0-9a-fA-F][0-9a-fA-F]$") then
-        vim.notify(string.format("Invalid byte '%s'. Use 2 hex digits each", byte), vim.log.levels.ERROR)
+      local byte_value = parse_hex_byte_arg(byte)
+      if not byte_value then
+        vim.notify(string.format("Invalid byte '%s'. Use 0x-prefixed hex, e.g. 0x41", byte), vim.log.levels.ERROR)
         return
       end
-      table.insert(bytes_to_insert, byte)
+      table.insert(bytes_to_insert, byte_value)
     end
   end
 
-  local cursor_line = vim.fn.line(".")
-  local cursor_col = vim.fn.col(".")
-  local current_line = vim.fn.getline(cursor_line)
-
-  -- Parse current line
-  local offset = tonumber(current_line:match("^(%x+):"), 16)
-  if not offset then
-    vim.notify("Could not parse offset", vim.log.levels.ERROR)
-    return
-  end
-
-  -- Determine byte position in line based on cursor column
-  local hex_start_col = 11
-  if cursor_col < hex_start_col then cursor_col = hex_start_col end
-
-  -- Calculate which byte position (0-15) the cursor is on
-  local rel_col = cursor_col - hex_start_col
-  local byte_pos = math.floor(rel_col / 3)
-  byte_pos = math.max(0, math.min(15, byte_pos))
-
-  local hex_section = parse_hex_bytes_from_xxd_line(current_line)
-
-  -- Convert hex string to byte array
-  local bytes = {}
-  for i = 1, #hex_section, 2 do
-    table.insert(bytes, hex_section:sub(i, i + 1))
-  end
-
-  -- Insert new bytes at position
-  for i, byte_val in ipairs(bytes_to_insert) do
-    table.insert(bytes, byte_pos + i, byte_val)
-  end
-
-  -- Rebuild lines (may need to split into multiple lines)
-  local new_lines = {}
-  local curr_offset = offset
-
-  for i = 1, #bytes, 16 do
-    local line_bytes = {}
-    for j = i, math.min(i + 15, #bytes) do
-      table.insert(line_bytes, bytes[j])
-    end
-
-    local hex_str = table.concat(line_bytes, " ")
-    local ascii_str = string.rep(".", #line_bytes)
-    local line = string.format("%08x: %-47s  %s", curr_offset, hex_str, ascii_str)
-
-    table.insert(new_lines, line)
-    curr_offset = curr_offset + #line_bytes
-  end
-
-  -- Replace current line and insert additional lines if needed
-  vim.fn.setline(cursor_line, new_lines[1])
-  if #new_lines > 1 then
-    vim.fn.append(cursor_line, vim.list_slice(new_lines, 2))
-  end
+  local insert_offset = insert_bytes_at_cursor(bytes_to_insert)
+  if not insert_offset then return end
 
   local bytes_display = table.concat(bytes_to_insert, " ")
   vim.notify(string.format("Inserted %d byte(s) [%s] at offset 0x%x. Run :HexReoffset then :HexWrite.",
-    #bytes_to_insert, bytes_display, offset + byte_pos), vim.log.levels.INFO)
-end, { nargs = "*", desc = "Insert bytes at cursor: HexInsert aa bb cc OR HexInsert 4 aa" })
+    #bytes_to_insert, bytes_display, insert_offset), vim.log.levels.INFO)
+end, { nargs = "*", desc = "Insert bytes at cursor: HexInsert 0xaa 0xbb 0xcc OR HexInsert 4 0xaa" })
 
 -- Helper command: Append bytes to the end
 api.nvim_create_user_command("HexAppend", function(opts)
@@ -348,27 +376,27 @@ api.nvim_create_user_command("HexAppend", function(opts)
       table.insert(bytes_to_append, "00")
     end
   elseif #args == 1 then
-    -- Single arg: exactly 2 hex digits is always a byte value (so "20"
-    -- appends 0x20, not 20 zero-bytes); any other all-digit string is a
-    -- repeat count of 0x00 bytes.
-    if args[1]:match("^[0-9a-fA-F][0-9a-fA-F]$") then
-      table.insert(bytes_to_append, args[1])
+    -- Single arg: a 0x-prefixed value is a byte ("0x20" appends one 0x20
+    -- byte); a bare number is always a repeat count of 0x00 bytes.
+    local byte_value = parse_hex_byte_arg(args[1])
+    if byte_value then
+      table.insert(bytes_to_append, byte_value)
     elseif args[1]:match("^%d+$") then
       local count = tonumber(args[1])
       for i = 1, count do
         table.insert(bytes_to_append, "00")
       end
     else
-      vim.notify("Invalid argument '" .. args[1] .. "'. Use 2 hex digits for a byte, or a number for a repeat count",
+      vim.notify("Invalid argument '" .. args[1] .. "'. Use 0x-prefixed hex for a byte (e.g. 0x20), or a number for a repeat count",
         vim.log.levels.ERROR)
       return
     end
   elseif #args == 2 and args[1]:match("^%d+$") then
     -- count + repeating byte
     local count = tonumber(args[1])
-    local byte_value = args[2]
-    if not byte_value:match("^[0-9a-fA-F][0-9a-fA-F]$") then
-      vim.notify("Invalid byte value", vim.log.levels.ERROR)
+    local byte_value = parse_hex_byte_arg(args[2])
+    if not byte_value then
+      vim.notify("Invalid byte value. Use 0x-prefixed hex, e.g. 0xff", vim.log.levels.ERROR)
       return
     end
     for i = 1, count do
@@ -377,11 +405,12 @@ api.nvim_create_user_command("HexAppend", function(opts)
   else
     -- Byte sequence
     for _, byte in ipairs(args) do
-      if not byte:match("^[0-9a-fA-F][0-9a-fA-F]$") then
-        vim.notify(string.format("Invalid byte '%s'", byte), vim.log.levels.ERROR)
+      local byte_value = parse_hex_byte_arg(byte)
+      if not byte_value then
+        vim.notify(string.format("Invalid byte '%s'. Use 0x-prefixed hex, e.g. 0x41", byte), vim.log.levels.ERROR)
         return
       end
-      table.insert(bytes_to_append, byte)
+      table.insert(bytes_to_append, byte_value)
     end
   end
 
@@ -429,7 +458,7 @@ api.nvim_create_user_command("HexAppend", function(opts)
   vim.notify(string.format("Appended %d byte(s) [%s]. Use :HexWrite to save.",
     #bytes_to_append, #bytes_to_append <= 8 and bytes_display or (bytes_display:sub(1, 23) .. "...")),
     vim.log.levels.INFO)
-end, { nargs = "*", desc = "Append bytes: HexAppend aa bb cc OR HexAppend 32 ff" })
+end, { nargs = "*", desc = "Append bytes: HexAppend 0xaa 0xbb 0xcc OR HexAppend 32 0xff" })
 
 -- Helper command: Recalculate all offsets after insertions/deletions
 api.nvim_create_user_command("HexReoffset", function()
