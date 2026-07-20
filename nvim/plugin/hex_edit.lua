@@ -640,7 +640,18 @@ api.nvim_create_user_command("HexDelete", function(opts)
     return
   end
 
-  local count = tonumber(opts.args) or 1
+  local count = 1
+  if opts.args ~= "" then
+    if not opts.args:match("^%d+$") then
+      vim.notify("Invalid count '" .. opts.args .. "'. Use a positive integer (e.g. 1, 4, 16)", vim.log.levels.ERROR)
+      return
+    end
+    count = tonumber(opts.args) --[[@as integer]]
+    if count < 1 then
+      vim.notify("Count must be at least 1", vim.log.levels.ERROR)
+      return
+    end
+  end
   local cursor_line = vim.fn.line(".")
   local cursor_col = vim.fn.col(".")
   local current_line = vim.fn.getline(cursor_line)
@@ -677,9 +688,11 @@ api.nvim_create_user_command("HexDelete", function(opts)
 
   -- Calculate absolute position and delete bytes
   local abs_pos = byte_pos + 1
+  local deleted = 0
   for i = 1, count do
     if abs_pos <= #all_bytes then
       table.remove(all_bytes, abs_pos)
+      deleted = deleted + 1
     end
   end
 
@@ -710,8 +723,11 @@ api.nvim_create_user_command("HexDelete", function(opts)
     api.nvim_buf_set_lines(buf, cursor_line - 1 + #new_lines, cursor_line + lines_to_check, false, {})
   end
 
-  vim.notify(string.format("Deleted %d byte(s) at offset 0x%x. Run :HexReoffset then :HexWrite.",
-    count, offset + byte_pos), vim.log.levels.INFO)
+  local suffix = deleted < count
+    and string.format(" (%d requested, only %d were available)", count, deleted)
+    or ""
+  vim.notify(string.format("Deleted %d byte(s) at offset 0x%x%s. Run :HexReoffset then :HexWrite.",
+    deleted, offset + byte_pos, suffix), vim.log.levels.INFO)
 end, { nargs = "?", desc = "Delete N bytes at cursor (HexDelete [count])" })
 
 -- Helper command: Insert a full 16-byte line at cursor
