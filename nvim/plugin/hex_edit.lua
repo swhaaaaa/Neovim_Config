@@ -721,12 +721,19 @@ api.nvim_create_user_command("HexInsertLine", function(opts)
     return
   end
 
-  local byte_value = opts.args ~= "" and opts.args or "ff"
+  local raw_value = opts.args ~= "" and opts.args or "ff"
 
-  -- Validate byte value
-  if not byte_value:match("^[0-9a-fA-F][0-9a-fA-F]$") then
-    vim.notify("Invalid byte value. Use 2 hex digits (e.g., 00, ff, a5)", vim.log.levels.ERROR)
-    return
+  -- Accept either a 0x-prefixed value ("0xff") or a bare 2-hex-digit value
+  -- ("ff"); no byte-vs-count ambiguity here since this arg is always a
+  -- single byte, unlike HexInsert/HexAppend/HexReplace's first argument.
+  local byte_value = parse_hex_byte_arg(raw_value)
+  if not byte_value then
+    if raw_value:match("^[0-9a-fA-F][0-9a-fA-F]$") then
+      byte_value = raw_value:lower()
+    else
+      vim.notify("Invalid byte value. Use 2 hex digits or 0x-prefixed hex (e.g., 00, 0xff, a5)", vim.log.levels.ERROR)
+      return
+    end
   end
 
   local cursor_line = vim.fn.line(".")
@@ -753,7 +760,7 @@ api.nvim_create_user_command("HexInsertLine", function(opts)
   vim.fn.append(cursor_line, new_line)
   vim.notify("Inserted 16 bytes (0x" .. byte_value .. "). Run :HexReoffset then :HexWrite to save.",
     vim.log.levels.WARN)
-end, { nargs = "?", desc = "Insert 16 bytes at cursor (HexInsertLine [byte_value])" })
+end, { nargs = "?", desc = "Insert 16 bytes at cursor: HexInsertLine [0xff or ff]" })
 
 -- Helper command: Delete N whole xxd lines at cursor (= N*16 bytes each)
 -- Usage:  :HexDeleteLine        → delete 1 line (16 bytes)
