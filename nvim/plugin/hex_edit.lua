@@ -788,7 +788,18 @@ api.nvim_create_user_command("HexDeleteLine", function(opts)
     return
   end
 
-  local count = math.max(1, tonumber(opts.args) or 1)
+  local count = 1
+  if opts.args ~= "" then
+    if not opts.args:match("^%d+$") then
+      vim.notify("Invalid count '" .. opts.args .. "'. Use a positive integer (e.g. 1, 2, 5)", vim.log.levels.ERROR)
+      return
+    end
+    count = tonumber(opts.args) --[[@as integer]]
+    if count < 1 then
+      vim.notify("Count must be at least 1", vim.log.levels.ERROR)
+      return
+    end
+  end
   local buf   = api.nvim_get_current_buf()
   local total = api.nvim_buf_line_count(buf)
   local first = vim.fn.line(".") - 1   -- 0-indexed
