@@ -599,6 +599,7 @@ api.nvim_create_user_command("HexReoffset", function()
   local lines = api.nvim_buf_get_lines(buf, 0, -1, false)
   local new_lines = {}
   local current_offset = 0
+  local failed_lines = 0
 
   for i, line in ipairs(lines) do
     if line:match("^%x+:") then
@@ -620,6 +621,16 @@ api.nvim_create_user_command("HexReoffset", function()
 
         table.insert(new_lines, new_line)
         current_offset = current_offset + byte_count
+      else
+        -- Looks like an xxd line but its hex content couldn't be parsed
+        -- (e.g. corrupted/garbled). Keep it unchanged rather than silently
+        -- dropping bytes from the buffer.
+        table.insert(new_lines, line)
+        failed_lines = failed_lines + 1
+        if failed_lines <= 3 then
+          vim.notify(string.format("Warning: Failed to parse line %d, keeping it unchanged: [%s]", i, line),
+            vim.log.levels.WARN)
+        end
       end
     else
       -- Keep non-xxd lines as-is
@@ -629,8 +640,11 @@ api.nvim_create_user_command("HexReoffset", function()
 
   -- Replace all lines
   api.nvim_buf_set_lines(buf, 0, -1, false, new_lines)
-  vim.notify(string.format("Reoffset complete. Total: %d bytes (0x%x)", current_offset, current_offset),
-    vim.log.levels.INFO)
+  local summary = string.format("Reoffset complete. Total: %d bytes (0x%x)", current_offset, current_offset)
+  if failed_lines > 0 then
+    summary = summary .. string.format(" (%d line(s) could not be parsed and were left unchanged)", failed_lines)
+  end
+  vim.notify(summary, failed_lines > 0 and vim.log.levels.WARN or vim.log.levels.INFO)
 end, { desc = "Recalculate all line offsets after edits" })
 
 -- Helper command: Delete N bytes at cursor position
