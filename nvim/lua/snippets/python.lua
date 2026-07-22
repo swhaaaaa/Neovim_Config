@@ -8,7 +8,7 @@ return {
   -- `!v strftime(...)` → vim.fn.strftime via function node
   s({ trig = "head", dscr = "Python source file header" }, {
     t({ '"""', "Description: " }), i(1),
-    t({ "", "Author: Jie-dong Hao (jdhao@hotmail.com)", "Created: " }),
+    t({ "", "Author: swhaaaaa (swhaaaaa@gmail.com)", "Created: " }),
     f(function() return vim.fn.strftime("%Y-%m-%d %H:%M:%S%z") end),
     t({ "", '"""', "" }),
     i(0),
