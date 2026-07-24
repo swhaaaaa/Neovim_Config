@@ -127,6 +127,7 @@ wk.add {
   { "<leader>As", desc = "Claude: send selection" },
   { "<leader>Aa", desc = "Claude: accept diff" },
   { "<leader>Ad", desc = "Claude: deny diff" },
+  { "<leader>v",  desc = "select Python venv (venv-selector)" },
   { "<leader>u",  group = "UI toggles" },
   -- UI toggle entries
   { "<leader>ub", desc = "blink cursor to locate it" },

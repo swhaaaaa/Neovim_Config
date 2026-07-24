@@ -192,6 +192,24 @@ local plugin_specs = {
     },
   },
 
+  -- venv-selector.nvim: pick a Python virtualenv (venv/poetry/pipenv/conda/
+  -- pyenv/uv, ...) without restarting Neovim. Reconfigures pyright and
+  -- nvim-dap-python in-process on selection, and sets $VIRTUAL_ENV /
+  -- $CONDA_PREFIX for terminals spawned afterwards. Requires fd/fdfind.
+  {
+    "linux-cultist/venv-selector.nvim",
+    dependencies = { "ibhagwan/fzf-lua" },
+    ft = "python",
+    keys = {
+      { "<leader>v", "<cmd>VenvSelect<cr>", desc = "select Python venv" },
+    },
+    opts = {
+      options = {
+        picker = "fzf-lua",
+      },
+    },
+  },
+
 
   -- ─── Treesitter ───────────────────────────────────────────────────────────────
   {

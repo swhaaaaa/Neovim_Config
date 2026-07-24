@@ -156,6 +156,35 @@ install_if_missing "rg"     "ripgrep"           "ripgrep"       "ripgrep"       
 install_if_missing "fzf"    "fzf"               "fzf"           "fzf"             "fzf"             "fuzzy finder — required by fzf-lua"
 install_if_missing "ctags"  "universal-ctags"   "ctags"         "ctags"           "universal-ctags" "buffer tag browser (<leader>fB in fzf-lua)"
 install_if_missing "cscope" "cscope"            "cscope"        "cscope"          "cscope"          "C/C++ symbol navigation (cscope_maps.nvim)"
+
+# fd — used by venv-selector.nvim to find Python virtualenvs (<leader>v).
+# On Debian/Ubuntu the apt package is 'fd-find' and it installs the binary
+# as 'fdfind'; the plugin auto-detects either name.
+if command -v fd &>/dev/null || command -v fdfind &>/dev/null; then
+    success "fd already installed"
+else
+    warn "fd not found (used by venv-selector.nvim to find Python virtualenvs — <leader>v)"
+    read -rp "  Install fd now? [Y/n] " answer
+    answer="${answer:-Y}"
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
+        case "$PKG_MGR" in
+            apt)    sudo apt-get install -y fd-find ;;
+            dnf)    sudo dnf install -y fd-find ;;
+            pacman) sudo pacman -S --noconfirm fd ;;
+            brew)   brew install fd ;;
+            *)      warn "Cannot auto-install fd — unknown package manager. Install manually." ;;
+        esac
+
+        if command -v fd &>/dev/null || command -v fdfind &>/dev/null; then
+            success "fd installed"
+        else
+            warn "fd installation may have failed — check manually"
+        fi
+    else
+        info "Skipping fd. venv-selector.nvim will not find any virtualenvs without it."
+    fi
+fi
+
 install_if_missing "node"        "nodejs"         "nodejs"        "nodejs"          "node"            "required by many LSP servers and Markdown preview"
 install_if_missing "npm"         "npm"            "npm"           "npm"             "node"            "required to install LSP servers and Markdown preview"
 install_if_missing "shellcheck"   "shellcheck"      "ShellCheck"     "shellcheck"       "shellcheck"       "shell script linter (nvim-lint runs it on .sh/.bash files)"

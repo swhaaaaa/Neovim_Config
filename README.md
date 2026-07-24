@@ -22,7 +22,7 @@ Evolved from a classic Vim setup.
 |------|---------|
 | `ripgrep` (`rg`) | fzf-lua live grep, grug-far, ack.vim backend (preferred) |
 | `ack` / `ack-grep` | ack.vim search backend (fallback when rg unavailable) |
-| `fd` / `fdfind` | fzf-lua file listing |
+| `fd` / `fdfind` | fzf-lua file listing; venv-selector.nvim virtualenv discovery |
 | `ctags` | cscope |
 | `cscope` | C/C++ symbol navigation |
 | `clangd` | C/C++ LSP |
@@ -77,6 +77,7 @@ On first launch, **Lazy.nvim** auto-installs all plugins, then the curated Trees
 | `nvim-lightbulb` | Code action indicator (`💡`) |
 | `glance.nvim` | LSP definition/references floating preview |
 | `lazydev.nvim` | Lua API completion for config editing |
+| `venv-selector.nvim` | Pick a Python virtualenv without restarting Neovim (`<leader>v`) |
 
 ### Treesitter
 | Plugin | Role |
@@ -294,6 +295,7 @@ Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete 
 | `<leader>lr` | Peek references (Glance) |
 | `<leader>li` | Peek implementations (Glance) |
 | `<leader>Wa/Wr/Wl` | Add / remove / list workspace folders |
+| `<leader>v` | Pick Python virtualenv (venv-selector.nvim, fzf-lua picker) |
 | `grr` | References (Neovim default) |
 | `gri` | Implementation (Neovim default) |
 | `gra` | Code action (Neovim default, n/x) |

@@ -331,6 +331,18 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `gri` | n | Implementation (Neovim default) |
 | `gra` | n/x | Code action (Neovim default) |
 | `grn` | n | Rename (Neovim default; prefer `<leader>rn` for live preview) |
+| `<leader>v` | n | Pick Python virtualenv (venv-selector.nvim) |
+
+### Python Virtualenv (venv-selector.nvim)
+
+`<leader>v` opens an fzf-lua picker listing discovered virtualenvs — plain
+`venv`, Poetry, Pipenv, Anaconda/Miniconda, Pyenv, virtualenvwrapper, Hatch,
+Pipx, and PEP-723 `uv` script envs. Picking one reconfigures `pyright` and
+`nvim-dap-python` in-process (no Neovim restart) and sets `$VIRTUAL_ENV` /
+`$CONDA_PREFIX` for terminals opened afterwards. The plugin remembers the
+last-picked venv per project and re-activates it automatically the next time
+you open a Python file there. Requires `fd`/`fdfind` on `PATH` — install.sh
+prompts for it.
 
 ### LSP Diagnostics
 
