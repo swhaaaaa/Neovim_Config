@@ -93,7 +93,7 @@ vim.api.nvim_create_user_command("LspRestart", lsp_restart,
 -- builddir = name of the build subdirectory inside pkgdir (default: "builddir")
 local function meson_setup_one(pkgdir, builddir, on_done)
   builddir = builddir or "builddir"
-  local cmd = string.format("meson setup %s", builddir)
+  local cmd = string.format("meson setup %s", vim.fn.shellescape(builddir))
   vim.notify(string.format("[%s] %s", vim.fn.fnamemodify(pkgdir, ":t"), cmd),
     vim.log.levels.INFO, { title = "Meson" })
 
