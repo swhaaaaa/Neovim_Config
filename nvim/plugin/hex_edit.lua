@@ -98,6 +98,12 @@ local function show_canonical_from_file()
   vim.bo.eol = false           -- no end-of-line at EOF
   vim.bo.fixeol = false        -- don't fix missing EOL
   vim.b._hex_mode = true
+
+  -- nvim_buf_set_lines() always sets 'modified'; the buffer's real contents
+  -- exactly mirror the file on disk at this point, so clear it. Otherwise
+  -- :q right after :HexOn (or right after a successful :HexWrite) throws
+  -- E37, and buftype=nowrite means there's no :w to silence it with.
+  vim.bo.modified = false
 end
 
 local function leave_hex_mode()

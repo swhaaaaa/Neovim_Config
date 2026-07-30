@@ -23,14 +23,15 @@
 15. [Surround](#surround)
 16. [Textobjects (mini.ai)](#textobjects-miniai)
 17. [C/C++ Tools](#cc-tools)
-18. [Spelling](#spelling)
-19. [Terminal](#terminal)
-20. [Notifications](#notifications)
-21. [Meson Build](#meson-build)
-22. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
-23. [Claude Code CLI (claudecode.nvim)](#claude-code-cli-claudecodenvim)
-24. [User Commands](#user-commands)
-25. [Tips & Workflows](#tips--workflows)
+18. [Hex Editor](#hex-editor)
+19. [Spelling](#spelling)
+20. [Terminal](#terminal)
+21. [Notifications](#notifications)
+22. [Meson Build](#meson-build)
+23. [OpenBMC / Yocto Kernel LSP](#openbmc--yocto-kernel-lsp)
+24. [Claude Code CLI (claudecode.nvim)](#claude-code-cli-claudecodenvim)
+25. [User Commands](#user-commands)
+26. [Tips & Workflows](#tips--workflows)
 
 ---
 
@@ -795,6 +796,31 @@ Typical use:
 
 ---
 
+## Hex Editor
+
+Custom `xxd`-based hex editor (`nvim/plugin/hex_edit.lua`). Renders the file
+as a canonical `xxd -g 1 -c 16` view; edits happen in that view and are only
+written back to disk with `:HexWrite`. There are no keymaps — everything is
+command-driven.
+
+| Command | Action |
+|---------|--------|
+| `:HexOn` | Enter hex view of the current file (read from disk, `nowrite` buftype so plain `:w`/`ZZ` are blocked) |
+| `:HexOff` | Leave hex view, reload the buffer from disk |
+| `:HexWrite` | Decode the hex view and write it to the file on disk (prompts if the resulting size changed) |
+| `:HexInsert [count] {0xNN}` | Insert byte(s) before the cursor: `0xaa 0xbb` (sequence), `4 0xaa` (repeat), or bare `0xaa` (one byte) |
+| `:HexAppend [count] {0xNN}` | Same as `:HexInsert` but appends at end of file; no args appends 16× `0xff` |
+| `:HexReplace [count] {0xNN}` | Overwrite bytes at cursor in place (never shifts/resizes) |
+| `:HexInsertLine [0xNN or NN]` | Insert a full 16-byte line below cursor, defaulting to `0xff` |
+| `:HexDelete [count]` | Delete `count` bytes at cursor (default 1) |
+| `:HexDeleteLine [count]` | Delete `count` whole 16-byte lines at cursor (default 1) |
+| `:HexReoffset` | Recalculate all line offsets after an insert/delete — run before `:HexWrite` |
+
+Typical flow: `:HexOn` → edit with `HexInsert`/`HexDelete`/etc. → `:HexReoffset`
+(if the byte count changed) → `:HexWrite` → `:HexOff`.
+
+---
+
 ## Spelling
 
 | Key | Mode | Action |
@@ -1012,6 +1038,12 @@ claude   # authenticate on first run
 | `:MesonLink [dir]` | Only (re)create `compile_commands.json` symlink without re-running setup |
 | `:KernelSetup [build_root]` | Generate `compile_commands.json` + `.clangd` for OpenBMC/Yocto kernel, then restart LSP |
 | `:LspRestart` | Restart LSP clients for current buffer |
+| `:HexOn` / `:HexOff` | Enter/leave hex editor view (see [Hex Editor](#hex-editor)) |
+| `:HexWrite` | Save hex view back to the file on disk |
+| `:HexInsert` / `:HexAppend` / `:HexReplace` | Insert, append, or overwrite bytes at cursor |
+| `:HexInsertLine` / `:HexDeleteLine` | Insert/delete a full 16-byte line at cursor |
+| `:HexDelete [count]` | Delete `count` bytes at cursor |
+| `:HexReoffset` | Recalculate hex view offsets after insert/delete |
 
 ---
 
