@@ -250,6 +250,12 @@ local function cursor_offset_info()
   local rel_col = cursor_col - hex_start_col
   local byte_pos = math.max(0, math.min(15, math.floor(rel_col / 3)))
 
+  -- Clamp to the line's actual byte count so a cursor resting in the ASCII
+  -- gutter of a short last line (file size not a multiple of 16) never
+  -- yields a byte_pos beyond what's really there.
+  local line_byte_count = #parse_hex_bytes_from_xxd_line(current_line) / 2
+  byte_pos = math.min(byte_pos, line_byte_count)
+
   return { line_num = cursor_line, line = current_line, offset = offset, byte_pos = byte_pos }
 end
 
