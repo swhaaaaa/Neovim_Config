@@ -400,6 +400,8 @@ api.nvim_create_autocmd("WinEnter", {
     if not is_claude_terminal(buf) then return end
     -- Delete snacks' auto_insert BufEnter autocmd before it fires.
     -- WinEnter fires before BufEnter so this is guaranteed to run first.
+    -- Deletes ALL BufEnter autocmds on this buffer, not just snacks' — fine
+    -- as long as nothing else legitimately hooks BufEnter on it.
     for _, ac in ipairs(api.nvim_get_autocmds({ event = "BufEnter", buffer = buf })) do
       pcall(api.nvim_del_autocmd, ac.id)
     end

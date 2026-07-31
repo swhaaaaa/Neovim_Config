@@ -98,9 +98,9 @@ else
       command = lldb_exec,
       name    = "lldb",
     }
-    -- remap type to lldb for the fallback adapter
+    -- type stays "codelldb" — that's the dap.adapters key this fallback
+    -- registers itself under above, not literally the codelldb binary.
     local lldb_cfg = vim.deepcopy(c_cpp_cfg)
-    for _, cfg in ipairs(lldb_cfg) do cfg.type = "codelldb" end
     dap.configurations.c   = lldb_cfg
     dap.configurations.cpp = vim.deepcopy(lldb_cfg)
   else
