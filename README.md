@@ -288,7 +288,7 @@ Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete 
 |-----|--------|
 | `gd` | Go to definition (location list if multiple) |
 | `K` | Hover documentation |
-| `<leader>la` | Code action |
+| `<leader>la` | Code action (n/v — v sends the selection as a range to the server) |
 | `<leader>rn` | Rename symbol (live preview) |
 | `<leader>sh` | Signature help |
 | `<leader>ld` | Peek definitions (Glance) |

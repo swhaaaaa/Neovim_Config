@@ -322,7 +322,7 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `<leader>li` | n | Peek implementations (Glance popup) |
 | `<leader>ls` | n/v | Workspace symbols (fzf-lua, live; v seeds query from selection) |
 | `<leader>rn` | n | Rename symbol (inc-rename with live preview) |
-| `<leader>la` | n | Code action |
+| `<leader>la` | n/v | Code action (v sends the selection as a range to the server) |
 | `<leader>Wa` | n | Add workspace folder |
 | `<leader>Wr` | n | Remove workspace folder |
 | `<leader>Wl` | n | List workspace folders |

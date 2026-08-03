@@ -80,7 +80,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- ("find symbol assignments") lives under the cscope-reserved <leader>c
     -- prefix (see cscope.lua); this buffer-local map was silently shadowing
     -- it in LSP-attached buffers. Moved into the LSP peek (glance) group.
-    map("n", "<leader>la", vim.lsp.buf.code_action,  { desc = "LSP: code action" })
+    -- "x" too: vim.lsp.buf.code_action() auto-detects a visual selection and
+    -- sends it as a range to the server (some servers offer range-only
+    -- actions, e.g. "extract function") — matches the built-in gra keymap,
+    -- which already supports n/x/v.
+    map({ "n", "x" }, "<leader>la", vim.lsp.buf.code_action,  { desc = "LSP: code action" })
     -- Note: <leader>wa/wr/wl → <leader>Wa/Wr/Wl — <leader>w is also bound
     -- directly to "save buffer" (mappings.lua). Sharing that as a prefix made
     -- every <leader>w in an LSP-attached buffer wait out 'timeoutlen' (500ms)

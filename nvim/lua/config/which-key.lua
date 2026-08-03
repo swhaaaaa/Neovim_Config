@@ -58,7 +58,7 @@ wk.add {
   { "<leader>ks", desc = "kernel: gen compile_commands + .clangd" },
   { "<leader>kp", desc = "OE pkg: link bitbake compile_commands.json" },
   { "<leader>l",  group = "LSP peek (glance)" },
-  { "<leader>la", desc = "LSP: code action" },
+  { "<leader>la", mode = { "n", "x" }, desc = "LSP: code action" },
   { "<leader>lc", desc = "change cwd to current file's dir (lcd)" },
   { "<leader>ld", desc = "LSP: peek definitions (glance)" },
   { "<leader>lr", desc = "LSP: peek references (glance)" },
