@@ -68,9 +68,12 @@ function! utils#MoveSelection(direction) abort
     return
   endif
 
-  " Cache ends of the selection
-  let l:start_line = line("'<")
-  let l:end_line   = line("'>")
+  " '< and '> are only refreshed when Visual mode is actually left; the
+  " <Cmd> keymaps that call this function never leave Visual mode, so
+  " line("'<")/col("'<") etc. would read stale (zero) values here. `v` and
+  " `.` stay live for the duration of the selection instead.
+  let l:start_line = min([line('.'), line('v')])
+  let l:end_line   = max([line('.'), line('v')])
   let l:last_line  = line('$')
 
   if a:direction ==# 'down'
@@ -98,6 +101,15 @@ function! utils#MoveSelection(direction) abort
     normal! xmzpmy`zlv`y
 
   elseif a:direction ==# 'left'
+    " The macro below needs to move the cursor 2 columns left of the
+    " selection start before pasting. When the selection starts in column 1
+    " there's nowhere to go: the 2h fails outright, which aborts the rest of
+    " the :normal! sequence *before* the p that restores the deleted text,
+    " permanently losing the selection. Bail out instead.
+    if min([col('.'), col('v')]) == 1
+      normal! gv
+      return
+    endif
     " Exactly your mapping: x2hmzpv`zl
     " (shift selection one/two chars to the left and reselect)
     normal! x2hmzpv`zl
