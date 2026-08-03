@@ -26,12 +26,13 @@ local async_cmd = function(cmd_str, on_exit)
 end
 
 local async_git_status_update = function()
-  -- Throttle: fetch at most once every 5 minutes to avoid network calls every second
+  -- Throttle only the network fetch to at most once every 5 minutes.
   local now = vim.uv.now()
-  if now - last_fetch_time < 300000 then return end
-  last_fetch_time = now
-  -- Fetch in background to refresh remote refs for next poll
-  async_cmd("git fetch origin", on_exit_fetch)
+  if now - last_fetch_time >= 300000 then
+    last_fetch_time = now
+    -- Fetch in background to refresh remote refs for next poll
+    async_cmd("git fetch origin", on_exit_fetch)
+  end
 
   -- Always run rev-list — uses locally known refs, no need to wait for fetch
   -- the @{upstream} notation is inspired by post: https://www.reddit.com/r/neovim/comments/t48x5i/git_branch_aheadbehind_info_status_line_component/
