@@ -259,6 +259,7 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `<leader>ld` | n | Peek definitions (Glance) |
 | `<leader>lr` | n | Peek references (Glance) |
 | `<leader>li` | n | Peek implementations (Glance) |
+| `<leader>ls` | n/v | Workspace symbols (fzf-lua, live; v seeds query from selection) |
 
 ### Cscope (C/C++ symbol navigation)
 
@@ -319,6 +320,7 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 | `<leader>ld` | n | Peek definitions (Glance popup) |
 | `<leader>lr` | n | Peek references (Glance popup) |
 | `<leader>li` | n | Peek implementations (Glance popup) |
+| `<leader>ls` | n/v | Workspace symbols (fzf-lua, live; v seeds query from selection) |
 | `<leader>rn` | n | Rename symbol (inc-rename with live preview) |
 | `<leader>la` | n | Code action |
 | `<leader>Wa` | n | Add workspace folder |

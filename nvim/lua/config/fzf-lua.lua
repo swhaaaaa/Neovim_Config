@@ -224,6 +224,19 @@ vim.keymap.set("n", "<leader>fr", "<cmd>FzfLua oldfiles<CR>",  { desc = "Recent 
 -- only hierarchical browsing — this fills that gap).
 vim.keymap.set("n", "<leader>fk", "<cmd>FzfLua keymaps<CR>",   { desc = "Search keymaps (fuzzy)", silent = true })
 
+-- LSP workspace symbols: type directly into the fzf prompt, live-queries the
+-- LSP server per keystroke (unlike gd/Glance, which only ever act on the
+-- symbol under the cursor).
+vim.keymap.set("n", "<leader>ls", function()
+  fzf.lsp_live_workspace_symbols()
+end, { desc = "LSP: workspace symbols (type query)", silent = true })
+
+-- Visual → same, seeded by the selection instead of typing from scratch.
+vim.keymap.set("x", "<leader>ls", function()
+  local q = get_visual_selection()
+  fzf.lsp_live_workspace_symbols(q ~= "" and { lsp_query = q } or {})
+end, { desc = "LSP: workspace symbols (seeded by selection)", silent = true })
+
 -- Normal → choose a directory
 vim.keymap.set("n", "<leader>sd", function()
   local keys = vim.api.nvim_replace_termcodes(":GrepHere ", true, false, true)

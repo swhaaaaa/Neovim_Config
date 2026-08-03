@@ -294,6 +294,7 @@ Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete 
 | `<leader>ld` | Peek definitions (Glance) |
 | `<leader>lr` | Peek references (Glance) |
 | `<leader>li` | Peek implementations (Glance) |
+| `<leader>ls` | Workspace symbols (fzf-lua, live-search; visual mode seeds query from selection) |
 | `<leader>Wa/Wr/Wl` | Add / remove / list workspace folders |
 | `<leader>v` | Pick Python virtualenv (venv-selector.nvim, fzf-lua picker) |
 | `grr` | References (Neovim default) |
