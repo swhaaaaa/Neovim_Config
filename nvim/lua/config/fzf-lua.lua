@@ -279,7 +279,7 @@ vim.keymap.set("x", "<leader>fg", function()
   fzf.live_grep(cfg)
 end, { desc = "Fuzzy grep selection", silent = true })
 
--- NEW: Visual → files (no dir prompt), seeded by selection
+-- Visual → files (no dir prompt), seeded by selection
 vim.keymap.set("x", "<leader>ff", function()
   local q = get_visual_selection()
   local cfg = {}

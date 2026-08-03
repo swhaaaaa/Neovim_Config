@@ -30,15 +30,18 @@ local handler = function(virtText, lnum, endLnum, width, truncate)
   return newVirtText
 end
 
-require("ufo").setup {
+local ok, ufo = pcall(require, "ufo")
+if not ok then return end
+
+ufo.setup {
   fold_virt_text_handler = handler,
 }
 
-vim.keymap.set("n", "zR", require("ufo").openAllFolds)
-vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
-vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
+vim.keymap.set("n", "zR", ufo.openAllFolds)
+vim.keymap.set("n", "zM", ufo.closeAllFolds)
+vim.keymap.set("n", "zr", ufo.openFoldsExceptKinds)
 vim.keymap.set("n", "<leader>K", function()
-  local _ = require("ufo").peekFoldedLinesUnderCursor()
+  local _ = ufo.peekFoldedLinesUnderCursor()
 end, {
   desc = "Preview folded maps",
 })

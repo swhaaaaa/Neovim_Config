@@ -1,4 +1,5 @@
-local smart_splits = require("smart-splits")
+local ok, smart_splits = pcall(require, "smart-splits")
+if not ok then return end
 
 smart_splits.setup {
   ignored_filetypes = { "nofile", "quickfix", "prompt" },
