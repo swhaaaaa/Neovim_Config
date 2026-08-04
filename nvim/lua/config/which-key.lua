@@ -191,8 +191,8 @@ wk.add {
   { "]r", desc = "illuminate: next reference" },
   { "[r", desc = "illuminate: prev reference" },
   -- markdown (only active in markdown buffers)
-  { "<leader>mp", ft = "markdown", desc = "markdown: toggle browser preview" },
-  { "<leader>mr", ft = "markdown", desc = "markdown: toggle in-editor rendering" },
+  { "<leader>mp", cond = function() return vim.bo.filetype == "markdown" end, desc = "markdown: toggle browser preview" },
+  { "<leader>mr", cond = function() return vim.bo.filetype == "markdown" end, desc = "markdown: toggle in-editor rendering" },
   -- mini.ai textobjects (operator-pending hints)
   { "af", desc = "around function definition" },
   { "if", desc = "inner function definition" },
