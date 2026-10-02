@@ -292,9 +292,14 @@ local plugin_specs = {
         -- Remap 'around/inside last' from 'al'/'il' to 'aL'/'iL' so that the
         -- two-char 'al' binding doesn't shadow our custom 'l' (loop) textobject.
         -- mini.ai docs recommend this pattern to avoid conflicts with Neovim builtins.
+        -- Likewise 'around/inside next' 'an'/'in' -> 'aN'/'iN': mini.ai maps
+        -- them in x mode too, which shadowed Nvim 0.12's built-in visual
+        -- incremental selection (v_an / v_in: expand/shrink by syntax node).
         mappings = {
           around_last = "aL",
           inside_last = "iL",
+          around_next = "aN",
+          inside_next = "iN",
         },
         custom_textobjects = {
           f = ts_linewise("@function.outer",    "@function.inner"),
@@ -749,11 +754,6 @@ local plugin_specs = {
     },
   },
   { "andymass/vim-matchup",  event = "BufRead" },
-  {
-    "simnalamburt/vim-mundo",
-    cmd  = { "MundoToggle", "MundoShow" },
-    keys = { { "<leader>um", "<cmd>MundoToggle<CR>", desc = "toggle undo tree" } },
-  },
   {
     "gbprod/yanky.nvim",
     cmd = "YankyRingHistory",

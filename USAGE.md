@@ -294,7 +294,9 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 
 | Key | Action |
 |-----|--------|
-| `<leader>um` | Toggle Mundo undo tree |
+| `<leader>um` | Toggle built-in undo tree (Nvim 0.12 `nvim.undotree`) |
+
+> Move the cursor in the tree window to jump to that undo state. Also available as `:Undotree` (after the first `<leader>um`, or `:packadd nvim.undotree`).
 
 ### Treesitter Context
 
@@ -302,6 +304,17 @@ Like the classic `mark.vim` — manually mark words you want to track while read
 |---------------|--------|
 | `<leader>ux` | Toggle treesitter context bar on/off |
 | `[C` | Jump up to current context (e.g. jump to function signature) |
+
+### Incremental Selection (built-in, Nvim 0.12+)
+
+| Key | Mode | Action |
+|-----|------|--------|
+| `an` | x/o | Expand selection to the parent syntax node (`[count]` levels); as an operator target, e.g. `dan` |
+| `in` | x/o | Shrink selection back to a child node |
+| `]n` / `[n` | x | Select the next / previous sibling node |
+| `]N` / `[N` | x | Extend the selection to the next / previous sibling node |
+
+> Start with `v`, then press `an` repeatedly to grow the selection outwards (identifier → expression → statement → block → function). Uses treesitter; falls back to LSP `selectionRange` in buffers without a parser. mini.ai's "around/inside next" textobjects moved to `aN`/`iN` to free these keys.
 
 ### Aerial (symbol outline — LSP/treesitter)
 
@@ -625,9 +638,9 @@ LuaSnip is the only snippet engine, loading from two sources:
 | Key | Action |
 |-----|--------|
 | `aL` / `iL` | Around / inner *last* occurrence of a textobject (search backward) |
-| `an` / `in` | Around / inner *next* occurrence of a textobject (search forward) |
+| `aN` / `iN` | Around / inner *next* occurrence of a textobject (search forward), e.g. `yiN(` |
 
-> `aL` / `iL` use uppercase L because `al` is reserved for the loop textobject.
+> `aL` / `iL` use uppercase L because `al` is reserved for the loop textobject. `aN` / `iN` use uppercase N because `an` / `in` are Neovim 0.12's built-in incremental selection (see [Incremental Selection](#incremental-selection-built-in-nvim-012)).
 
 ---
 
@@ -1022,7 +1035,7 @@ claude   # authenticate on first run
 | `:Obsession` | Start/toggle session recording (auto-saves on exit) |
 | `:Obsession {file}` | Start recording to a specific session file |
 | `:AerialToggle` | Toggle symbol outline (also `<leader>ao`) |
-| `:MundoToggle` | Toggle visual undo tree (also `<leader>um`) |
+| `:Undotree` | Toggle built-in undo tree (also `<leader>um`) |
 | `:CscopeFiles [dir...]` | Generate `cscope.files` from dirs (default: cwd) |
 | `:CscopeFiles! [dir...]` | Append dirs to existing `cscope.files` (de-dup) |
 | `:CscopeBuild [filelist]` | Build `cscope.out` from `cscope.files` |

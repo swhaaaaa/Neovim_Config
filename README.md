@@ -135,7 +135,6 @@ On first launch, **Lazy.nvim** auto-installs all plugins, then the curated Trees
 | `Comment.nvim` | Smart commenting (`gc`) |
 | `which-key.nvim` | Keymap popup helper |
 | `yanky.nvim` | Yank ring history |
-| `vim-mundo` | Visual undo tree |
 | `vim-swap` | Swap function arguments |
 | `vim-matchup` | Better `%` matching |
 | `better-escape.vim` | Fast `jj`/`jk` escape from insert mode |
@@ -252,6 +251,8 @@ Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete 
 | `f` / `F` / `t` / `T` | Native find/till motions, enhanced with flash.nvim jump labels when ambiguous |
 | `s` | Flash: ad-hoc 2-char label jump (n/x/o) |
 | `S` | Flash: treesitter node select (n/x/o) |
+| `an` / `in` | (visual) Expand / shrink selection by syntax node — built-in, LSP fallback |
+| `]n` / `[n` | (visual) Select next / previous sibling node (`]N` / `[N` extend) |
 | `r` | Flash remote (o): jump to a label, then a motion (e.g. `iw`) completes the operator there |
 | `R` | Flash treesitter search (o/x): jump to a label, operator completes on that whole node |
 | `*` / `#` / `n` / `N` | Search with hlslens highlights |
@@ -435,6 +436,7 @@ Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete 
 | `<leader>ub` | Blink cursor column/line to locate cursor |
 | `<leader>uc` | Pick colorscheme interactively (fzf-lua) |
 | `<leader>ux` | Toggle treesitter context bar |
+| `<leader>um` | Toggle built-in undo tree |
 | `<leader>tf` | Toggle format-on-save (conform.nvim) |
 | `<leader>fm` | Toggle fold method: treesitter expr ↔ manual |
 

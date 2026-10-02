@@ -13,10 +13,6 @@ call utils#Cabbrev('ps',  'Lazy sync')
 "                   Plugin Settings (VimScript)           "
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"""" vim-mundo
-let g:mundo_verbose_graph = 0
-let g:mundo_width = 80
-
 """" better-escape.vim
 " interval is set to 175ms in lua/config/better_escape.lua (init phase)
 

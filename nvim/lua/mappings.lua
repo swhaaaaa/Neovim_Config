@@ -157,6 +157,17 @@ keymap.set("n", "<leader>y", "<cmd>%yank<cr>", { desc = "yank entire buffer" })
 -- has no "l" map, but keeps the prefix fully clear per CLAUDE.md.
 keymap.set("n", "<leader>ul", "<cmd>call utils#ToggleCursorCol()<cr>", { desc = "toggle cursor column" })
 
+-- Built-in undo tree (Nvim 0.12+, opt-in package; replaces vim-mundo, which
+-- needed the python3 provider). open() toggles: it closes the tree if it is
+-- already shown. Moving the cursor in the tree window restores that state;
+-- <CR> jumps back to the edited buffer. Also available as :Undotree.
+keymap.set("n", "<leader>um", function()
+  if not package.loaded["undotree"] then
+    vim.cmd.packadd("nvim.undotree")
+  end
+  require("undotree").open { command = "topleft 40vnew" }
+end, { desc = "toggle undo tree" })
+
 -- Move current line up and down
 keymap.set("n", "<A-k>", '<cmd>call utils#SwitchLine(line("."), "up")<cr>', { desc = "move line up" })
 keymap.set("n", "<A-j>", '<cmd>call utils#SwitchLine(line("."), "down")<cr>', { desc = "move line down" })
