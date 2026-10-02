@@ -214,7 +214,10 @@ local plugin_specs = {
   -- ─── Treesitter ───────────────────────────────────────────────────────────────
   {
     "nvim-treesitter/nvim-treesitter",
-    lazy = true,
+    -- main branch does not support lazy-loading: its queries/ dir must be on
+    -- 'runtimepath' before the first FileType event, or vim.treesitter.start()
+    -- finds no highlights query for non-bundled languages (python, rust, ...).
+    lazy = false,
     build = ":TSUpdate",
     config = function()
       require("config.treesitter")

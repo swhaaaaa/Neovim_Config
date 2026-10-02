@@ -109,11 +109,11 @@ install_if_missing() {
 step "── Step 1: Neovim ──────────────────────────────────────────"
 
 install_neovim() {
-    info "Installing Neovim >= 0.11..."
+    info "Installing Neovim >= 0.12..."
     if [ "$PKG_MGR" = "apt" ]; then
         # apt often ships an old nvim — use the official AppImage instead
         info "Using official Neovim AppImage for latest version..."
-        NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.11.2/nvim-linux-x86_64.appimage"
+        NVIM_URL="https://github.com/neovim/neovim/releases/download/v0.12.5/nvim-linux-x86_64.appimage"
         curl -fLo /tmp/nvim.appimage "$NVIM_URL"
         chmod +x /tmp/nvim.appimage
         sudo mv /tmp/nvim.appimage /usr/local/bin/nvim
@@ -138,8 +138,8 @@ fi
 NVIM_VERSION=$(nvim --version | head -1 | grep -oP '\d+\.\d+\.\d+')
 NVIM_MAJOR=$(echo "$NVIM_VERSION" | cut -d. -f1)
 NVIM_MINOR=$(echo "$NVIM_VERSION" | cut -d. -f2)
-if [ "$NVIM_MAJOR" -eq 0 ] && [ "$NVIM_MINOR" -lt 11 ]; then
-    error "Neovim >= 0.11 required. Found: $NVIM_VERSION — please upgrade."
+if [ "$NVIM_MAJOR" -eq 0 ] && [ "$NVIM_MINOR" -lt 12 ]; then
+    error "Neovim >= 0.12 required. Found: $NVIM_VERSION — please upgrade."
 fi
 success "Neovim $NVIM_VERSION"
 

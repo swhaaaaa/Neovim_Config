@@ -3,8 +3,9 @@ vim.loader.enable()
 
 local utils = require("utils")
 
-local expected_version = "0.12.2"
-utils.is_compatible_version(expected_version)
+-- Minimum supported version (nvim-treesitter main branch requires 0.12+)
+local min_version = "0.12.0"
+utils.is_compatible_version(min_version)
 
 local config_dir = vim.fn.stdpath("config")
 ---@cast config_dir string

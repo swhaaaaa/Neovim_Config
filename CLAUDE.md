@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Setup
 
 ```bash
-bash build_nvim.sh   # optional: build latest Neovim from source (>= 0.11 required)
+bash build_nvim.sh   # optional: build latest Neovim from source (>= 0.12 required)
 bash install.sh      # installs tools and symlinks nvim/ → ~/.config/nvim
 ```
 

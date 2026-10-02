@@ -10,7 +10,7 @@ Evolved from a classic Vim setup.
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| Neovim | >= 0.11 | Required (`smoothscroll`, `virtual_lines` need 0.10+) |
+| Neovim | >= 0.12 | Required (nvim-treesitter main branch needs 0.12+) |
 | git | any | Plugin manager & git plugins |
 | curl | any | Downloads |
 | node + npm | any | Markdown preview, LSP servers |
@@ -43,7 +43,7 @@ bash install.sh      # installs tools, then links nvim/ → ~/.config/nvim
 ```
 
 The installer will automatically:
-1. Check / install **Neovim** >= 0.11 if missing
+1. Check / install **Neovim** >= 0.12 if missing
 2. Install required tools: `git`, `curl`
 3. Install recommended tools: `ripgrep`, `fzf`, `ctags`, `cscope`, `node`, `npm`
 4. Install formatters: `stylua` (via cargo), `ruff` (via pip), `prettier` (via npm)
