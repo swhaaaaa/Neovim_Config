@@ -66,25 +66,46 @@ api.nvim_create_user_command("ReloadConfig", function()
   vim.notify("Config reloaded (" .. #plugin_configs .. " plugin configs)", vim.log.levels.INFO)
 end, { desc = "Reload init.lua and all config modules" })
 
--- ─── LSP restart helper (Neovim 0.11 compatible) ─────────────────────────────
--- :LspRestart was removed in Neovim 0.11. Use this instead.
-local function lsp_restart()
-  vim.schedule(function()
-    -- vim.lsp.enable(name) re-attaches to every buffer of matching filetype
-    -- on its own (via doautoall), so no per-buffer bookkeeping is needed here.
-    local names = {}
-    for _, client in ipairs(vim.lsp.get_clients()) do
-      names[client.name] = true
-      client:stop(true)
-    end
-    for name in pairs(names) do
-      vim.lsp.enable(name)
-    end
-  end)
+-- ─── LSP restart ──────────────────────────────────────────────────────────────
+-- Thin wrapper over the built-in `:lsp restart` (Nvim 0.12+). The built-in
+-- with no arguments only restarts clients attached to the *current* buffer;
+-- :LspRestart keeps this config's old meaning of "restart every active
+-- client" and also accepts client names, e.g. `:LspRestart clangd`.
+local function active_client_names()
+  local names = {}
+  for _, client in ipairs(vim.lsp.get_clients()) do
+    names[client.name] = true
+  end
+  return vim.tbl_keys(names)
 end
 
-vim.api.nvim_create_user_command("LspRestart", lsp_restart,
-  { desc = "Restart all LSP clients (Neovim 0.11 compatible)" })
+-- Also called by the Meson/Kernel helpers below after they (re)generate
+-- compile_commands.json. Scheduled so it is safe from job callbacks; silently
+-- does nothing when no client is running. Returns false in that case.
+local function lsp_restart(names)
+  names = (names and #names > 0) and names or active_client_names()
+  if #names == 0 then
+    return false
+  end
+  vim.schedule(function()
+    vim.cmd.lsp { args = vim.list_extend({ "restart" }, names) }
+  end)
+  return true
+end
+
+api.nvim_create_user_command("LspRestart", function(opts)
+  if not lsp_restart(opts.fargs) then
+    vim.notify("No active LSP clients", vim.log.levels.WARN, { title = "LspRestart" })
+  end
+end, {
+  nargs = "*",
+  complete = function(arg_lead)
+    return vim.tbl_filter(function(name)
+      return vim.startswith(name, arg_lead)
+    end, active_client_names())
+  end,
+  desc = "Restart all (or the named) LSP clients via built-in :lsp restart",
+})
 
 -- ─── Meson build helpers ──────────────────────────────────────────────────────
 

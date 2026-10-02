@@ -109,6 +109,24 @@ end, {
   desc = "reload init.lua",
 })
 
+-- Full restart (Nvim 0.12+ :restart): unlike <leader>sv, this also picks up
+-- plugin-spec changes and plugins whose setup() can't run twice. Buffers,
+-- tabs, layout and cwd are restored from a session. Terminal and blank
+-- windows are left out, so toggleterm / Claude Code terminals are not
+-- relaunched as bare :terminal jobs. With unsaved changes, 'confirm' asks to
+-- save first; choosing Cancel aborts the restart.
+keymap.set("n", "<leader>sV", function()
+  local saved = vim.o.sessionoptions
+  vim.opt.sessionoptions:remove { "terminal", "blank" }
+  local ok, err = pcall(vim.cmd.restart)
+  if not ok then
+    -- Restart aborted (unsaved changes, Cancel at the prompt): restore the option so
+    -- later :mksession / :Obsession saves are unaffected.
+    vim.o.sessionoptions = saved
+    vim.notify(tostring(err), vim.log.levels.ERROR, { title = "restart" })
+  end
+end, { desc = "restart nvim (keep session)" })
+
 -- Reselect the text that has just been pasted, see also https://stackoverflow.com/a/4317090/6064933.
 -- keymap.set("n", "<leader>v", "printf('`[%s`]', getregtype()[0])", {
 --   expr = true,

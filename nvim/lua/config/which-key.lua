@@ -77,6 +77,7 @@ wk.add {
   { "<leader>ss", desc = "session: toggle recording (obsession)" },
   { "<leader>sr", desc = "session: restore from Session.vim" },
   { "<leader>sv", desc = "reload vimrc / init.lua" },
+  { "<leader>sV", desc = "restart nvim (keep session)" },
   { "<leader>ev", desc = "open init.lua in new tab" },
   { "<leader>sh", desc = "LSP: signature help" },
   { "<leader>sd", mode = { "n", "x" }, desc = "grep in chosen dir (fzf-lua)" },

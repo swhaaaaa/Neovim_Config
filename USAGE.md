@@ -42,6 +42,7 @@
 | `;` | n/v | Enter command mode (same as `:`) |
 | `<leader>ev` | n | Edit `init.lua` in a new tab |
 | `<leader>sv` | n | Reload `init.lua` without restarting |
+| `<leader>sV` | n | Full restart (`:restart`, Nvim 0.12+): restores buffers/tabs/layout; use after plugin-spec changes. Terminals are not relaunched; with unsaved changes it asks to save (Cancel aborts) |
 | `<leader>lc` | n | Change working directory to current file's folder |
 | `<leader>ub` | n | Blink cursor to find its position |
 | `<leader>uc` | n | Pick colorscheme interactively (fzf-lua) |
@@ -1026,7 +1027,7 @@ claude   # authenticate on first run
 | `:lua Snacks.notifier.show_history()` | Browse past notifications (also `<leader>un`) |
 | `:Format` | Format current buffer (conform.nvim with LSP fallback) |
 | `:LspInfo2` | Show active LSP clients for current buffer |
-| `:ReloadConfig` | Reload `init.lua` without restarting Neovim |
+| `:ReloadConfig` | Reload `init.lua` without restarting Neovim (`<leader>sv`; for a full restart use `<leader>sV`) |
 | `:AckRegex {pat}` | Search with regex via ack.vim (bypasses `--fixed-strings`) |
 | `:GrugFar` | Open project-wide find & replace panel |
 | `:TodoFzfLua` | List all TODO/FIXME/HACK/NOTE comments via fzf-lua |
@@ -1052,7 +1053,7 @@ claude   # authenticate on first run
 | `:MesonBuild [pkgdir]` | `meson compile -C builddir` in pkgdir or cwd (errors if builddir missing) |
 | `:MesonLink [dir]` | Only (re)create `compile_commands.json` symlink without re-running setup |
 | `:KernelSetup [build_root]` | Generate `compile_commands.json` + `.clangd` for OpenBMC/Yocto kernel, then restart LSP |
-| `:LspRestart` | Restart LSP clients for current buffer |
+| `:LspRestart [name...]` | Restart all active LSP clients, or only the named ones (wraps built-in `:lsp restart`) |
 | `:HexOn` / `:HexOff` | Enter/leave hex editor view (see [Hex Editor](#hex-editor)) |
 | `:HexWrite` | Save hex view back to the file on disk |
 | `:HexInsert` / `:HexAppend` / `:HexReplace` | Insert, append, or overwrite bytes at cursor |

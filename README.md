@@ -445,8 +445,8 @@ Inside oil, edit the buffer and save with `,w` to apply: delete a line = delete 
 |---------|--------|
 | `:Format` | Format current buffer (conform.nvim / LSP fallback) |
 | `:LspInfo2` | Show active LSP clients for current buffer |
-| `:ReloadConfig` | Reload `init.lua` without restarting |
-| `:LspRestart` | Restart all LSP clients (Neovim 0.11 compatible) |
+| `:ReloadConfig` | Reload `init.lua` without restarting (`<leader>sv`; full restart: `<leader>sV`) |
+| `:LspRestart [name...]` | Restart all (or the named) LSP clients — wraps built-in `:lsp restart` |
 | `:MesonSetup [pkg ...]` | `meson setup` + symlink `compile_commands.json`, restart LSP |
 | `:MesonBuild [pkgdir]` | `meson compile -C builddir` in a terminal split |
 | `:MesonLink [builddir]` | Re-create `compile_commands.json` symlink only |
